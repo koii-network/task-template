@@ -10,7 +10,7 @@ You can run any task from the available list of KOI_Tasks and enjoy the KOI_Rewa
 
 1. Run `node KOI_Tasks.js`, this will get the list of available tasks from the Smart Contract (This might take few seconds - TODO: Get cached state from bundler once this smart contract is merged with original one).
 2. Then you will be prompted with two options `Show KOI Tasks` and `Add KOI task`.
-3. You can select `Show KOI Task` to view the list of available tasks.(For adding your own KOI_Task refer to next section)
+3. You can select `Show KOI Tasks` to view the list of available tasks.(For adding your own KOI_Task refer to next section)
 4. Then you can enter the Id or name of any task which you want to run.
 5. The KOI associated with that task will get transfered to your wallet once the task is sucessfully completed and submitted to bundler(TODO: Need to combine this smart contract with original one)
 ## Creating Your OWN KOI_Task

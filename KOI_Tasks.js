@@ -53,7 +53,7 @@ const init = async () => {
     type: 'select',
     name: 'options',
     message: 'Select Option',
-    choices: [{title: 'Show KOI Task', value: 'showTasks'}, {title: 'Add KOI Task', value: 'addTask'}],
+    choices: [{title: 'Show KOI Tasks', value: 'showTasks'}, {title: 'Add KOI Task', value: 'addTask'}],
   });
   if (response.options == 'showTasks') {
     if (latestState && latestState.KOI_TASKS) {
