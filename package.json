@@ -1,0 +1,19 @@
+{
+  "name": "koi_tasks_sdk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "arweave": "^1.10.13",
+    "jsonfile": "^6.1.0",
+    "node-fetch": "^2.6.1",
+    "prompt": "^1.1.0",
+    "prompts": "^2.4.0",
+    "smartweave": "^0.4.27"
+  }
+}
