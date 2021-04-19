@@ -23,3 +23,4 @@ Creating your own KOI Task is pretty easy. The repo contains a folder `JS_APP_DE
 3. Deploy the file under `JS_APP_DEPLOT -> dist -> main.js` to the arweave `arweave deploy JS_APP_DEPLOT/dist/main.js --key-file path/to/arweave-key.json`.
 4. Then run `node KOI_Tasks.js`, select `Add KOI Task`, enter your task name, Task File Url (Obtained from step 3) and then KOI_Reward you want to stake for this particular task.
 
+
