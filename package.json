@@ -1,19 +1,22 @@
 {
-  "name": "koi_tasks_sdk",
+  "name": "js_app_deploy",
   "version": "1.0.0",
   "description": "",
-  "main": "KOI_Tasks.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "arweave": "^1.10.13",
-    "jsonfile": "^6.1.0",
-    "node-fetch": "^2.6.1",
-    "prompt": "^1.1.0",
-    "prompts": "^2.4.0",
-    "smartweave": "^0.4.27"
+    "axios": "^0.27.2",
+    "node-cron": "^3.0.2",
+    "request": "^2.88.2",
+    "web3.storage": "^4.4.0"
+  },
+  "devDependencies": {
+    "webpack": "^5.28.0",
+    "webpack-cli": "^4.5.0"
   }
 }
