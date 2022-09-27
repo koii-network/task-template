@@ -6,6 +6,9 @@ const NODE_MODE_SERVICE = 'service';
 const task = require('./coreLogic');
 const {app,NODE_MODE} = require('./init');
 const {namespaceWrapper} = require("./namespaceWrapper")
+const {Transaction, SystemProgram, PublicKey, Keypair} = require('@_koi/web3.js')
+const fs = require('fs')
+
 /**
  * @description Setup function is the first  function that is called in executable to setup the node
  */
@@ -15,6 +18,24 @@ async function setup() {
   console.log(await namespaceWrapper.storeSet("testKey","testValue"))
   console.log(await namespaceWrapper.storeGet("testKey"))
 
+  const createSubmitterAccTransaction = new Transaction().add(
+    SystemProgram.transfer({
+      fromPubkey: new PublicKey('9GWMkJ43dRcqy8u1cudWDTwuBSciEWHr2nTMZEFxuR3N'),
+      toPubkey: new PublicKey('9GWMkJ43dRcqy8u1cudWDTwuBSciEWHr2nTMZEFxuR3K'),
+      lamports: 1000000
+    }),
+  );
+  console.log("MY TRANSACTION STARTING")
+  let submitterAccount=Keypair.fromSecretKey(
+    Uint8Array.from(
+      JSON.parse(
+        fs.readFileSync('/Users/apple/.config/solana/id.json', 'utf-8'),
+      ),
+    ),
+  );
+  await namespaceWrapper.sendAndConfirmTransactionWrapper(createSubmitterAccTransaction,[submitterAccount])
+
+  // console.log("MY TRANSACTION STARTING END")
   // namespaceWrapper.sendAndConfirmTransactionWrapper()
   // console.log(namespace.taskTxId, namespace.operationMode);
   // Run default setup
