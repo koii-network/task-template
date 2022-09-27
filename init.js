@@ -18,5 +18,6 @@ app.listen(EXPRESS_PORT, () => {
 
 module.exports={
     app,
-    NODE_MODE
+    NODE_MODE,
+    TASK_ID
 }

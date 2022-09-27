@@ -5,13 +5,17 @@ const cron = require('node-cron');
 const NODE_MODE_SERVICE = 'service';
 const task = require('./coreLogic');
 const {app,NODE_MODE} = require('./init');
-
+const {namespaceWrapper} = require("./namespaceWrapper")
 /**
  * @description Setup function is the first  function that is called in executable to setup the node
  */
 async function setup() {
   console.log('setup function called');
+  console.log(await namespaceWrapper.storeGet("testKey"))
+  console.log(await namespaceWrapper.storeSet("testKey","testValue"))
+  console.log(await namespaceWrapper.storeGet("testKey"))
 
+  // namespaceWrapper.sendAndConfirmTransactionWrapper()
   // console.log(namespace.taskTxId, namespace.operationMode);
   // Run default setup
   // namespace.defaultTaskSetup();
