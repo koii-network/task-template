@@ -1,11 +1,11 @@
 const {default: axios} = require('axios');
 const BASE_ROOT_URL = 'http://localhost:8887/namespace-wrapper';
-const {TASK_ID, MAIN_ACCOUNT_PUBKEY} = require('./init');
+const {TASK_ID, MAIN_ACCOUNT_PUBKEY, SECRET_KEY} = require('./init');
 const {Connection, PublicKey} = require('@_koi/web3.js');
 
 let connection;
-const namespaceWrapper=new NamespaceWrapper()
-namespaceWrapper.getRpcUrl().then(rpcUrl=>{
+const namespaceWrapper = new NamespaceWrapper();
+namespaceWrapper.getRpcUrl().then((rpcUrl) => {
   connection = new Connection(rpcUrl, 'confirmed');
 });
 
@@ -78,8 +78,12 @@ class NamespaceWrapper {
   async sendAndConfirmTransactionWrapper(transaction, signers) {
     const blockhash = (await connection.getRecentBlockhash('finalized')).blockhash;
     transaction.recentBlockhash = blockhash;
-    transaction.feePayer=new PublicKey(MAIN_ACCOUNT_PUBKEY)
-    return await genericHandler('sendAndConfirmTransactionWrapper', transaction.serialize({requireAllSignatures:false,verifySignatures:false}), signers);
+    transaction.feePayer = new PublicKey(MAIN_ACCOUNT_PUBKEY);
+    return await genericHandler(
+      'sendAndConfirmTransactionWrapper',
+      transaction.serialize({requireAllSignatures: false, verifySignatures: false}),
+      signers
+    );
   }
   async getTaskState() {
     return await genericHandler('getTaskState');
@@ -96,7 +100,7 @@ class NamespaceWrapper {
   async defaultTaskSetup() {
     return await genericHandler('defaultTaskSetup');
   }
-  async getRpcUrl(){
+  async getRpcUrl() {
     return await genericHandler('getRpcUrl');
   }
 }
@@ -105,10 +109,11 @@ async function genericHandler(...args) {
     let response = await axios.post(BASE_ROOT_URL, {
       args,
       taskId: TASK_ID,
+      secret: SECRET_KEY,
     });
     if (response.status == 200) return response.data;
     else {
-      console.error(response);
+      console.error(response.status, response.data);
       return null;
     }
   } catch (err) {
