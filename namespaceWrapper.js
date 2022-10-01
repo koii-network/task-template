@@ -1,5 +1,5 @@
 const {default: axios} = require('axios');
-const BASE_ROOT_URL = 'http://localhost:8887/namespace-wrapper';
+const BASE_ROOT_URL = 'http://localhost:8080/namespace-wrapper';
 const {TASK_ID, MAIN_ACCOUNT_PUBKEY, SECRET_KEY} = require('./init');
 const {Connection, PublicKey} = require('@_koi/web3.js');
 
