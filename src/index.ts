@@ -5,13 +5,14 @@
  import  {app, NODE_MODE}  from './init';
  import  {namespaceWrapper}  from './namespaceWrapper';
  import  {Transaction, SystemProgram, PublicKey, Keypair}  from '@_koi/web3.js';
- import  fs from 'fs';
+ import  * as fs from 'fs';
 
  const NODE_MODE_SERVICE = 'service';
  /**
   * @description Setup function is the first  function that is called in executable to setup the node
   */
  async function setup():Promise<any> {
+   console.log(app)
    console.log('setup function called');
    console.log(await namespaceWrapper.storeGet('testKey'));
    console.log(await namespaceWrapper.storeSet('testKey', 'testValue'));
