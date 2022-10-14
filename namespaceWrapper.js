@@ -3,12 +3,6 @@ const BASE_ROOT_URL = 'http://localhost:8080/namespace-wrapper';
 const {TASK_ID, MAIN_ACCOUNT_PUBKEY, SECRET_KEY} = require('./init');
 const {Connection, PublicKey} = require('@_koi/web3.js');
 
-let connection;
-const namespaceWrapper = new NamespaceWrapper();
-namespaceWrapper.getRpcUrl().then((rpcUrl) => {
-  connection = new Connection(rpcUrl, 'confirmed');
-});
-
 class NamespaceWrapper {
   /**
    * Namespace wrapper of storeGetAsync
@@ -121,6 +115,11 @@ async function genericHandler(...args) {
     return null;
   }
 }
+let connection;
+const namespaceWrapper = new NamespaceWrapper();
+namespaceWrapper.getRpcUrl().then((rpcUrl) => {
+  connection = new Connection(rpcUrl, 'confirmed');
+});
 module.exports = {
   namespaceWrapper,
 };
