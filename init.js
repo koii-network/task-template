@@ -5,6 +5,9 @@ const EXPRESS_PORT = process.argv[4];
 const NODE_MODE = process.argv[5];
 const MAIN_ACCOUNT_PUBKEY = process.argv[6];
 const SECRET_KEY = process.argv[7];
+const K2_NODE_URL = process.argv[8];
+const SERVICE_URL = process.argv[9];
+const STAKE = Number(process.argv[10]);
 
 const app = express();
 
@@ -23,4 +26,7 @@ module.exports = {
   TASK_ID,
   MAIN_ACCOUNT_PUBKEY,
   SECRET_KEY,
+  K2_NODE_URL,
+  SERVICE_URL,
+  STAKE
 };

@@ -7,5 +7,8 @@ module.exports={
     devtool: 'source-map',
     optimization: {
         usedExports: false, // <- no remove unused function
+    },
+    stats:{
+      moduleTrace:false
     }
 }
