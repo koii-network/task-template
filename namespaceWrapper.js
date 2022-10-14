@@ -33,11 +33,11 @@ class NamespaceWrapper {
   //   async fsWriteStream(imagepath: string) {}
   //   async fsReadStream(imagepath: string) {}
 
-  async submissionOnChain(taskStateInfoKeypairPubKey, submitterKeypair, submission) {
-    return await genericHandler('submissionOnChain', taskStateInfoKeypairPubKey, submitterKeypair, submission);
+  async submissionOnChain(submitterKeypair, submission) {
+    return await genericHandler('submissionOnChain', submitterKeypair, submission);
   }
-  async voteOnChain(taskStateInfoKeypairPubKey, submitterPubkey, voterKeypair, isValid) {
-    return await genericHandler('voteOnChain', taskStateInfoKeypairPubKey, submitterPubkey, voterKeypair, isValid);
+  async voteOnChain(candidatePubkey, isValid, voterKeypair) {
+    return await genericHandler('voteOnChain', candidatePubkey, voterKeypair, isValid);
   }
   async stakeOnChain(taskStateInfoPublicKey, stakingAccKeypair, stakePotAccount, stakeAmount) {
     return await genericHandler(
@@ -48,10 +48,9 @@ class NamespaceWrapper {
       stakeAmount
     );
   }
-  async claimReward(taskStateInfoAddress, stakePotAccount, beneficiaryAccount, claimerKeypair) {
+  async claimReward( stakePotAccount, beneficiaryAccount, claimerKeypair) {
     return await genericHandler(
       'claimReward',
-      taskStateInfoAddress,
       stakePotAccount,
       beneficiaryAccount,
       claimerKeypair
@@ -96,6 +95,77 @@ class NamespaceWrapper {
   }
   async getRpcUrl() {
     return await genericHandler('getRpcUrl');
+  }
+  async validateAndVoteOnNodes(validation) {
+    await this.checkVoteStatus();
+    console.log("******/  IN VOTING /******");
+    const taskAccountDataJSON = await this.getTaskState();
+    const current_round = taskAccountDataJSON.current_round;
+    const expected_round = current_round - 1;
+    console.log("TASK DATA CURRENT ROUND", current_round);
+
+    const status = taskAccountDataJSON.status;
+    const stat_val = Object.keys(status)[0];
+    console.log("STATUS", stat_val);
+
+    const voteStatus = await namespaceWrapper.storeGet("voteStatus");
+    console.log("Getting data VoteStatus", voteStatus);
+
+    if (voteStatus == true && stat_val == "Voting") {
+      console.log("Now voting for the submission of last round");
+      console.log("SUBMISSIONS", taskAccountDataJSON.submissions);
+      const size = Object.keys(taskAccountDataJSON.submissions).length;
+      console.log("SIZE", size);
+      const values = Object.values(taskAccountDataJSON.submissions);
+      const keys = Object.keys(taskAccountDataJSON.submissions);
+
+      for (let i = 0; i < size; i++) {
+        console.log("LOOP CALLING", i + 1);
+        try {
+          console.log("VALUE", values[i].round);
+          if (expected_round == values[i].round) {
+            console.log("LOGIC TO VOTE ON THIS ITEM");
+            //fetch candidate public key
+            let candidatePublicKey = keys[i];
+            let candidateKeyPairPublicKey = new PublicKey(candidatePublicKey);
+            console.log(
+              "CANDIDATE KEY PAIR PUB KEY",
+              candidateKeyPairPublicKey
+            );
+            console.log("CANDIDATE PUBLIC KEY", candidatePublicKey);
+            console.log("SUBMITTER PUB KEY", MAIN_ACCOUNT_PUBKEY);
+            if (candidatePublicKey == MAIN_ACCOUNT_PUBKEY) {
+              console.log("YOU CANNOT VOTE ON YOUR OWN SUBMISSIONS");
+            } else {
+              // Write the logic for checking the submissions here and if the submissions is okay then call the Vote function
+              let vote;
+              console.log("SUBMISSION VALUE", values[i].submission_value);
+              const masterIndex = values[i].submission_value;
+
+              console.log("MASTERINDEX", masterIndex);
+              vote = await validation(masterIndex);
+              console.log("VOTE", vote);
+
+              console.log(`Voting ${vote} to ${candidatePublicKey}`);
+              try {
+                const response = await this.voteOnChain(
+                  candidateKeyPairPublicKey,
+                  vote
+                );
+
+                console.log("RESPONSE FROM VOTING FUNCTION", response);
+              } catch (error) {
+                console.warn("ERROR FROM VOTING FUNCTION", error);
+              }
+            }
+          }
+        } catch (err) {
+          console.log("CATCH IN LOOP", err);
+        }
+      }
+    } else {
+      console.log("No voting allowed until next round");
+    }
   }
 }
 async function genericHandler(...args) {
