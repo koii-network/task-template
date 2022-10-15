@@ -14,31 +14,8 @@ const fs = require('fs');
  */
 async function setup() {
   console.log('setup function called');
-  console.log(await namespaceWrapper.storeGet('testKey'));
-  console.log(await namespaceWrapper.storeSet('testKey', 'testValue'));
-  console.log(await namespaceWrapper.storeGet('testKey'));
-
-  const createSubmitterAccTransaction = new Transaction().add(
-    SystemProgram.transfer({
-      fromPubkey: new PublicKey('FnQm11NXJxPSjza3fuhuQ6Cu4fKNqdaPkVSRyLSWf14d'),
-      toPubkey: new PublicKey('9GWMkJ43dRcqy8u1cudWDTwuBSciEWHr2nTMZEFxuR3F'),
-      lamports: 1000000,
-    })
-  );
-  console.log('MY TRANSACTION STARTING');
-  let submitterAccount = Keypair.fromSecretKey(
-    Uint8Array.from(JSON.parse(fs.readFileSync('/home/ghazanfer/.config/koii/id.json', 'utf-8')))
-  );
- 
-  await namespaceWrapper.sendAndConfirmTransactionWrapper(createSubmitterAccTransaction, [
-    submitterAccount,
-  ]);
-
-  // console.log("MY TRANSACTION STARTING END")
-  // namespaceWrapper.sendAndConfirmTransactionWrapper()
-  // console.log(namespace.taskTxId, namespace.operationMode);
   // Run default setup
-  // namespace.defaultTaskSetup();
+  namespaceWrapper.defaultTaskSetup();
   // Run any extra setup
 }
 
@@ -64,11 +41,11 @@ async function execute() {
   console.log('NODE MODE', NODE_MODE);
   let cronArray = [];
   if (NODE_MODE == NODE_MODE_SERVICE) {
-    // cronArray.push(cron.schedule('*/40 * * * *', () => task(namespace)));
+    cronArray.push(cron.schedule('*/40 * * * *', () => task()));
   }
   cronArray.push(
     cron.schedule('*/60 * * * *', () => {
-      // namespace.validateAndVoteOnNodes(validateNode);
+      namespaceWrapper.validateAndVoteOnNodes(validateNode);
     })
   );
 
@@ -77,8 +54,8 @@ async function execute() {
 
 setup().then(execute);
 
-//  if (namespace.app) {
+ if (app) {
 //  Write your Express Endpoints here.
 //  For Example
 //  namespace.express('post', '/accept-cid', async (req, res) => {})
-//  }
+ }

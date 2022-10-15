@@ -4,7 +4,8 @@
 const axios = require('axios');
 const fs = require('fs');
 const {Web3Storage, getFilesFromPath} = require('web3.storage');
-const storageClient = new Web3Storage({token: process.env.WEB3_STORAGE_KEY});
+const {namespaceWrapper} = require('./namespaceWrapper');
+
 async function task() {
   const promises = [];
 
@@ -100,14 +101,16 @@ async function task() {
   console.log(`Avg Price: ${avg_price}`);
   const btc_price_json = JSON.stringify({avg_price, prices});
   fs.writeFileSync('btc_price.json', btc_price_json);
+  
+  const storageClient = new Web3Storage({token: process.env.WEB3_STORAGE_KEY});
 
   if (storageClient) {
     // Storing on IPFS through web3 storage as example
     const file = await getFilesFromPath('./btc_price.json');
     const cid = await storageClient.put(file);
     console.log('Data uploaded to IPFS: ', cid);
-    await namespace.redisSet('cid', cid);
-    await namespace.checkSubmissionAndUpdateRound(cid);
+    await namespaceWrapper.storeSet('cid', cid);
+    await namespaceWrapper.checkSubmissionAndUpdateRound(cid);
   }
   return false;
 }
