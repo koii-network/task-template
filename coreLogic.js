@@ -102,7 +102,7 @@ async function task() {
   const btc_price_json = JSON.stringify({avg_price, prices});
   fs.writeFileSync('btc_price.json', btc_price_json);
   
-  const storageClient = new Web3Storage({token: process.env.WEB3_STORAGE_KEY});
+  const storageClient = new Web3Storage({token: process.env.SECRET_WEB3_STORAGE_KEY});
 
   if (storageClient) {
     // Storing on IPFS through web3 storage as example
