@@ -111,7 +111,7 @@ class NamespaceWrapper {
     const voteStatus = await namespaceWrapper.storeGet("voteStatus");
     console.log("Getting data VoteStatus", voteStatus);
 
-    if (voteStatus == true && stat_val == "Voting") {
+    if (voteStatus == 'true' && stat_val == "Voting") {
       console.log("Now voting for the submission of last round");
       console.log("SUBMISSIONS", taskAccountDataJSON.submissions);
       const size = Object.keys(taskAccountDataJSON.submissions).length;
