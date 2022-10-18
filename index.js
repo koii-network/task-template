@@ -39,23 +39,20 @@ async function validateNode(node) {
 async function execute() {
   console.log('BTC to USD Script now running');
   console.log('NODE MODE', NODE_MODE);
-  let cronArray = [];
   if (NODE_MODE == NODE_MODE_SERVICE) {
-    cronArray.push(cron.schedule('*/40 * * * *', () => task()));
+    // Submission Logic
+    cron.schedule('*/40 * * * *', () => task());
   }
-  cronArray.push(
-    cron.schedule('*/60 * * * *', () => {
-      namespaceWrapper.validateAndVoteOnNodes(validateNode);
-    })
-  );
-
-  return cronArray;
+  // Voting Logic
+  cron.schedule('*/60 * * * *', () => {
+    namespaceWrapper.validateAndVoteOnNodes(validateNode);
+  });
 }
 
 setup().then(execute);
 
- if (app) {
-//  Write your Express Endpoints here.
-//  For Example
-//  namespace.express('post', '/accept-cid', async (req, res) => {})
- }
+if (app) {
+  //  Write your Express Endpoints here.
+  //  For Example
+  //  namespace.express('post', '/accept-cid', async (req, res) => {})
+}
