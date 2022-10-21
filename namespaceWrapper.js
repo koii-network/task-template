@@ -21,17 +21,25 @@ class NamespaceWrapper {
   async storeSet(key, value) {
     return await genericHandler('storeSet', key, value);
   }
-  //   /**
-  //    * Namespace wrapper over fsPromises methods
-  //    * @param {*} method The fsPromise method to call
-  //    * @param {*} path Path for the express call
-  //    * @param  {...any} args Remaining parameters for the FS call
-  //    * @returns {Promise<any>}
-  //    */
-  //   async fs(method, path, ...args) {}
-  //   async fsStaking(method, path, ...args) {}
-  //   async fsWriteStream(imagepath: string) {}
-  //   async fsReadStream(imagepath: string) {}
+  /**
+   * Namespace wrapper over fsPromises methods
+   * @param {*} method The fsPromise method to call
+   * @param {*} path Path for the express call
+   * @param  {...any} args Remaining parameters for the FS call
+   * @returns {Promise<any>}
+   */
+  async fs(method, path, ...args) {
+    return await genericHandler('fs', method, path, ...args);
+  }
+  async fsStaking(method, path, ...args) {
+    return await genericHandler('fsStaking', method, path, ...args);
+  }
+  async fsWriteStream(imagepath) {
+    return await genericHandler('fsWriteStream', imagepath);
+  }
+  async fsReadStream(imagepath) {
+    return await genericHandler('fsReadStream', imagepath);
+  }
 
   async submissionOnChain(submitterKeypair, submission) {
     return await genericHandler('submissionOnChain', submitterKeypair, submission);
