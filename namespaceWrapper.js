@@ -63,7 +63,8 @@ class NamespaceWrapper {
     return await genericHandler('sendTransaction', serviceNodeAccount, beneficiaryAccount, amount);
   }
   async getSubmitterAccount() {
-    return await genericHandler('getSubmitterAccount');
+    const submitterAccountResp = await genericHandler('getSubmitterAccount');
+    return Keypair.fromSecretKey(Uint8Array.from(Object.values(submitterAccountResp?._keypair?.secretKey)));
   }
   /**
    * sendAndConfirmTransaction wrapper that injects mainSystemWallet as the first signer for paying the tx fees
@@ -84,9 +85,9 @@ class NamespaceWrapper {
   async getTaskState() {
     return await genericHandler('getTaskState');
   }
-  async checkVoteStatus() {
-    return await genericHandler('checkVoteStatus');
-  }
+  // async checkVoteStatus() {
+  //   return await genericHandler('checkVoteStatus');
+  // }
   async checkSubmissionAndUpdateRound(submissionValue = 'default') {
     return await genericHandler('checkSubmissionAndUpdateRound', submissionValue);
   }
@@ -100,33 +101,38 @@ class NamespaceWrapper {
     return await genericHandler('getRpcUrl');
   }
   async getNodes(url) {
-    return await genericHandler('getRpcUrl', url);
+    return await genericHandler('getNodes', url);
   }
   async validateAndVoteOnNodes(validate) {
-    await this.checkVoteStatus();
+    // await this.checkVoteStatus();
     console.log('******/  IN VOTING /******');
     const taskAccountDataJSON = await this.getTaskState();
     const current_round = taskAccountDataJSON.current_round;
     const expected_round = current_round - 1;
 
     const status = taskAccountDataJSON.status;
-    const stat_val = Object.keys(status)[0];
+    const task_status = Object.keys(status)[0];
 
-    const voteStatus = await this.storeGet('voteStatus');
+    // const voteStatus = await this.storeGet('voteStatus');
+    const lastVotedRound = await this.storeGet('lastVotedRound');
 
     console.log(
-      `Task status: ${stat_val}, Local status: ${voteStatus}, Submissions: ${
+      `Task status: ${task_status}, Last Voted Round: ${lastVotedRound}, Submissions: ${
         Object.keys(taskAccountDataJSON.submissions).length
       }`
     );
 
     console.log('Submissions', taskAccountDataJSON.submissions);
 
-    if (!process.env.SERVICE_URL) console.warn('SERVICE_URL not set');
-    const nodes = await this.getNodes(process.env.SERVICE_URL || '');
+    if (!TRUSTED_SERVICE_URL) console.warn('SERVICE_URL not set');
+    const nodes = await this.getNodes(TRUSTED_SERVICE_URL);
     console.log('Nodes', nodes);
 
-    if (voteStatus == 'true' && stat_val == 'Voting' && Object.keys(taskAccountDataJSON.submissions).length > 0) {
+    if (
+      lastVotedRound != expected_round.toString() &&
+      task_status == 'Voting' &&
+      Object.keys(taskAccountDataJSON.submissions).length > 0
+    ) {
       // Filter only submissions from last round
       const submissions = {};
       for (const id in taskAccountDataJSON.submissions) {
@@ -172,7 +178,7 @@ class NamespaceWrapper {
 
       // After every iteration of checking the Submissions the Voting will be closed for that round
       try {
-        await this.storeSet('voteStatus', 'false');
+        await this.storeSet('lastVotedRound', `${expected_round}`);
       } catch (err) {
         console.warn('Error setting voting status', err);
       }
@@ -195,7 +201,8 @@ async function genericHandler(...args) {
       return null;
     }
   } catch (err) {
-    console.error(err);
+    console.error(err.message);
+    console.error(err?.response?.data);
     return null;
   }
 }
