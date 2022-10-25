@@ -1,24 +1,25 @@
 {
   "compilerOptions": {
-    "target": "ES5",
-    "module": "ES6",
+    "target": "ES6",
+    "module": "CommonJS",
     "lib": ["ES2022"],
     "moduleResolution": "node",
     "rootDir": ".",
     "outDir": "build",
+    // "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
-    "alwaysStrict": true,
+    "alwaysStrict": false,
     "sourceMap": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noUnusedParameters": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
     "strictNullChecks": false,
-
+    "skipLibCheck": true
   },
   "include": ["src/**/*", "__tests__/**/*"]
 }

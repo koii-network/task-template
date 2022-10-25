@@ -1,3 +1,3 @@
 export interface GenericResponseInterface {
-  [key: string]: unknown;
+  [key: string]: any;
 }
