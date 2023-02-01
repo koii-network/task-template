@@ -1,58 +1,41 @@
-/**
- * TODO Test this more
- */
-const cron = require('node-cron');
-const NODE_MODE_SERVICE = 'service';
-const task = require('./coreLogic');
-const {app, NODE_MODE} = require('./init');
-const {namespaceWrapper} = require('./namespaceWrapper');
-const {Transaction, SystemProgram, PublicKey, Keypair} = require('@_koi/web3.js');
-const fs = require('fs');
+const coreLogic = require("./coreLogic");
+const { app } = require("./init");
+const { namespaceWrapper } = require("./namespaceWrapper");
 
-/**
- * @description Setup function is the first  function that is called in executable to setup the node
- */
+
 async function setup() {
-  console.log('setup function called');
+  console.log("setup function called");
   // Run default setup
-  namespaceWrapper.defaultTaskSetup();
-  // Run any extra setup
-}
-
-/*
- * @description Using to validate an individual node.
- */
-async function validateNode(node) {
-  console.log('Validating Node', node);
-  const cid = node.submission_value;
-  const res = await client.get(cid);
-  if (!res.ok) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
-/**
- * @description Execute function is called just after the setup function  to run Submit, Vote API in cron job
- */
-async function execute() {
-  console.log('BTC to USD Script now running');
-  console.log('NODE MODE', NODE_MODE);
-  if (NODE_MODE == NODE_MODE_SERVICE) {
-    // Submission Logic
-    cron.schedule('*/40 * * * *', () => task());
-  }
-  // Voting Logic
-  cron.schedule('*/60 * * * *', () => {
-    namespaceWrapper.validateAndVoteOnNodes(validateNode);
+  await namespaceWrapper.defaultTaskSetup();
+  process.on("message", (m) => {
+    console.log("CHILD got message:", m);
+    if (m.functionCall == "submitPayload") {
+      console.log("submitPayload called");
+      coreLogic.submitTask(m.roundNumber);
+    } else if (m.functionCall == "auditPayload") {
+      console.log("auditPayload called");
+      coreLogic.auditTask(m.roundNumber);
+    }
+    else if(m.functionCall == "executeTask") {
+      console.log("executeTask called");
+      coreLogic.task();
+    }
+    else if(m.functionCall == "generateAndSubmitDistributionList") {
+      console.log("generateAndSubmitDistributionList called");
+      coreLogic.generateAndSubmitDistributionList(m.roundNumber);
+    }
+    else if(m.functionCall == "distributionListAudit") {
+      console.log("distributionListAudit called");
+      coreLogic.auditDistribution(m.roundNumber);
+    }
   });
 }
 
-setup().then(execute);
+setup();
 
 if (app) {
   //  Write your Express Endpoints here.
   //  For Example
   //  namespace.express('post', '/accept-cid', async (req, res) => {})
 }
+

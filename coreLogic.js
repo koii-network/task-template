@@ -1,118 +1,112 @@
-/*
- * @description Gather BTC to USD prices
- */
-const axios = require('axios');
-const fs = require('fs');
-const {Web3Storage, getFilesFromPath} = require('web3.storage');
-const {namespaceWrapper} = require('./namespaceWrapper');
+const crypto = require("crypto");
+const { namespaceWrapper } = require("./namespaceWrapper");
+
 
 async function task() {
-  const promises = [];
-
-  // https://www.coingecko.com/en/api/documentation
-  promises.push(
-    axios({
-      method: 'get',
-      url: 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd',
-    })
-      .then(async (response) => {
-        if (response.data) {
-          const price = response.data.bitcoin.usd;
-          console.log('CoinGecko Price', price);
-          return price;
-        }
-      })
-      .catch((err) => {
-        console.log('CoinGecko Failed: ', err.message);
-      })
-  );
-
-  // https://coinmarketcap.com/api/documentation/v1/#operation/getV1CryptocurrencyQuotesHistorical
-  if (process.env.COINMARKETCAP_KEY) {
-    promises.push(
-      axios({
-        method: 'get',
-        url: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=10',
-        headers: {
-          'X-CMC_PRO_API_KEY': process.env.COINMARKETCAP_KEY,
-        },
-      })
-        .then(async (response) => {
-          if (response.data) {
-            const btc = response.data.data.find((e) => e.id == 1);
-            if (btc) {
-              const price = btc.quote.USD.price;
-              console.log('CoinMarketCap Price', price);
-              return price;
-            }
-          }
-        })
-        .catch((err) => {
-          console.log('CoinMarketCap Failed: ', err.message);
-        })
-    );
-  }
-
-  // https://nomics.com/docs/
-  if (process.env.NOMICS_KEY) {
-    promises.push(
-      axios({
-        method: 'get',
-        url: `https://api.nomics.com/v1/currencies/ticker?key=${process.env.NOMICS_KEY}&ids=BTC&interval=1d`,
-      })
-        .then(async (response) => {
-          if (response.data) {
-            const price = response.data[0].price;
-            console.log('Nomics Price', price);
-            return price;
-          }
-        })
-        .catch((err) => {
-          console.log('Nomics Failed: ', err.message);
-        })
-    );
-  }
-
-  // https://docs.coinapi.io/?javascript#get-specific-rate-get
-  if (process.env.COINAPI_KEY) {
-    promises.push(
-      axios({
-        method: 'get',
-        url: `https://rest.coinapi.io/v1/exchangerate/BTC/USD`,
-        headers: {'X-CoinAPI-Key': process.env.COINAPI_KEY},
-      })
-        .then(async (response) => {
-          if (response.data) {
-            const price = response.data.rate;
-            console.log('CoinAPI Price', price);
-            return price;
-          }
-        })
-        .catch((err) => {
-          console.log('CoinAPI Failed: ', err.message);
-        })
-    );
-  }
-
-  const prices = (await Promise.all(promises)).filter((e) => e).map((e) => parseFloat(e));
-  const avg_price = prices.reduce((a, b) => a + b) / prices.length;
-
-  console.log('Prices', prices);
-  console.log(`Avg Price: ${avg_price}`);
-  const btc_price_json = JSON.stringify({avg_price, prices});
-  fs.writeFileSync('btc_price.json', btc_price_json);
-  
-  const storageClient = new Web3Storage({token: process.env.SECRET_WEB3_STORAGE_KEY});
-
-  if (storageClient) {
-    // Storing on IPFS through web3 storage as example
-    const file = await getFilesFromPath('./btc_price.json');
-    const cid = await storageClient.put(file);
-    console.log('Data uploaded to IPFS: ', cid);
-    await namespaceWrapper.storeSet('cid', cid);
-    await namespaceWrapper.checkSubmissionAndUpdateRound(cid);
-  }
+  const x = Math.random().toString();
+  const cid = crypto.createHash("sha1").update(x).digest("hex");
   return false;
 }
+async function generateAndSubmitDistributionList(round) {
+  console.log("generateAndSubmitDistributionList called");
+  // const selectedNode = await namespaceWrapper.nodeSelectionDistributionList(round);
+  // console.log("selectedNode", selectedNode);
+  // const submitterAccountKeyPair = await namespaceWrapper.getSubmitterAccount();
+  // console.log({submitterAccountKeyPair});
+  // const submitterPubkey = submitterAccountKeyPair.publicKey.toBase58();
+  // if(selectedNode == submitterPubkey) {
+    console.log("I am selected node");
+    let distributionList = {};
+    const taskAccountDataJSON = await namespaceWrapper.getTaskState();
+    const submissions = taskAccountDataJSON.submissions[round];
+    const submissions_audit_trigger =
+                  taskAccountDataJSON.submissions_audit_trigger[round];
+    if (submissions == null) {
+      console.log("No submisssions found in N-2 round");
+      return distributionList;
+    } else {
+      const keys = Object.keys(submissions);
+      const values = Object.values(submissions);
+      const size = values.length;
+      console.log("Submissions from last round: ", keys, values, size);
+      for (let i = 0; i < size; i++) {
+        const candidatePublicKey = keys[i];
+        if (submissions_audit_trigger && submissions_audit_trigger[candidatePublicKey]) {
+          console.log(submissions_audit_trigger[candidatePublicKey].votes, "distributions_audit_trigger votes ");
+          const votes = submissions_audit_trigger[candidatePublicKey].votes;
+          let numOfVotes = 0;
+          for (let index = 0; index < votes.length; index++) {
+            if(votes[i].is_valid)
+              numOfVotes++;
+            else numOfVotes--;
+          }
+          if(numOfVotes < 0)
+            continue;
+        }
+        distributionList[candidatePublicKey] = 1;  
+      }
+    }
+    
+    const decider = await namespaceWrapper.uploadDistributionList(
+      distributionList, round
+    );
+    console.log("DECIDER", decider);
+  
+    if (decider) {
+      const response = await namespaceWrapper.distributionListSubmissionOnChain(round);
+      console.log("RESPONSE FROM DISTRIBUTION LIST", response);
+    }
+  // }
+}
 
-module.exports = task;
+
+async function validateNode(node) {
+  
+// Write your logic for the validation of submission value here and return a boolean value in response
+
+console.log("Validating Node", node);
+  return true;
+}
+
+async function validateDistribution(node) {
+
+// Write your logic for the validation of submission value here and return a boolean value in response
+// this logic will we same as generation of distribution list function 
+  console.log("Validating Node", node);
+  return true;
+}
+// Submit Address with distributioon list to K2
+async function submitTask(roundNumber) {
+  console.log("submitTask called with round", roundNumber);
+  try {
+    console.log("inside try");
+    console.log(await namespaceWrapper.getSlot(), "current slot while calling submit");
+      const x = Math.random().toString();
+  const cid = crypto.createHash("sha1").update(x).digest("hex");
+    await namespaceWrapper.checkSubmissionAndUpdateRound(cid, roundNumber);
+    console.log("after the submission call");
+  } catch (error) {
+    console.log("error in submission", error);
+  }
+}
+
+async function auditTask(roundNumber) {
+  console.log("auditTask called with round", roundNumber);
+  console.log(await namespaceWrapper.getSlot(), "current slot while calling auditTask");
+  await namespaceWrapper.validateAndVoteOnNodes(validateNode, roundNumber);
+}
+
+async function auditDistribution(roundNumber) {
+  console.log("auditDistribution called with round", roundNumber);
+  await namespaceWrapper.validateAndVoteOnDistributionList(validateDistribution, roundNumber);
+}
+
+module.exports = {
+  task,
+  generateAndSubmitDistributionList,
+  validateNode,
+  validateDistribution,
+  submitTask,
+  auditTask,
+  auditDistribution
+};
