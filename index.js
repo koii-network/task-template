@@ -22,7 +22,7 @@ async function setup() {
     }
     else if(m.functionCall == "generateAndSubmitDistributionList") {
       console.log("generateAndSubmitDistributionList called");
-      coreLogic.generateAndSubmitDistributionList(m.roundNumber);
+      coreLogic.submitDistributionList(m.roundNumber);
     }
     else if(m.functionCall == "distributionListAudit") {
       console.log("distributionListAudit called");

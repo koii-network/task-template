@@ -1,22 +1,23 @@
-const crypto = require("crypto");
 const { namespaceWrapper } = require("./namespaceWrapper");
 
 
 async function task() {
-  const x = Math.random().toString();
-  const cid = crypto.createHash("sha1").update(x).digest("hex");
-  return false;
+  // Write the logic to do the work required for submitting the values and optionally store the result in levelDB
 }
-async function generateAndSubmitDistributionList(round) {
-  console.log("generateAndSubmitDistributionList called");
-  // const selectedNode = await namespaceWrapper.nodeSelectionDistributionList(round);
-  // console.log("selectedNode", selectedNode);
-  // const submitterAccountKeyPair = await namespaceWrapper.getSubmitterAccount();
-  // console.log({submitterAccountKeyPair});
-  // const submitterPubkey = submitterAccountKeyPair.publicKey.toBase58();
-  // if(selectedNode == submitterPubkey) {
-    console.log("I am selected node");
-    let distributionList = {};
+async function fetchSubmission(){
+  // Write the logic to fetch the submission values here and return the cid string
+}
+
+async function generateDistributionList(){
+  console.log("GenerateDistributionList called");
+  console.log("I am selected node");
+
+  // Write the logic to generate the distribution list here by introducing the rules of your choice
+
+
+  /*  **** SAMPLE LOGIC FOR GENERATING DISTRIBUTION LIST ******
+  
+  let distributionList = {};
     const taskAccountDataJSON = await namespaceWrapper.getTaskState();
     const submissions = taskAccountDataJSON.submissions[round];
     const submissions_audit_trigger =
@@ -45,7 +46,15 @@ async function generateAndSubmitDistributionList(round) {
         }
         distributionList[candidatePublicKey] = 1;  
       }
-    }
+    } */
+    
+}
+
+
+async function submitDistributionList(round) {
+  console.log("SubmitDistributionList called");
+  
+    const distributionList = await generateDistributionList();
     
     const decider = await namespaceWrapper.uploadDistributionList(
       distributionList, round
@@ -56,7 +65,6 @@ async function generateAndSubmitDistributionList(round) {
       const response = await namespaceWrapper.distributionListSubmissionOnChain(round);
       console.log("RESPONSE FROM DISTRIBUTION LIST", response);
     }
-  // }
 }
 
 
@@ -71,7 +79,7 @@ console.log("Validating Node", node);
 async function validateDistribution(node) {
 
 // Write your logic for the validation of submission value here and return a boolean value in response
-// this logic will we same as generation of distribution list function 
+// this logic can be same as generation of distribution list function and based on the comparision will final object , decision can be made
   console.log("Validating Node", node);
   return true;
 }
@@ -81,8 +89,7 @@ async function submitTask(roundNumber) {
   try {
     console.log("inside try");
     console.log(await namespaceWrapper.getSlot(), "current slot while calling submit");
-      const x = Math.random().toString();
-  const cid = crypto.createHash("sha1").update(x).digest("hex");
+    const cid = await fetchSubmission();
     await namespaceWrapper.checkSubmissionAndUpdateRound(cid, roundNumber);
     console.log("after the submission call");
   } catch (error) {
@@ -103,7 +110,7 @@ async function auditDistribution(roundNumber) {
 
 module.exports = {
   task,
-  generateAndSubmitDistributionList,
+  submitDistributionList,
   validateNode,
   validateDistribution,
   submitTask,

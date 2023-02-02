@@ -7,7 +7,6 @@ class NamespaceWrapper {
   /**
    * Namespace wrapper of storeGetAsync
    * @param {string} key // Path to get
-   * @returns {Promise<*>} Promise containing data
    */
   async storeGet(key) {
     return await genericHandler("storeGet", key);
@@ -16,7 +15,6 @@ class NamespaceWrapper {
    * Namespace wrapper over storeSetAsync
    * @param {string} key Path to set
    * @param {*} value Data to set
-   * @returns {Promise<void>}
    */
   async storeSet(key, value) {
     return await genericHandler("storeSet", key, value);
@@ -26,7 +24,6 @@ class NamespaceWrapper {
    * @param {*} method The fsPromise method to call
    * @param {*} path Path for the express call
    * @param  {...any} args Remaining parameters for the FS call
-   * @returns {Promise<any>}
    */
   async fs(method, path, ...args) {
     return await genericHandler("fs", method, path, ...args);
@@ -195,7 +192,7 @@ class NamespaceWrapper {
       const values = Object.values(submissions);
       const size = values.length;
       console.log("Submissions from last round: ", keys, values, size);
-
+      let isValid
       const submitterAccountKeyPair = await this.getSubmitterAccount();
       const submitterPubkey = submitterAccountKeyPair.publicKey.toBase58();
       for (let i = 0; i < size; i++) {
@@ -210,7 +207,7 @@ class NamespaceWrapper {
               "SUBMISSION VALUE TO CHECK",
               values[i].submission_value
             );
-            const isValid = await validate(values[i].submission_value);
+            isValid = await validate(values[i].submission_value);
             console.log(`Voting ${isValid} to ${candidatePublicKey}`);
 
             if (isValid) {
@@ -270,12 +267,9 @@ class NamespaceWrapper {
       const values = Object.values(submissions);
       const size = values.length;
       console.log("Submissions from last round: ", keys, values, size);
-
+      let isValid
       const submitterAccountKeyPair = await this.getSubmitterAccount();
       const submitterPubkey = submitterAccountKeyPair.publicKey.toBase58();
-      // console.log({ submitterAccountKeyPair });
-      let isValid = false;
-      //console.log(`Voting ${isValid} to ${candidatePublicKey}`);
 
       for (let i = 0; i < size; i++) {
         let candidatePublicKey = keys[i];
