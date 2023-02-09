@@ -23,7 +23,7 @@ class NamespaceWrapper {
    * @param {string} key // Path to get
    * @returns {Promise<*>} Promise containing data
    */
-  async storeGet(key): Promise<string> {
+  async storeGet(key: string): Promise<string> {
     return (await genericHandler("storeGet", key)) as unknown as string | null;
   }
   /**
@@ -32,7 +32,7 @@ class NamespaceWrapper {
    * @param {*} value Data to set
    * @returns {Promise<void>}
    */
-  async storeSet(key, value): Promise<void> {
+  async storeSet(key: string, value: string): Promise<void> {
     return (await genericHandler("storeSet", key, value)) as unknown as void;
   }
   /**
@@ -69,7 +69,7 @@ class NamespaceWrapper {
     );
   }
   async auditSubmission(
-    candidatePubkey: string,
+    candidatePubkey: PublicKey,
     isValid: boolean,
     voterKeypair: Keypair,
     round: number
@@ -84,10 +84,10 @@ class NamespaceWrapper {
   }
 
   async distributionListAuditSubmission(
-    candidatePubkey,
-    isValid,
-    voterKeypair,
-    round
+    candidatePubkey: PublicKey,
+    isValid: boolean,
+    voterKeypair: Keypair,
+    round: number
   ): Promise<GenericResponseInterface> {
     return await genericHandler(
       "distributionListAuditSubmission",
@@ -98,7 +98,7 @@ class NamespaceWrapper {
     );
   }
 
-  async uploadDistributionList(distributionList, round) {
+  async uploadDistributionList(distributionList, round: number) {
     return await genericHandler(
       "uploadDistributionList",
       distributionList,
@@ -106,7 +106,7 @@ class NamespaceWrapper {
     );
   }
 
-  async distributionListSubmissionOnChain(round) {
+  async distributionListSubmissionOnChain(round: number) {
     return await genericHandler("distributionListSubmissionOnChain", round);
   }
 
@@ -115,10 +115,10 @@ class NamespaceWrapper {
   }
 
   async stakeOnChain(
-    taskStateInfoPublicKey,
-    stakingAccKeypair,
-    stakePotAccount,
-    stakeAmount
+    taskStateInfoPublicKey: PublicKey,
+    stakingAccKeypair: Keypair,
+    stakePotAccount: PublicKey,
+    stakeAmount: number
   ): Promise<GenericResponseInterface> {
     return await genericHandler(
       "stakeOnChain",
@@ -129,9 +129,9 @@ class NamespaceWrapper {
     );
   }
   async claimReward(
-    stakePotAccount,
-    beneficiaryAccount,
-    claimerKeypair
+    stakePotAccount: PublicKey,
+    beneficiaryAccount: PublicKey,
+    claimerKeypair: Keypair
   ): Promise<GenericResponseInterface> {
     return await genericHandler(
       "claimReward",
@@ -141,9 +141,9 @@ class NamespaceWrapper {
     );
   }
   async sendTransaction(
-    serviceNodeAccount,
-    beneficiaryAccount,
-    amount
+    serviceNodeAccount: PublicKey,
+    beneficiaryAccount: PublicKey,
+    amount: number
   ): Promise<GenericResponseInterface> {
     return await genericHandler(
       "sendTransaction",
@@ -165,8 +165,8 @@ class NamespaceWrapper {
    * @param {Function} callback // Callback function on traffic receive
    */
   async sendAndConfirmTransactionWrapper(
-    transaction,
-    signers
+    transaction: any,
+    signers: any
   ): Promise<GenericResponseInterface> {
     const blockhash = (await connection.getRecentBlockhash("finalized"))
       .blockhash;
@@ -188,7 +188,7 @@ class NamespaceWrapper {
   //   return await genericHandler('checkVoteStatus');
   // }
 
-  async checkSubmissionAndUpdateRound(submissionValue, round) {
+  async checkSubmissionAndUpdateRound(submissionValue, round: number) {
     return await genericHandler(
       "checkSubmissionAndUpdateRound",
       submissionValue,
@@ -224,7 +224,7 @@ class NamespaceWrapper {
       const values: any = Object.values(submissions);
       const size = values.length;
       console.log("Submissions from last round: ", keys, values, size);
-      let isValid;
+      let isValid: boolean;
       const submitterAccountKeyPair = await this.getSubmitterAccount();
       const submitterPubkey = submitterAccountKeyPair.publicKey.toBase58();
       for (let i = 0; i < size; i++) {
@@ -257,7 +257,7 @@ class NamespaceWrapper {
               ) {
                 console.log("VOTING TRUE ON AUDIT");
                 const response = await this.auditSubmission(
-                  candidateKeyPairPublicKey.toBase58(),
+                  candidateKeyPairPublicKey,
                   isValid,
                   submitterAccountKeyPair,
                   round
@@ -268,7 +268,7 @@ class NamespaceWrapper {
               // Call auditSubmission function and isValid is passed as false
               console.log("RAISING AUDIT / VOTING FALSE");
               const response = await this.auditSubmission(
-                candidateKeyPairPublicKey.toBase58(),
+                candidateKeyPairPublicKey,
                 isValid,
                 submitterAccountKeyPair,
                 round
@@ -304,7 +304,7 @@ class NamespaceWrapper {
       const values: any = Object.values(submissions);
       const size = values.length;
       console.log("Submissions from last round: ", keys, values, size);
-      let isValid;
+      let isValid: boolean;
       const submitterAccountKeyPair = await this.getSubmitterAccount();
       const submitterPubkey = submitterAccountKeyPair.publicKey.toBase58();
 

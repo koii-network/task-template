@@ -47,7 +47,7 @@ async function generateDistributionList() {
     } */
 }
 
-export async function submitDistributionList(round) {
+export async function submitDistributionList(round: number) {
   console.log("SubmitDistributionList called");
 
   const distributionList = await generateDistributionList();
@@ -66,22 +66,23 @@ export async function submitDistributionList(round) {
   }
 }
 
-export async function validateNode(node) {
+export async function validateNode(node: object) {
   // Write your logic for the validation of submission value here and return a boolean value in response
 
   console.log("Validating Node", node);
   return true;
 }
 
-export async function validateDistribution(node) {
+export async function validateDistribution(node: object) {
   // Write your logic for the validation of submission value here and return a boolean value in response
   // this logic can be same as generation of distribution list function and based on the comparision will final object , decision can be made
+
   console.log("Validating Node", node);
   return true;
 }
 // Submit Address with distributioon list to K2
-export async function submitTask(roundNumber) {
-  console.log("submitTask called with round", roundNumber);
+export async function submitTask(round: number) {
+  console.log("submitTask called with round", round);
   try {
     console.log("inside try");
     console.log(
@@ -89,36 +90,26 @@ export async function submitTask(roundNumber) {
       "current slot while calling submit"
     );
     const cid = await fetchSubmission();
-    await namespaceWrapper.checkSubmissionAndUpdateRound(cid, roundNumber);
+    await namespaceWrapper.checkSubmissionAndUpdateRound(cid, round);
     console.log("after the submission call");
   } catch (error) {
     console.log("error in submission", error);
   }
 }
 
-export async function auditTask(roundNumber) {
-  console.log("auditTask called with round", roundNumber);
+export async function auditTask(round: number) {
+  console.log("auditTask called with round", round);
   console.log(
     await namespaceWrapper.getSlot(),
     "current slot while calling auditTask"
   );
-  await namespaceWrapper.validateAndVoteOnNodes(validateNode, roundNumber);
+  await namespaceWrapper.validateAndVoteOnNodes(validateNode, round);
 }
 
-export async function auditDistribution(roundNumber) {
-  console.log("auditDistribution called with round", roundNumber);
+export async function auditDistribution(round: number) {
+  console.log("auditDistribution called with round", round);
   await namespaceWrapper.validateAndVoteOnDistributionList(
     validateDistribution,
-    roundNumber
+    round
   );
 }
-
-// module.exports = {
-//   task,
-//   submitDistributionList,
-//   validateNode,
-//   validateDistribution,
-//   submitTask,
-//   auditTask,
-//   auditDistribution,
-// };
