@@ -136,6 +136,14 @@ class NamespaceWrapper {
     );
   }
 
+  async nodeSelectionDistributionList() {
+    return await genericHandler("nodeSelectionDistributionList");
+  }
+
+  async payoutTrigger() {
+    return await genericHandler("payloadTrigger");
+  }
+
   async uploadDistributionList(distributionList, round) {
     return await genericHandler("uploadDistributionList", distributionList, round);
   }
