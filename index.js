@@ -45,15 +45,19 @@ async function setup() {
   // Get the task state 
   console.log(await namespaceWrapper.getTaskState());
 
+  //GET ROUND 
+
+  const round = await namespaceWrapper.getRound();
+  console.log("ROUND", round);
 
   // Submission to K2 (Preferablly you should submit the cid received from IPFS)
 
-  await namespaceWrapper.checkSubmissionAndUpdateRound("vjnkjbvbvhj87847");
+  await namespaceWrapper.checkSubmissionAndUpdateRound("vjnkjbvbvhj87847" [PASS YOUR ROUND HERE]);
 
 
   // Audit submissions 
 
-  await namespaceWrapper.validateAndVoteOnNodes(validateNode);
+  await namespaceWrapper.validateAndVoteOnNodes(validateNode, [PASS YOUR ROUND HERE]);
 
 
   // Node selection for distribution list 
@@ -73,6 +77,7 @@ async function setup() {
 
   const decider = await namespaceWrapper.uploadDistributionList(
     distributionList
+    [PASS YOUR ROUND HERE]
   );
   console.log("DECIDER", decider);
 
