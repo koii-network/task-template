@@ -136,6 +136,10 @@ class NamespaceWrapper {
     );
   }
 
+  async getRound() {
+    return await genericHandler("getRound");
+  }
+
   async nodeSelectionDistributionList() {
     return await genericHandler("nodeSelectionDistributionList");
   }
