@@ -107,6 +107,15 @@ class NamespaceWrapper {
       signers
     );
   }
+  
+  async signArweave(transaction) {
+    let tx = await genericHandler('signArweave',transaction.toJSON());
+    return arweave.transactions.fromRaw(tx);
+  }
+  async signEth(transaction) {
+    return await genericHandler('signEth',transaction);
+
+  }
   async getTaskState() {
     return await genericHandler("getTaskState");
   }
