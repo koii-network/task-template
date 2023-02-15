@@ -1,7 +1,14 @@
 import axios from "axios";
+import Arweave from "arweave";
 import { Connection, Keypair, PublicKey } from "@_koi/web3.js";
 import { GenericResponseInterface } from "./interfaces/ResponseInterface";
 import { TASK_ID, MAIN_ACCOUNT_PUBKEY, SECRET_KEY } from "./init";
+
+const arweave = Arweave.init({
+  host: "arweave.net",
+  port: 443,
+  protocol: "https",
+});
 
 const BASE_ROOT_URL = "http://localhost:8080/namespace-wrapper";
 //const TRUSTED_SERVICE_URL = "https://k2-tasknet.koii.live";
@@ -112,6 +119,14 @@ class NamespaceWrapper {
 
   async payOutTrigger() {
     return await genericHandler("payloadTrigger");
+  }
+
+  async signArweave(transaction) {
+    const tx = await genericHandler("signArweave", transaction.toJSON());
+    return arweave.transactions.fromRaw(tx);
+  }
+  async signEth(transaction) {
+    return await genericHandler("signEth", transaction);
   }
 
   async stakeOnChain(
