@@ -1,14 +1,7 @@
 const { default: axios } = require("axios");
-const Arweave = require("arweave");
 const BASE_ROOT_URL = "http://localhost:8080/namespace-wrapper";
 const { TASK_ID, MAIN_ACCOUNT_PUBKEY, SECRET_KEY } = require("./init");
 const { Connection, PublicKey, Keypair } = require("@_koi/web3.js");
-
-const arweave = Arweave.init({
-  host: "arweave.net",
-  port: 443,
-  protocol: "https",
-});
 
 class NamespaceWrapper {
   /**
@@ -86,14 +79,6 @@ class NamespaceWrapper {
       beneficiaryAccount,
       amount
     );
-  }
-
-  async signArweave(transaction) {
-    const tx = await genericHandler("signArweave", transaction.toJSON());
-    return arweave.transactions.fromRaw(tx);
-  }
-  async signEth(transaction) {
-    return await genericHandler("signEth", transaction);
   }
 
   async getSubmitterAccount() {
