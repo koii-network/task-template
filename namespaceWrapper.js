@@ -156,7 +156,6 @@ class NamespaceWrapper {
       "distributionListAuditSubmission",
       candidatePubkey,
       isValid,
-      voterKeypair,
       round
     );
   }
@@ -303,7 +302,7 @@ class NamespaceWrapper {
       const keys = Object.keys(submissions);
       const values = Object.values(submissions);
       const size = values.length;
-      console.log("Submissions from last round: ", keys, values, size);
+      console.log("Distribution Submissions from last round: ", keys, values, size);
       let isValid
       const submitterAccountKeyPair = await this.getSubmitterAccount();
       const submitterPubkey = submitterAccountKeyPair.publicKey.toBase58();
@@ -313,11 +312,11 @@ class NamespaceWrapper {
         console.log("FOR CANDIDATE KEY", candidatePublicKey);
         let candidateKeyPairPublicKey = new PublicKey(keys[i]);
         if (candidatePublicKey == submitterPubkey) {
-          console.log("YOU CANNOT VOTE ON YOUR OWN SUBMISSIONS");
+          console.log("YOU CANNOT VOTE ON YOUR OWN DISTRIBUTION SUBMISSIONS");
         } else {
           try {
             console.log(
-              "SUBMISSION VALUE TO CHECK",
+              "DISTRIBUTION SUBMISSION VALUE TO CHECK",
               values[i].submission_value
             );
             isValid = await validateDistribution(values[i].submission_value);
@@ -327,34 +326,34 @@ class NamespaceWrapper {
               // check for the submissions_audit_trigger , if it exists then vote true on that otherwise do nothing
               const distributions_audit_trigger =
                 taskAccountDataJSON.distributions_audit_trigger[round];
-              console.log("SUBMIT AUDIT TRIGGER", distributions_audit_trigger);
+              console.log("SUBMIT DISTRIBUTION AUDIT TRIGGER", distributions_audit_trigger);
               // console.log(
               //   "CANDIDATE PUBKEY CHECK IN AUDIT TRIGGER",
               //   distributions_audit_trigger[candidatePublicKey]
               // );
               if (distributions_audit_trigger && distributions_audit_trigger[candidatePublicKey]) {
-                console.log("VOTING TRUE ON AUDIT");
+                console.log("VOTING TRUE ON DISTRIBUTION AUDIT");
                 const response = await this.distributionListAuditSubmission(
                   candidateKeyPairPublicKey,
                   isValid,
                   submitterAccountKeyPair,
                   round
                 );
-                console.log("RESPONSE FROM AUDIT FUNCTION", response);
+                console.log("RESPONSE FROM DISTRIBUTION AUDIT FUNCTION", response);
               }
             } else if (isValid == false) {
               // Call auditSubmission function and isValid is passed as false
-              console.log("RAISING AUDIT / VOTING FALSE");
+              console.log("RAISING AUDIT / VOTING FALSE ON DISTRIBUTION");
               const response = await this.distributionListAuditSubmission(
                 candidateKeyPairPublicKey,
                 isValid,
                 submitterAccountKeyPair,
                 round
               );
-              console.log("RESPONSE FROM AUDIT FUNCTION", response);
+              console.log("RESPONSE FROM DISTRIBUTION AUDIT FUNCTION", response);
             }
           } catch (err) {
-            console.log("ERROR IN ELSE CONDITION", err);
+            console.log("ERROR IN ELSE CONDITION FOR DISTRIBUTION", err);
           }
         }
       }
