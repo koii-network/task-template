@@ -48,12 +48,12 @@ async function submitTask(roundNumber) {
 /**
  * @description Contains logic for the validation of submission value
  *
- * @param {string} submission value
+ * @param {string} submissionValue
  * @returns {boolean} The validity of the submission
  */
-async function validateNode(node) {
-  console.log("Validating Node", node);
-  const cid = node.submission_value; // Retrieve node's submission value
+async function validateNode(submissionValue) {
+  console.log("Validating Submission Value", submissionValue);
+  const cid = submissionValue; // Retrieve node's submission value
 
   const char = cid.charAt(0);
   // If first character of cid is in the first 23 letters of the alphabet, return true
@@ -150,10 +150,10 @@ async function submitDistributionList(round) {
  * @param {string} distributionList
  * @returns {boolean} The validity of the distribution list
  */
-async function validateDistribution(node) {
+async function validateDistribution(distributionList) {
   // Write your logic for the validation of submission value here and return a boolean value in response
   // this logic can be same as generation of distribution list function and based on the comparision will final object , decision can be made
-  console.log("Validating Node", node);
+  console.log("Validating Distribution List", distributionList);
   return true;
 }
 
