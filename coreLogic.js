@@ -134,6 +134,8 @@ async function auditDistribution(roundNumber) {
 
 module.exports = {
   task,
+  fetchSubmission,
+  generateDistributionList,
   submitDistributionList,
   validateNode,
   validateDistribution,
