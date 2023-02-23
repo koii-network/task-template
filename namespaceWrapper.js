@@ -4,6 +4,7 @@ const { TASK_ID, MAIN_ACCOUNT_PUBKEY, SECRET_KEY } = require("./init");
 const { Connection, PublicKey, Keypair } = require("@_koi/web3.js");
 
 class NamespaceWrapper {
+  connection;
   /**
    * Namespace wrapper of storeGetAsync
    * @param {string} key // Path to get
@@ -95,6 +96,11 @@ class NamespaceWrapper {
    * @param {Function} callback // Callback function on traffic receive
    */
   async sendAndConfirmTransactionWrapper(transaction, signers) {
+    if (!this.connection) {
+      const rpcUrl = await namespaceWrapper.getRpcUrl();
+      console.log(rpcUrl, "RPC URL");
+      this.connection = new Connection(rpcUrl, "confirmed");
+    }
     const blockhash = (await connection.getRecentBlockhash("finalized"))
       .blockhash;
     transaction.recentBlockhash = blockhash;
@@ -108,14 +114,13 @@ class NamespaceWrapper {
       signers
     );
   }
-  
+
   async signArweave(transaction) {
-    let tx = await genericHandler('signArweave',transaction.toJSON());
+    let tx = await genericHandler("signArweave", transaction.toJSON());
     return arweave.transactions.fromRaw(tx);
   }
   async signEth(transaction) {
-    return await genericHandler('signEth',transaction);
-
+    return await genericHandler("signEth", transaction);
   }
   async getTaskState() {
     return await genericHandler("getTaskState");
@@ -126,7 +131,7 @@ class NamespaceWrapper {
       "auditSubmission",
       candidatePubkey,
       isValid,
-      voterKeypair, 
+      voterKeypair,
       round
     );
   }
@@ -158,7 +163,11 @@ class NamespaceWrapper {
   }
 
   async uploadDistributionList(distributionList, round) {
-    return await genericHandler("uploadDistributionList", distributionList, round);
+    return await genericHandler(
+      "uploadDistributionList",
+      distributionList,
+      round
+    );
   }
 
   async distributionListSubmissionOnChain(round) {
@@ -213,7 +222,7 @@ class NamespaceWrapper {
       const values = Object.values(submissions);
       const size = values.length;
       console.log("Submissions from last round: ", keys, values, size);
-      let isValid
+      let isValid;
       const submitterAccountKeyPair = await this.getSubmitterAccount();
       const submitterPubkey = submitterAccountKeyPair.publicKey.toBase58();
       for (let i = 0; i < size; i++) {
@@ -240,7 +249,10 @@ class NamespaceWrapper {
               //   "CANDIDATE PUBKEY CHECK IN AUDIT TRIGGER",
               //   submissions_audit_trigger[candidatePublicKey]
               // );
-              if (submissions_audit_trigger && submissions_audit_trigger[candidatePublicKey]) {
+              if (
+                submissions_audit_trigger &&
+                submissions_audit_trigger[candidatePublicKey]
+              ) {
                 console.log("VOTING TRUE ON AUDIT");
                 const response = await this.auditSubmission(
                   candidateKeyPairPublicKey,
@@ -269,7 +281,6 @@ class NamespaceWrapper {
     }
   }
 
-
   async validateAndVoteOnDistributionList(validateDistribution, round) {
     // await this.checkVoteStatus();
     console.log("******/  IN VOTING OF DISTRIBUTION LIST /******");
@@ -287,8 +298,13 @@ class NamespaceWrapper {
       const keys = Object.keys(submissions);
       const values = Object.values(submissions);
       const size = values.length;
-      console.log("Distribution Submissions from last round: ", keys, values, size);
-      let isValid
+      console.log(
+        "Distribution Submissions from last round: ",
+        keys,
+        values,
+        size
+      );
+      let isValid;
       const submitterAccountKeyPair = await this.getSubmitterAccount();
       const submitterPubkey = submitterAccountKeyPair.publicKey.toBase58();
 
@@ -311,12 +327,18 @@ class NamespaceWrapper {
               // check for the submissions_audit_trigger , if it exists then vote true on that otherwise do nothing
               const distributions_audit_trigger =
                 taskAccountDataJSON.distributions_audit_trigger[round];
-              console.log("SUBMIT DISTRIBUTION AUDIT TRIGGER", distributions_audit_trigger);
+              console.log(
+                "SUBMIT DISTRIBUTION AUDIT TRIGGER",
+                distributions_audit_trigger
+              );
               // console.log(
               //   "CANDIDATE PUBKEY CHECK IN AUDIT TRIGGER",
               //   distributions_audit_trigger[candidatePublicKey]
               // );
-              if (distributions_audit_trigger && distributions_audit_trigger[candidatePublicKey]) {
+              if (
+                distributions_audit_trigger &&
+                distributions_audit_trigger[candidatePublicKey]
+              ) {
                 console.log("VOTING TRUE ON DISTRIBUTION AUDIT");
                 const response = await this.distributionListAuditSubmission(
                   candidateKeyPairPublicKey,
@@ -324,7 +346,10 @@ class NamespaceWrapper {
                   submitterAccountKeyPair,
                   round
                 );
-                console.log("RESPONSE FROM DISTRIBUTION AUDIT FUNCTION", response);
+                console.log(
+                  "RESPONSE FROM DISTRIBUTION AUDIT FUNCTION",
+                  response
+                );
               }
             } else if (isValid == false) {
               // Call auditSubmission function and isValid is passed as false
@@ -335,7 +360,10 @@ class NamespaceWrapper {
                 submitterAccountKeyPair,
                 round
               );
-              console.log("RESPONSE FROM DISTRIBUTION AUDIT FUNCTION", response);
+              console.log(
+                "RESPONSE FROM DISTRIBUTION AUDIT FUNCTION",
+                response
+              );
             }
           } catch (err) {
             console.log("ERROR IN ELSE CONDITION FOR DISTRIBUTION", err);
@@ -365,12 +393,9 @@ async function genericHandler(...args) {
     return null;
   }
 }
-let connection;
+// let connection;
 const namespaceWrapper = new NamespaceWrapper();
-namespaceWrapper.getRpcUrl().then((rpcUrl) => {
-  console.log(rpcUrl, "RPC URL");
-  connection = new Connection(rpcUrl, "confirmed");
-});
+
 module.exports = {
   namespaceWrapper,
 };

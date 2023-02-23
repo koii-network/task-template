@@ -1,9 +1,12 @@
 const coreLogic = require("./coreLogic");
-const { app } = require("./init");
+const { app, init } = require("./init");
 const { namespaceWrapper } = require("./namespaceWrapper");
 
-
 async function setup() {
+  // calling init
+
+  await init();
+
   console.log("setup function called");
   // Run default setup
   await namespaceWrapper.defaultTaskSetup();
@@ -15,21 +18,17 @@ async function setup() {
     } else if (m.functionCall == "auditPayload") {
       console.log("auditPayload called");
       coreLogic.auditTask(m.roundNumber);
-    }
-    else if(m.functionCall == "executeTask") {
+    } else if (m.functionCall == "executeTask") {
       console.log("executeTask called");
       coreLogic.task();
-    }
-    else if(m.functionCall == "generateAndSubmitDistributionList") {
+    } else if (m.functionCall == "generateAndSubmitDistributionList") {
       console.log("generateAndSubmitDistributionList called");
       coreLogic.submitDistributionList(m.roundNumber);
-    }
-    else if(m.functionCall == "distributionListAudit") {
+    } else if (m.functionCall == "distributionListAudit") {
       console.log("distributionListAudit called");
       coreLogic.auditDistribution(m.roundNumber);
     }
   });
-
 
   /* GUIDE TO CALLS K2 FUNCTIONS MANUALLY
 
@@ -100,8 +99,6 @@ async function setup() {
 
 
   */
-
-
 }
 
 setup();
@@ -111,4 +108,3 @@ if (app) {
   //  For Example
   //  namespace.express('post', '/accept-cid', async (req, res) => {})
 }
-
