@@ -11,7 +11,7 @@ async function task() {
   console.log("HASH:", cid);
 
   if (cid) {
-    await namespaceWrapper.storeSet("cid", cid); // store CID in levelDB
+    await namespaceWrapper.storeSet("cid", cid); // store CID on levelDB
   }
   return false;
 }
@@ -79,9 +79,9 @@ async function auditTask(roundNumber) {
 }
 
 /**
- * @description Genrates a distribution list that contains the key:value pair
- * of participating nodes public key and amount of KOII to be rewarded.
- * Introduce preffered rules when generating a distribution list
+ * @description Generates a distribution list that contains the key:value pair
+ * of participating nodes public keys and amount of KOII to be rewarded.
+ * Introduce preferred rules when generating a distribution list
  * @param {number} round Current round of the task
  */
 async function generateDistributionList(round) {
@@ -89,10 +89,11 @@ async function generateDistributionList(round) {
   console.log("I am selected node");
 
   let distributionList = {}; // init distribution list
-  const taskAccountDataJSON = await namespaceWrapper.getTaskState(); // init distribution list
-  const submissions = taskAccountDataJSON.submissions[round];
+  const taskAccountDataJSON = await namespaceWrapper.getTaskState(); // retrieve task data
+  const submissions = taskAccountDataJSON.submissions[round]; // retrieve submissions
   const submissions_audit_trigger =
-                taskAccountDataJSON.submissions_audit_trigger[round];
+    taskAccountDataJSON.submissions_audit_trigger[round];
+
   if (submissions == null) {
     console.log("No submissions found in N-2 round");
     return distributionList;
@@ -100,22 +101,27 @@ async function generateDistributionList(round) {
     const keys = Object.keys(submissions);
     const values = Object.values(submissions);
     const size = values.length;
+
     console.log("Submissions from last round: ", keys, values, size);
     for (let i = 0; i < size; i++) {
       const candidatePublicKey = keys[i];
-      if (submissions_audit_trigger && submissions_audit_trigger[candidatePublicKey]) {
-        console.log(submissions_audit_trigger[candidatePublicKey].votes, "distributions_audit_trigger votes");
+      if (
+        submissions_audit_trigger &&
+        submissions_audit_trigger[candidatePublicKey]
+      ) {
+        console.log(
+          submissions_audit_trigger[candidatePublicKey].votes,
+          "distributions_audit_trigger votes"
+        );
         const votes = submissions_audit_trigger[candidatePublicKey].votes;
         let numOfVotes = 0;
         for (let index = 0; index < votes.length; index++) {
-          if(votes[i].is_valid)
-            numOfVotes++;
+          if (votes[i].is_valid) numOfVotes++;
           else numOfVotes--;
         }
-        if(numOfVotes < 0)
-          continue;
+        if (numOfVotes < 0) continue;
       }
-      distributionList[candidatePublicKey] = 1;  
+      distributionList[candidatePublicKey] = 1;
     }
   }
 }
@@ -128,9 +134,9 @@ async function generateDistributionList(round) {
 async function submitDistributionList(round) {
   console.log("SubmitDistributionList called");
 
-  const distributionList = await generateDistributionList(); // get distribution list
+  const distributionList = await generateDistributionList(round); // get distribution list
 
-  const decider = await namespaceWrapper.uploadDistributionList( 
+  const decider = await namespaceWrapper.uploadDistributionList(
     distributionList,
     round
   );
@@ -151,10 +157,15 @@ async function submitDistributionList(round) {
  * @returns {boolean} The validity of the distribution list
  */
 async function validateDistribution(distributionList) {
-  // Write your logic for the validation of submission value here and return a boolean value in response
-  // this logic can be same as generation of distribution list function and based on the comparision will final object , decision can be made
   console.log("Validating Distribution List", distributionList);
-  return true;
+  let val = Math.random();
+  if (val < 0.5) {
+    console.log("sending true");
+    return true;
+  } else {
+    console.log("sending false");
+    return false;
+  }
 }
 
 /**
