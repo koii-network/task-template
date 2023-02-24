@@ -2,9 +2,25 @@ const { namespaceWrapper } = require("./namespaceWrapper");
 
 async function task() {
   // Write the logic to do the work required for submitting the values and optionally store the result in levelDB
+  
+  // Below is just a sample of work that a task can do
+  
+  const x = Math.random().toString(); // generate random number and convert to string
+  const cid = crypto.createHash("sha1").update(x).digest("hex"); // convert to CID
+  console.log("HASH:", cid);
+
+  if (cid) {
+    await namespaceWrapper.storeSet("cid", cid); // store CID in levelDB
+  }
+  
 }
 async function fetchSubmission(){
   // Write the logic to fetch the submission values here and return the cid string
+
+  // The code below shows how you can fetch your stored value from level DB
+
+  const cid = await namespaceWrapper.storeGet("cid"); // retrieves the cid
+  return cid;
 }
 
 async function generateDistributionList(round){
@@ -52,6 +68,9 @@ async function generateDistributionList(round){
 
 
 async function submitDistributionList(round) {
+
+// This function just upload your generated dustribution List and do the transaction for that 
+
   console.log("SubmitDistributionList called");
   
     const distributionList = await generateDistributionList(round);
@@ -68,31 +87,21 @@ async function submitDistributionList(round) {
 }
 
 
-async function validateNode(node) {
+async function validateNode(submission_value) {
   
 // Write your logic for the validation of submission value here and return a boolean value in response
 
-console.log("Validating Node", node);
-  return true;
+console.log("submission_value", submission_value);
+return true;
 }
 
-async function validateDistribution(node) {
+async function validateDistribution(distribution_list) {
 
 // Write your logic for the validation of submission value here and return a boolean value in response
 // this logic can be same as generation of distribution list function and based on the comparision will final object , decision can be made
-  console.log("Validating Distribution Node", node);
-  // const x = Math.random().toString();
-  // const cid = crypto.createHash("sha1").update(x).digest("hex");
-  // const char = cid.charAt(0);
-  let val = Math.random();
-  // If first character of cid is in the first 23 letters of the alphabet, return true
-  if (val < 0.5) {
-    console.log("sending true");
-    return true;
-  } else {
-    console.log("sending false");
-    return false;
-  }
+  console.log("Validating Distribution Node", distribution_list);
+  return true;
+  
 }
 // Submit Address with distributioon list to K2
 async function submitTask(roundNumber) {
