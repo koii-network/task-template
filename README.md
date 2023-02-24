@@ -9,7 +9,7 @@ Index file - You have two ways to run your task when doing development
 
 1. With Timer ON (one of the environment variable in task-node)- When the timer is ON, IPC calls are made by calculating the average time slots of all the task running your node. 
 
-2. With Timer OFF - This allows you to do manual calls to K2 instead of the automated one's with triggers but for using this make sure that you fully understand how the round managemnt is done on K2. Transactions are only accepted in a dedicated windows. 
+2. With Timer OFF - This allows you to do manual calls to K2 instead of the automated one's with triggers but for using this make sure that you fully understand how the round managemnt is done on K2. Transactions are only accepted in a dedicated windows. Guide ffor manual calls is in index.js
 
 The methods mentioned in index.js are based on the events that task-node triggeres. The core logic of which resides in coreLogic.js
 
