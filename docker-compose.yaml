@@ -17,12 +17,9 @@ services:
     command: yarn initialize-start
     depends_on: 
       - redis
-      - k2
     ports:
       - '8080:8080'
-    env_file: .env
-  
-
+    env_file: .env-local
 
     container_name: task_node
     restart: always
