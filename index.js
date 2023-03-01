@@ -48,50 +48,25 @@ async function setup() {
 
   //GET ROUND 
 
-  const round = await namespaceWrapper.getRound();
-  console.log("ROUND", round);
+  // const round = await namespaceWrapper.getRound();
+  // console.log("ROUND", round);
 
   // Submission to K2 (Preferablly you should submit the cid received from IPFS)
 
-  //await namespaceWrapper.checkSubmissionAndUpdateRound("vjnkjbvbvhj87847" [PASS YOUR ROUND HERE]);
 
+   //await coreLogic.submitTask(round - 1)
 
   // Audit submissions 
 
-  //await namespaceWrapper.validateAndVoteOnNodes(validateNode, [PASS YOUR ROUND HERE]);
-
-
-  // Node selection for distribution list 
-
-  // const selectedNode = await namespaceWrapper.nodeSelectionDistributionList();
-  // console.log("SELECTED NODE", selectedNode);
-
-  // Distribution list sample 
-
-  // const distributionList = {
-  //   "29SSj6EQARvATESSQbBcmSE3A1iaWwqXFunzAEDoV7Xj": 4,
-  //   "3KUfsjpjCSCjwCBm4TraM5cGx6YzEUo9rrq2hrSsJw3x": 5,
-  //   Avxvdc2efsPqysBZt4VKDSgiP4iuJ8GaAWhsNVUAi5CZ: 6,
-  // };
+  //await coreLogic.auditTask(round - 1)
 
   // upload distribution list to K2
 
-  // const decider = await namespaceWrapper.uploadDistributionList(
-  //   distributionList
-  //   [PASS YOUR ROUND HERE]
-  // );
-  // console.log("DECIDER", decider);
-
-  // Do the submission only if the distribution was uploaded correctly based on decider 
-
-  // if (decider) {
-  //   const response = await namespaceWrapper.distributionListSubmissionOnChain();
-  //   console.log("RESPONSE FROM DISTRIBUTION LIST", response);
-  // }
+  //await coreLogic.submitDistributionList(round - 2)
 
   // Audit distribution list
 
-  //await namespaceWrapper.validateAndVoteOnDistributionList();
+  //await coreLogic.auditDistribution(round - 2);
 
   // Payout trigger
 

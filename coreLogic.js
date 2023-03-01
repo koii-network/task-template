@@ -109,8 +109,8 @@ async function submitTask(roundNumber) {
   try {
     console.log("inside try");
     console.log(await namespaceWrapper.getSlot(), "current slot while calling submit");
-    const cid = await fetchSubmission();
-    await namespaceWrapper.checkSubmissionAndUpdateRound(cid, roundNumber);
+    const submission = await fetchSubmission();
+    await namespaceWrapper.checkSubmissionAndUpdateRound(submission, roundNumber);
     console.log("after the submission call");
   } catch (error) {
     console.log("error in submission", error);
