@@ -38,3 +38,29 @@ If you intend to check the logic that you wrote in these function then just call
 Once you are ready with the changes you can do : yarn webpack 
 
 This will make the single main.js file in dist. Your logic for main.js goes to the executable file in your task-node container. We suggest you to have a script that migrates your main.js to executable in task-node container and restarts it to reflect your changes. 
+
+# Testing and Deploying
+Before you begin this process, be sure to check your code and write unit tests wherever possible to verify individual core logic functions. 
+
+## Build
+`yarn build`
+
+## Deploy
+To test the task with the [K2 Settlement Layer]() you'll need to deploy it. 
+
+First, make sure you have the `create-task-cli` installed.
+
+`npm i -g @_koii/create-task-cli`
+
+Then, you can begin the deployment with
+
+`yarn deploy`
+
+More tips on this flow can be found [in the docs](https://docs.koii.network/koii-software-toolkit-sdk/create-task-cli).
+
+## Run a node locally
+If you want to get a closer look at the console and test environment variables, you'll want to use the Task Node Docker Container to run the task locally. 
+
+`docker-compose up --build`
+
+You can also modify the sample `.env-local` to suit your particular task, in case you're using [custom secrets](https://docs.koii.network/microservices-and-tasks/task-development-kit-tdk/using-the-task-namespace/keys-and-secrets).
