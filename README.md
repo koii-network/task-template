@@ -58,6 +58,35 @@ Then, you can begin the deployment with
 
 More tips on this flow can be found [in the docs](https://docs.koii.network/koii-software-toolkit-sdk/create-task-cli).
 
+Note: You'll need a web3.storage key and the path to your wallet file for this. 
+
+### To get a web3.storage key
+If you have already created an account on [web3.storage](https://web3.storage) you'll just need to enter the API key after the prompts in the deploy process.
+
+### To get your wallet file path
+If you can't find your wallet file for the Koii CLI, you can use 
+`koii config get` to get your config file location, which will produce an output like this: 
+```
+Config File: /home/< your username >/.config/koii/cli/config.yml
+RPC URL: https://k2-testnet-validator-1.koii.live 
+WebSocket URL: wss://k2-testnet-validator-1.koii.live/ (computed)
+Keypair Path: /home/< your username >/.config/koii/id.json 
+Commitment: confirmed 
+```
+
+Open the 'config file' to see where your wallet file is being stored.
+```
+---
+json_rpc_url: "https://k2-testnet-validator-1.koii.live"
+websocket_url: ""
+keypair_path: /home/< your username >/.config/koii/id.json
+address_labels:
+  "11111111111111111111111111111111": System Program
+commitment: confirmed
+```
+
+Paste the 'keypair_path' into the deploy prompt to pay gas fees and fund your bounty wallet. 
+
 ## Run a node locally
 If you want to get a closer look at the console and test environment variables, you'll want to use the Task Node Docker Container to run the task locally. 
 
