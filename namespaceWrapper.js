@@ -228,7 +228,7 @@ class NamespaceWrapper {
               "SUBMISSION VALUE TO CHECK",
               values[i].submission_value
             );
-            isValid = await validate(values[i].submission_value);
+            isValid = await validate(values[i].submission_value, round);
             console.log(`Voting ${isValid} to ${candidatePublicKey}`);
 
             if (isValid) {
@@ -304,7 +304,7 @@ class NamespaceWrapper {
               "DISTRIBUTION SUBMISSION VALUE TO CHECK",
               values[i].submission_value
             );
-            isValid = await validateDistribution(values[i].submission_value);
+            isValid = await validateDistribution(values[i].submission_value, round);
             console.log(`Voting ${isValid} to ${candidatePublicKey}`);
 
             if (isValid) {

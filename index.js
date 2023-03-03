@@ -1,4 +1,4 @@
-const coreLogic = require("./coreLogic");
+const {coreLogic} = require("./coreLogic");
 const { app } = require("./init");
 const { namespaceWrapper } = require("./namespaceWrapper");
 
