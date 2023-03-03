@@ -7,6 +7,8 @@ async task() {
   // Write the logic to do the work required for submitting the values and optionally store the result in levelDB
   
   // Below is just a sample of work that a task can do
+
+  try{
   
   const x = Math.random().toString(); // generate random number and convert to string
   const cid = crypto.createHash("sha1").update(x).digest("hex"); // convert to CID
@@ -17,6 +19,9 @@ async task() {
   if (cid) {
     await namespaceWrapper.storeSet("cid", cid); // store CID in levelDB
   }
+}catch(err){
+  console.log("ERROR IN EXECUTING TASK", err);
+}
   
 }
 async fetchSubmission(){
@@ -35,6 +40,7 @@ async fetchSubmission(){
 }
 
 async generateDistributionList(round){
+  try{
   console.log("GenerateDistributionList called");
   console.log("I am selected node");
 
@@ -75,6 +81,9 @@ async generateDistributionList(round){
     }
     console.log("Distribution List", distributionList);
     return  distributionList;  
+  }catch(err){
+    console.log("ERROR IN GENERATING DISTRIBUTION LIST", err);
+  }
 }
 
 
@@ -83,8 +92,10 @@ async submitDistributionList(round) {
 // This function just upload your generated dustribution List and do the transaction for that 
 
   console.log("SubmitDistributionList called");
+
+  try{
   
-    const distributionList = await generateDistributionList(round);
+    const distributionList = await this.generateDistributionList(round);
     
     const decider = await namespaceWrapper.uploadDistributionList(
       distributionList, round
@@ -95,6 +106,9 @@ async submitDistributionList(round) {
       const response = await namespaceWrapper.distributionListSubmissionOnChain(round);
       console.log("RESPONSE FROM DISTRIBUTION LIST", response);
     }
+  }catch(err){
+    console.log("ERROR IN SUBMIT DISTRIBUTION", err);
+  }
 }
 
 
@@ -106,7 +120,7 @@ async validateNode(submission_value, round) {
 
 // try{
 
-// console.log("Received submission_value", submission_value);
+console.log("Received submission_value", submission_value, round);
 // const generatedValue = await namespaceWrapper.storeGet("cid");
 // console.log("GENERATED VALUE", generatedValue);
 // if(generatedValue == submission_value){
@@ -156,7 +170,7 @@ try{
   console.log("RESULT", result);
   return result;
 }catch(err){
-  console.log("ERROR IN CATCH", err);
+  console.log("ERROR IN VALIDATING DISTRIBUTION", err);
   return false;
 
 }
