@@ -7,7 +7,7 @@ async function fetchSubmission() {
   // Write the logic to fetch the submission values here and return the cid string
 }
 
-async function generateDistributionList() {
+async function generateDistributionList(round) {
   console.log("GenerateDistributionList called");
   console.log("I am selected node");
 
@@ -50,7 +50,7 @@ async function generateDistributionList() {
 export async function submitDistributionList(round: number) {
   console.log("SubmitDistributionList called");
 
-  const distributionList = await generateDistributionList();
+  const distributionList = await generateDistributionList(round);
 
   const decider = await namespaceWrapper.uploadDistributionList(
     distributionList,
