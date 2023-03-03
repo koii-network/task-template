@@ -56,51 +56,38 @@ Before you begin this process, be sure to check your code and write unit tests w
 Before deploying a task, you'll need to build it into a single file executable by running
 `yarn webpack`
 
-## Deploy
-To test the task with the [K2 Settlement Layer]() you'll need to deploy it. 
-
-First, make sure you have the `create-task-cli` installed.
-
-`npm i -g @_koii/create-task-cli`
-
-Then, you can begin the deployment with
-
-`yarn deploy`
-
-More tips on this flow can be found [in the docs](https://docs.koii.network/koii-software-toolkit-sdk/create-task-cli).
-
-Note: You'll need a web3.storage key and the path to your wallet file for this. 
+## Deploy your bundle
 
 ### To get a web3.storage key
-If you have already created an account on [web3.storage](https://web3.storage) you'll just need to enter the API key after the prompts in the deploy process.
+If you have already created an account on [web3.storage](https://web3.storage/docs/#quickstart) you'll just need to enter the API key after the prompts in the deploy process.
 
-### To get your wallet file path
-If you can't find your wallet file for the Koii CLI, you can use 
-`koii config get` to get your config file location, which will produce an output like this: 
+### Find or create a k2 wallet key
+
+If you have already generated a Koii wallet on yoru filesystem you can obtain the path to it by running `koii config get` which should return something similar to the following:
 ```
-Config File: /home/< your username >/.config/koii/cli/config.yml
-RPC URL: https://k2-testnet-validator-1.koii.live 
-WebSocket URL: wss://k2-testnet-validator-1.koii.live/ (computed)
-Keypair Path: /home/< your username >/.config/koii/id.json 
+➜ koii config get
+Config File: /home/<user>/.config/koii/cli/config.yml
+RPC URL: https://k2-testnet.koii.live 
+WebSocket URL: wss://k2-testnet.koii.live/ (computed)
+Keypair Path: /home/<user>/.config/koii/id.json 
 Commitment: confirmed 
-```
 
-Open the 'config file' to see where your wallet file is being stored.
 ```
----
-json_rpc_url: "https://k2-testnet-validator-1.koii.live"
-websocket_url: ""
-keypair_path: /home/< your username >/.config/koii/id.json
-address_labels:
-  "11111111111111111111111111111111": System Program
-commitment: confirmed
-```
+The `Keypair Path` will be used to pay gas fees and fund your bounty wallet by inputting it into the task CLI.
 
-Paste the 'keypair_path' into the deploy prompt to pay gas fees and fund your bounty wallet. 
+If you need to create a Koii wallet you can follow the instructions [here](https://docs.koii.network/koii-software-toolkit-sdk/using-the-cli#create-a-koii-wallet). Make sure to either copy your keypair path from the output, or use the method above to supply the task CLI with the proper wallet path.
+
+### Deploy to K2
+To test the task with the [K2 Settlement Layer](https://docs.koii.network/settlement-layer/k2-tick-tock-fast-blocks) you'll need to deploy it. 
+
+We have included our CLI for creating and publish tasks to the K2 network in this repo. Tips on this flow can be found [in the docs](https://docs.koii.network/koii-software-toolkit-sdk/create-task-cli). 
 
 ## Run a node locally
-If you want to get a closer look at the console and test environment variables, you'll want to use the Task Node Docker Container to run the task locally. 
+If you want to get a closer look at the console and test environment variables, you'll want to use the included docker-compose stack to run a task node locally.
 
-`docker-compose up --build`
+### Environment variables
+Copy the `.env-local` file to `.env` and make any modifications you need. You can include environment variables that your task expects to be present here.
+
+`docker-compose up`
 
 You can also modify the sample `.env-local` to suit your particular task, in case you're using [custom secrets](https://docs.koii.network/microservices-and-tasks/task-development-kit-tdk/using-the-task-namespace/keys-and-secrets).

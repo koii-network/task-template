@@ -14,7 +14,7 @@ services:
 
   task_node:
     image: public.ecr.aws/koii-network/task_node:latest
-    command: yarn initialize-start
+    command: yarn start
     depends_on: 
       - redis
     ports:
