@@ -12,6 +12,10 @@ Each round is set by a specific time period, and nodes participate by uploading 
 
 For more information on how the Task Flow works, check out [the runtime environment docs](https://docs.koii.network/microservices-and-tasks/what-are-tasks/gradual-consensus).
 
+## Requirements
+ - [Node >=16.0.0](https://nodejs.org)
+ - [Docker compose](https://docs.docker.com/compose/install/docker)
+
 ## What's in the template?
 `index.js` is the hub of your app, and ties together the other pieces. This will be the entrypoint when your task runs on Task Nodes
 
@@ -58,11 +62,12 @@ Before deploying a task, you'll need to build it into a single file executable b
 
 ## Deploy your bundle
 
+Complete the following to deploy your task on the k2 testnet and test it locally with docker compose.
+
 ### To get a web3.storage key
 If you have already created an account on [web3.storage](https://web3.storage/docs/#quickstart) you'll just need to enter the API key after the prompts in the deploy process.
 
 ### Find or create a k2 wallet key
-
 If you have already generated a Koii wallet on yoru filesystem you can obtain the path to it by running `koii config get` which should return something similar to the following:
 ```
 ➜ koii config get
@@ -80,14 +85,17 @@ If you need to create a Koii wallet you can follow the instructions [here](https
 ### Deploy to K2
 To test the task with the [K2 Settlement Layer](https://docs.koii.network/settlement-layer/k2-tick-tock-fast-blocks) you'll need to deploy it. 
 
-We have included our CLI for creating and publish tasks to the K2 network in this repo. Tips on this flow can be found [in the docs](https://docs.koii.network/koii-software-toolkit-sdk/create-task-cli). 
+We have included our CLI for creating and publish tasks to the K2 network in this repo. Tips on this flow can be found [in the docs](https://docs.koii.network/koii-software-toolkit-sdk/create-task-cli). One important thing to note is when you're presented with the choice of ARWEAVE, IPFS, or DEVELOPMENT you can select DEVELOPMENT and enter `main` in the following prompt. This will tell the task node to look for a `main.js` file in the executables folder. You can create this locally by running `yarn webpack`.
 
 ## Run a node locally
 If you want to get a closer look at the console and test environment variables, you'll want to use the included docker-compose stack to run a task node locally.
 
+1. Link or copy your wallet into the `config` folder as `id.json`
+2. Open `.env-local` and add your TaskID you obtained after deploying to K2 into the `TASKS` environment variable.\
+3. Run `docker compose up` and watch the output of the `task_node`. You can exit this process when your task has finished, or any other time if you have a long running persistent task.
+
+### Redeploying
+You do not need to publish your task every time you make modifications. You do however need to restart the `task_node` in order for the latest code to be used. To prepare your code you can run `yarn webpack` to create the bundle. If you have a `task_node` ruinning already, you can exit it and then run `docker compose up` to restart (or start) the node.
+
 ### Environment variables
-Copy the `.env-local` file to `.env` and make any modifications you need. You can include environment variables that your task expects to be present here.
-
-`docker-compose up`
-
-You can also modify the sample `.env-local` to suit your particular task, in case you're using [custom secrets](https://docs.koii.network/microservices-and-tasks/task-development-kit-tdk/using-the-task-namespace/keys-and-secrets).
+Open the `.env-local` file and make any modifications you need. You can include environment variables that your task expects to be present here, in case you're using [custom secrets](https://docs.koii.network/microservices-and-tasks/task-development-kit-tdk/using-the-task-namespace/keys-and-secrets).
