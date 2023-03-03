@@ -14,10 +14,8 @@ async task() {
 
   // fetching round number to store work accordingly
 
-  const round = await namespaceWrapper.getRound();
-
   if (cid) {
-    await namespaceWrapper.storeSet(`submission-${round}`, cid); // store CID in levelDB
+    await namespaceWrapper.storeSet("cid", cid); // store CID in levelDB
   }
   
 }
@@ -31,7 +29,7 @@ async fetchSubmission(){
   const round = await namespaceWrapper.getRound();
   // The code below shows how you can fetch your stored value from level DB
 
-  const cid = await namespaceWrapper.storeGet(`submission-${round}`); // retrieves the cid
+  const cid = await namespaceWrapper.storeGet("cid"); // retrieves the cid
   console.log("CID", cid);
   return cid;
 }
@@ -109,7 +107,7 @@ async validateNode(submission_value, round) {
 // try{
 
 // console.log("Received submission_value", submission_value);
-// const generatedValue = await namespaceWrapper.storeGet(`submission-${round}`);
+// const generatedValue = await namespaceWrapper.storeGet("cid");
 // console.log("GENERATED VALUE", generatedValue);
 // if(generatedValue == submission_value){
 //   return true;
