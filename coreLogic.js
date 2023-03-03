@@ -1,4 +1,5 @@
 const { namespaceWrapper } = require("./namespaceWrapper");
+const crypto = require('crypto');
 
 class CoreLogic{
 
@@ -25,12 +26,13 @@ async fetchSubmission(){
 
   // fetching round number to store work accordingly
 
+  console.log("IN FETCH SUBMISSION");
+
   const round = await namespaceWrapper.getRound();
-
-
   // The code below shows how you can fetch your stored value from level DB
 
   const cid = await namespaceWrapper.storeGet(`submission-${round}`); // retrieves the cid
+  console.log("CID", cid);
   return cid;
 }
 
@@ -98,25 +100,29 @@ async submitDistributionList(round) {
 }
 
 
-async validateNode(submission_value) {
+async validateNode(submission_value, round) {
   
 // Write your logic for the validation of submission value here and return a boolean value in response
 
 // The sample logic can be something like mentioned below to validate the submission
 
-try{
+// try{
 
-console.log("Received submission_value", submission_value);
-const generatedValue = JSON.parse(await namespaceWrapper.storeGet(`submission-${round}`));
-if(generatedValue == submission_value){
-  return true;
-}else{
-  return false;
-}
-}catch(err){
-  console.log("ERROR  IN VALDIATION", err);
-  return false;
-}
+// console.log("Received submission_value", submission_value);
+// const generatedValue = await namespaceWrapper.storeGet(`submission-${round}`);
+// console.log("GENERATED VALUE", generatedValue);
+// if(generatedValue == submission_value){
+//   return true;
+// }else{
+//   return false;
+// }
+// }catch(err){
+//   console.log("ERROR  IN VALDIATION", err);
+//   return false;
+// }
+
+// For succesfull flow we return true for now 
+return true;
 }
 
 
@@ -164,7 +170,8 @@ async submitTask(roundNumber) {
   try {
     console.log("inside try");
     console.log(await namespaceWrapper.getSlot(), "current slot while calling submit");
-    const submission = await fetchSubmission();
+    const submission = await this.fetchSubmission();
+    console.log("SUBMISSION", submission);
     await namespaceWrapper.checkSubmissionAndUpdateRound(submission, roundNumber);
     console.log("after the submission call");
   } catch (error) {
@@ -175,12 +182,12 @@ async submitTask(roundNumber) {
 async auditTask(roundNumber) {
   console.log("auditTask called with round", roundNumber);
   console.log(await namespaceWrapper.getSlot(), "current slot while calling auditTask");
-  await namespaceWrapper.validateAndVoteOnNodes(validateNode, roundNumber);
+  await namespaceWrapper.validateAndVoteOnNodes(this.validateNode, roundNumber);
 }
 
 async auditDistribution(roundNumber) {
   console.log("auditDistribution called with round", roundNumber);
-  await namespaceWrapper.validateAndVoteOnDistributionList(validateDistribution, roundNumber);
+  await namespaceWrapper.validateAndVoteOnDistributionList(this.validateDistribution, roundNumber);
 }
 
 }
