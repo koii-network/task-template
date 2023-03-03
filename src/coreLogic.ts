@@ -44,7 +44,10 @@ async function generateDistributionList(round) {
         }
         distributionList[candidatePublicKey] = 1;  
       }
-    } */
+    } 
+    console.log("Distribution List", distributionList);
+    return  distributionList;  
+    */
 }
 
 export async function submitDistributionList(round: number) {
