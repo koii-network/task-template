@@ -195,6 +195,10 @@ class NamespaceWrapper {
     return await genericHandler("nodeSelectionDistributionList", round);
   }
 
+  async getDistributionList(publicKey,round) {
+    return await genericHandler("getDistributionList", publicKey, round);
+  }
+
   async validateAndVoteOnNodes(validate, round) {
     // await this.checkVoteStatus();
     console.log("******/  IN VOTING /******");
