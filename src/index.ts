@@ -39,7 +39,7 @@ async function setup() {
   */
 
   // Get the task state
-  console.log(await namespaceWrapper.getTaskState());
+  //console.log(await namespaceWrapper.getTaskState());
 
   //GET ROUND
 

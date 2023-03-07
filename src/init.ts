@@ -1,4 +1,4 @@
-import express, { Response, Request } from "express";
+import * as express from "express";
 
 const EXPRESS_PORT = process.argv[4];
 const TASK_NAME = process.argv[2];
@@ -13,7 +13,7 @@ export const STAKE = Number(process.argv[10]);
 export const app = express();
 
 console.log("SETTING UP EXPRESS", NODE_MODE);
-app.get("/", (_req: Request, res: Response) => {
+app.get("/", (_req: express.Request, res: express.Response) => {
   res.send("Hello World!");
 });
 
