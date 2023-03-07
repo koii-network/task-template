@@ -1,10 +1,4 @@
-import {
-  task,
-  submitDistributionList,
-  submitTask,
-  auditTask,
-  auditDistribution,
-} from "./coreLogic";
+import { coreLogic } from "./coreLogic";
 import { app } from "./init";
 import { namespaceWrapper } from "./namespaceWrapper";
 
@@ -16,26 +10,23 @@ async function setup() {
     console.log("CHILD got message:", m);
     if (m.functionCall == "submitPayload") {
       console.log("submitPayload called");
-      submitTask(m.roundNumber);
+      coreLogic.submitTask(m.roundNumber);
     } else if (m.functionCall == "auditPayload") {
       console.log("auditPayload called");
-      auditTask(m.roundNumber);
+      coreLogic.auditTask(m.roundNumber);
     } else if (m.functionCall == "executeTask") {
       console.log("executeTask called");
-      task();
+      coreLogic.task();
     } else if (m.functionCall == "generateAndSubmitDistributionList") {
       console.log("generateAndSubmitDistributionList called");
-      submitDistributionList(m.roundNumber);
+      coreLogic.submitDistributionList(m.roundNumber);
     } else if (m.functionCall == "distributionListAudit") {
       console.log("distributionListAudit called");
-      auditDistribution(m.roundNumber);
+      coreLogic.auditDistribution(m.roundNumber);
     }
   });
-}
 
-setup();
-
-/* GUIDE TO CALLS K2 FUNCTIONS MANUALLY
+  /* GUIDE TO CALLS K2 FUNCTIONS MANUALLY
 
   If you wish to do the development by avoiding the timers then you can do the intended calls to K2 
   directly using these function calls. 
@@ -47,34 +38,41 @@ setup();
 
   */
 
-// Get the task state
-//console.log(await namespaceWrapper.getTaskState());
+  // Get the task state
+  console.log(await namespaceWrapper.getTaskState());
 
-//GET ROUND
+  //GET ROUND
 
-// const round = await namespaceWrapper.getRound();
-// console.log("ROUND", round);
+  // const round = await namespaceWrapper.getRound();
+  // console.log("ROUND", round);
 
-// Submission to K2 (Preferablly you should submit the cid received from IPFS)
+  // Call to do the work for the task
 
-//await submitTask(round - 1)
+  //await coreLogic.task();
 
-// Audit submissions
+  // Submission to K2 (Preferablly you should submit the cid received from IPFS)
 
-//await auditTask(round - 1)
+  //await coreLogic.submitTask(round - 1);
 
-// upload distribution list to K2
+  // Audit submissions
 
-//await submitDistributionList(round - 2)
+  //await coreLogic.auditTask(round - 1);
 
-// Audit distribution list
+  // upload distribution list to K2
 
-//await auditDistribution(round - 2);
+  //await coreLogic.submitDistributionList(round - 2)
 
-// Payout trigger
+  // Audit distribution list
 
-// const responsePayout = await namespaceWrapper.payoutTrigger();
-// console.log("RESPONSE TRIGGER", responsePayout);
+  //await coreLogic.auditDistribution(round - 2);
+
+  // Payout trigger
+
+  // const responsePayout = await namespaceWrapper.payoutTrigger();
+  // console.log("RESPONSE TRIGGER", responsePayout);
+}
+
+setup();
 
 if (app) {
   //  Write your Express Endpoints here.

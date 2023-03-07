@@ -207,6 +207,11 @@ class NamespaceWrapper {
   async getNodes(url: string): Promise<GenericResponseInterface> {
     return await genericHandler("getNodes", url);
   }
+
+  async getDistributionList(publicKey: any, round: number) {
+    return await genericHandler("getDistributionList", publicKey, round);
+  }
+
   async validateAndVoteOnNodes(validateNode: any, round: number): Promise<any> {
     console.log("******/  IN VOTING /******");
     const taskAccountDataJSON = await this.getTaskState();
@@ -239,7 +244,7 @@ class NamespaceWrapper {
               "SUBMISSION VALUE TO CHECK",
               values[i].submission_value
             );
-            isValid = await validateNode(values[i].submission_value);
+            isValid = await validateNode(values[i].submission_value, round);
             console.log(`Voting ${isValid} to ${candidatePublicKey}`);
 
             if (isValid) {
@@ -320,7 +325,10 @@ class NamespaceWrapper {
               "SUBMISSION VALUE TO CHECK",
               values[i].submission_value
             );
-            isValid = await validateDistribution(values[i].submission_value);
+            isValid = await validateDistribution(
+              values[i].submission_value,
+              round
+            );
             console.log(`Voting ${isValid} to ${candidatePublicKey}`);
 
             if (isValid) {
