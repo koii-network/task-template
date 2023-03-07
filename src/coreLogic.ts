@@ -25,11 +25,9 @@ class CoreLogic {
     // Write the logic to fetch the submission values here and return the cid string
   }
 
-  async generateDistributionList(round: number) {
-    console.log("GenerateDistributionList called");
-    console.log("I am selected node");
-
-    // Write the logic to generate the distribution list here by introducing the rules of your choice
+async generateDistributionList(round) {
+  console.log("GenerateDistributionList called");
+  console.log("I am selected node");
 
     //  **** SAMPLE LOGIC FOR GENERATING DISTRIBUTION LIST ******
 
