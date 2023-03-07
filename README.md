@@ -1,12 +1,9 @@
 # K2-Task-Template
 Tasks run following a periodic structure of 'rounds':
-```
-executeTask => {
-  1. Do the work
-  2. Audit the work of other nodes
-  3. Pay rewards and slash stake
-}
-```
+
+![Screenshot_20230307-091958](https://user-images.githubusercontent.com/66934242/223565192-3ecce9c6-0f9a-4a58-8b02-2db19c61141f.png)
+
+
 
 Each round is set by a specific time period, and nodes participate by uploading data to IPFS, posting CIDs to the K2 settlement layer, and sending messages across REST APIs and WebSockets. 
 
@@ -69,15 +66,17 @@ If you have already created an account on [web3.storage](https://web3.storage/do
 
 ### Find or create a k2 wallet key
 If you have already generated a Koii wallet on yoru filesystem you can obtain the path to it by running `koii config get` which should return something similar to the following:
-```
-➜ koii config get
+
+![截图 2023-03-07 18-13-17](https://user-images.githubusercontent.com/66934242/223565661-ece1591f-2189-4369-8d2a-53393da15834.png)
+
+```bash
 Config File: /home/<user>/.config/koii/cli/config.yml
 RPC URL: https://k2-testnet.koii.live 
 WebSocket URL: wss://k2-testnet.koii.live/ (computed)
 Keypair Path: /home/<user>/.config/koii/id.json 
 Commitment: confirmed 
-
 ```
+
 The `Keypair Path` will be used to pay gas fees and fund your bounty wallet by inputting it into the task CLI.
 
 If you need to create a Koii wallet you can follow the instructions [here](https://docs.koii.network/koii-software-toolkit-sdk/using-the-cli#create-a-koii-wallet). Make sure to either copy your keypair path from the output, or use the method above to supply the task CLI with the proper wallet path.
