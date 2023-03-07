@@ -4,6 +4,7 @@ const webpack = require('webpack'); //to access built-in plugins
 module.exports = {
   entry: './src/index.ts',
   target: 'node',
+  mode: "development",
   module: {
     rules: [
       {
@@ -29,4 +30,7 @@ module.exports = {
       'process.env.FLUENTFFMPEG_COV': false,
     }),
   ],
+  optimization: {
+    usedExports: false, // <- no remove unused function
+  },
 };

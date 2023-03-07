@@ -7,7 +7,7 @@ async function fetchSubmission() {
   // Write the logic to fetch the submission values here and return the cid string
 }
 
-async function generateDistributionList(round) {
+async function generateDistributionList(_round) {
   console.log("GenerateDistributionList called");
   console.log("I am selected node");
 
