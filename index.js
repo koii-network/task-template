@@ -90,6 +90,15 @@ setup();
 if (app) {
   //  Write your Express Endpoints here.
   //  For Example
-  //  namespace.express('post', '/accept-cid', async (req, res) => {})
+  //  app.post('/accept-cid', async (req, res) => {})
+
+  // Sample API that return your task state 
+
+  app.get('/taskState', async (req, res) => {
+    const state = await namespaceWrapper.getTaskState();
+   console.log("TASK STATE", state);
+
+  res.status(200).json({ taskState: state })
+  })
 }
 
