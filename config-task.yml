@@ -1,0 +1,36 @@
+# Name and desciption sof your task
+task_name: "test-task"
+task_description: "This task is to test out the namespace function"
+# network value can be DEVELOPMENT , ARWEAVE or IPFS
+task_executable_network: "DEVELOPMENT"
+# Provide your web.storage key in case of IPFS otherwise leave blank
+secret_web3_storage_key: ""
+
+# Path to your executable webpack if the selected network is IPFS otherwise leave blank
+task_audit_program: ""
+
+# Provide your transaction ID in case of ARWEAVE and in case of DEVELOPMENT give your executable name as main otherwise leave blank
+task_audit_program_id: "main"
+
+# Total round time of your task : it must be given in slots and each slot is rougly equal to 4ms
+round_time: "600"
+
+audit_window: "200"
+submission_window: "200"
+
+# Amounts in KOII
+
+minimum_stake_amount: "5"
+total_bounty_amount: "10"
+bounty_amount_per_round: "1"
+
+#Number of times allowed to re-submit the distribution  list in case the distribution list is audited
+allowed_failed_distributions: "4"
+
+# CID of metadata
+task_metadata: ""
+task_locals: ""
+koii_vars: ""
+
+#Space in MBs
+space: "10"
