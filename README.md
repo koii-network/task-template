@@ -12,6 +12,8 @@ Each round is set by a specific time period, and nodes participate by uploading 
 
 For more information on how the Task Flow works, check out [the runtime environment docs](https://docs.koii.network/microservices-and-tasks/what-are-tasks/gradual-consensus).
 
+If this is your first time writing a Koii Task, you might want to use the [task organizer](https://www.figma.com/community/file/1220194939977550205/Task-Outline).
+
 ## Requirements
  - [Node >=16.0.0](https://nodejs.org)
  - [Docker compose](https://docs.docker.com/compose/install/docker)
