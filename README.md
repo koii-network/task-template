@@ -69,14 +69,6 @@ If you have already generated a Koii wallet on yoru filesystem you can obtain th
 
 ![截图 2023-03-07 18-13-17](https://user-images.githubusercontent.com/66934242/223565661-ece1591f-2189-4369-8d2a-53393da15834.png)
 
-```bash
-Config File: /home/<user>/.config/koii/cli/config.yml
-RPC URL: https://k2-testnet.koii.live 
-WebSocket URL: wss://k2-testnet.koii.live/ (computed)
-Keypair Path: /home/<user>/.config/koii/id.json 
-Commitment: confirmed 
-```
-
 The `Keypair Path` will be used to pay gas fees and fund your bounty wallet by inputting it into the task CLI.
 
 If you need to create a Koii wallet you can follow the instructions [here](https://docs.koii.network/koii-software-toolkit-sdk/using-the-cli#create-a-koii-wallet). Make sure to either copy your keypair path from the output, or use the method above to supply the task CLI with the proper wallet path.
