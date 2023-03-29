@@ -10,3 +10,4 @@ namespace/*
 config/*
 .env
 taskStateInfoKeypair.json
+localKOIIDB

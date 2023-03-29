@@ -31,7 +31,6 @@ async fetchSubmission(){
 
   console.log("IN FETCH SUBMISSION");
 
-  const round = await namespaceWrapper.getRound();
   // The code below shows how you can fetch your stored value from level DB
 
   const cid = await namespaceWrapper.storeGet("cid"); // retrieves the cid
@@ -205,6 +204,4 @@ async auditDistribution(roundNumber) {
 }
 const coreLogic = new CoreLogic();
 
-module.exports = {
-  coreLogic
-};
+module.exports = coreLogic;

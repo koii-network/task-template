@@ -1,6 +1,6 @@
 const {coreLogic} = require("./coreLogic");
 const { app } = require("./init");
-const { namespaceWrapper } = require("./namespaceWrapper");
+const { namespaceWrapper, taskNodeAdministered } = require("./namespaceWrapper");
 
 
 async function setup() {
@@ -85,8 +85,9 @@ async function setup() {
 
 }
 
-setup();
-
+if (taskNodeAdministered){
+  setup();
+}
 if (app) {
   //  Write your Express Endpoints here.
   //  For Example

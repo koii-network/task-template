@@ -1,15 +1,31 @@
 const { default: axios } = require("axios");
+const levelup = require('levelup');
+const leveldown = require('leveldown');
 const BASE_ROOT_URL = "http://localhost:8080/namespace-wrapper";
 const { TASK_ID, MAIN_ACCOUNT_PUBKEY, SECRET_KEY } = require("./init");
 const { Connection, PublicKey, Keypair } = require("@_koi/web3.js");
-
+const taskNodeAdministered = !!TASK_ID;
+let localLevelDB;
 class NamespaceWrapper {
   /**
    * Namespace wrapper of storeGetAsync
    * @param {string} key // Path to get
    */
   async storeGet(key) {
-    return await genericHandler("storeGet", key);
+    if (taskNodeAdministered){
+      return await genericHandler("storeGet", key);
+    }
+    instantiateLevelDb();
+    return new Promise((resolve, reject) => {
+      localLevelDB.get(key, { asBuffer: false }, (err, value) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(value);
+        }
+
+      });
+    });
   }
   /**
    * Namespace wrapper over storeSetAsync
@@ -17,7 +33,19 @@ class NamespaceWrapper {
    * @param {*} value Data to set
    */
   async storeSet(key, value) {
-    return await genericHandler("storeSet", key, value);
+    if (taskNodeAdministered){
+     return await genericHandler("storeSet", key, value);
+    }
+    instantiateLevelDb();
+    return new Promise((resolve, reject) => {
+      localLevelDB.put(key, value, {}, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
   }
   /**
    * Namespace wrapper over fsPromises methods
@@ -118,7 +146,11 @@ class NamespaceWrapper {
 
   }
   async getTaskState() {
-    return await genericHandler("getTaskState");
+    const response = await genericHandler("getTaskState");
+    if(response.error){
+      return null
+    }
+    return response
   }
 
   async auditSubmission(candidatePubkey, isValid, voterKeypair, round) {
@@ -349,6 +381,11 @@ class NamespaceWrapper {
     }
   }
 }
+async function instantiateLevelDb() {
+  if(!localLevelDB){
+    localLevelDB = levelup(leveldown("./localKOIIDB"));
+  }
+}
 
 async function genericHandler(...args) {
   try {
@@ -363,18 +400,20 @@ async function genericHandler(...args) {
       return null;
     }
   } catch (err) {
-    console.log("Error in genericHandler", err);
-    console.error(err.message);
+    console.error(`Error in genericHandler: "${args[0]}"`,err.message);
     console.error(err?.response?.data);
-    return null;
+    return {error:err};
   }
 }
 let connection;
 const namespaceWrapper = new NamespaceWrapper();
-namespaceWrapper.getRpcUrl().then((rpcUrl) => {
-  console.log(rpcUrl, "RPC URL");
-  connection = new Connection(rpcUrl, "confirmed");
-});
+if(taskNodeAdministered){
+  namespaceWrapper.getRpcUrl().then((rpcUrl) => {
+    console.log(rpcUrl, "RPC URL");
+    connection = new Connection(rpcUrl, "confirmed");
+  });
+}
 module.exports = {
   namespaceWrapper,
+  taskNodeAdministered
 };

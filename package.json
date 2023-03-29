@@ -16,6 +16,8 @@
     "@_koii/create-task-cli": "^0.1.12",
     "axios": "^0.27.2",
     "express": "^4.18.1",
+    "leveldown": "^6.1.1",
+    "levelup": "^5.1.1",
     "node-cron": "^3.0.2",
     "request": "^2.88.2",
     "web3.storage": "^4.4.0"
