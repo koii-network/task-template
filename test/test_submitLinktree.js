@@ -56,7 +56,7 @@ try {
   payload.signature = bs58.encode(nacl.sign.detached(msg, secretKey));
 
   axios
-    .post('http://localhost:8080/task/Aymg9fr1qCSbKSSvud4jG74MHrRGw8EpkFVQo6rFGSQf/register-linktree', {payload})
+    .post('http://localhost:8080/task/7jP87G1LJzWmLrr6RqQcA8bH6spZven4RHxGCgbPFzSo/register-linktree', {payload})
     .then((e) => {
       if (e.status != 200) {
         console.log(e);
