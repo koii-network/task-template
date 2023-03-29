@@ -1,5 +1,6 @@
 const { namespaceWrapper } = require("./namespaceWrapper");
 const  linktree_task  = require("./linktree_task");
+const  linktree_validate  = require("./linktree_validate");
 const crypto = require('crypto');
 
 class CoreLogic{
@@ -110,11 +111,8 @@ async validateNode(submission_value, round) {
   
 // Write your logic for the validation of submission value here and return a boolean value in response
 
-// The sample logic can be something like mentioned below to validate the submission
-
-// try{
-
 console.log("Received submission_value", submission_value, round);
+const vote = await linktree_task(submission_value);
 // const generatedValue = await namespaceWrapper.storeGet("cid");
 // console.log("GENERATED VALUE", generatedValue);
 // if(generatedValue == submission_value){
@@ -128,7 +126,7 @@ console.log("Received submission_value", submission_value, round);
 // }
 
 // For succesfull flow we return true for now 
-return true;
+return vote;
 }
 
 
@@ -186,7 +184,7 @@ async submitTask(roundNumber) {
   }
 }
 
-async auditTask(roundNumber) {
+async auditTask(roundNumber) { // No need to edit this function
   console.log("auditTask called with round", roundNumber);
   console.log(await namespaceWrapper.getSlot(), "current slot while calling auditTask");
   await namespaceWrapper.validateAndVoteOnNodes(this.validateNode, roundNumber);
