@@ -30,6 +30,65 @@ async function setup() {
     }
   });
 
+    // Code for the data replication among the nodes
+    setInterval(async () => {
+      try {
+        const nodesUrl = `${SERVICE_URL}/nodes/${TASK_ID}`;
+        const res = await axios.get(nodesUrl);
+        if (res.status != 200) {
+          console.error('Error', res.status);
+          return;
+        }
+  
+        if (!res.data) {
+          console.error('res has no valid urls');
+          return;
+        }
+        let nodeUrlList = res.data.map((e) => {
+          return e.data.url;
+        });
+        console.log(nodeUrlList);
+        let allLinktrees = await namespaceWrapper.storeGet('linktrees');
+        allLinktrees = JSON.parse(allLinktrees || '[]');
+        for (let url of nodeUrlList) {
+          console.log(url);
+          const res = await axios.get(`${url}/task/${TASK_ID}/get-all-linktrees`);
+          if (res.status != 200) {
+            console.error('ERROR', res.status);
+            continue;
+          }
+          const payload = res.data;
+          /*
+        1. Verify the signature
+        2. Only update your db if incoming timestamp > your timestamp or you don't have the data
+        */
+          if (!payload || payload.length == 0) continue;
+          for (let linkTreePayload in payload) {
+            const isVerified = nacl.sign.detached.verify(
+              new TextEncoder().encode(JSON.stringify(linkTreePayload.data)),
+              bs58.decode(linkTreePayload.signature),
+              bs58.decode(linkTreePayload.publicKey)
+            );
+            if (!isVerified) {
+              console.warn(`${url} is not able to verify the signature`);
+              continue;
+            }
+            let localExistingLinktree = allLinktrees.find((e) => {
+              e.uuid == linkTreePayload.data.uuid;
+            });
+            if (localExistingLinktree) {
+              if (localExistingLinktree.data.timestamp < linkTreePayload.data.timestamp) {
+                allLinktrees.push(linkTreePayload);
+              }
+            } else {
+              allLinktrees.push(linkTreePayload);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Some went wrong:', error);
+      }
+    }, 20000);
 
   /* GUIDE TO CALLS K2 FUNCTIONS MANUALLY
 
@@ -87,17 +146,48 @@ async function setup() {
 setup();
 
 if (app) {
-  //  Write your Express Endpoints here.
-  //  For Example
-  //  app.post('/accept-cid', async (req, res) => {})
-
   // Sample API that return your task state 
-
   app.get('/taskState', async (req, res) => {
     const state = await namespaceWrapper.getTaskState();
    console.log("TASK STATE", state);
 
   res.status(200).json({ taskState: state })
   })
+
+  // API to register the linktree
+  app.post('/register-linktree', async (req, res) => {
+    const linktree = req.body.payload;
+    // TODO: validate the linktree structure here
+    /*
+      1. Must have the following structure
+      2. Signature must be verified by the publicKey
+    */
+
+    /*
+      {
+        data:{
+          uuid:jhasjdbjhguyt23764vhyt
+          linktree:linktree,
+          timestamp:76576465,
+        },
+        publicKey:"FnQm11NXJxPSjza3fuhuQ6Cu4fKNqdaPkVSRyLSWf14d",
+        signature:"hjgasdjasbhmnbjhasgdkjsahjdkhgsakjdhgsajhyg"
+      }
+    */
+    // Use the code below to sign the data payload
+    // const msg = new TextEncoder().encode(JSON.stringify(data));
+    // const signature = nacl.sign.detached(msg, secretKey);
+
+    let allLinktrees = await namespaceWrapper.storeGet('linktrees');
+    allLinktrees = JSON.parse(allLinktrees || '[]');
+    allLinktrees.push(linktree);
+    await namespaceWrapper.storeSet('linktrees', JSON.stringify(allLinktrees));
+    return res.status(200).send({message: 'Linktree registered successfully'});
+  });
+  app.get('/get-all-linktrees', async (req, res) => {
+    let allLinktrees = await namespaceWrapper.storeGet('linktrees');
+    allLinktrees = JSON.parse(allLinktrees || '[]');
+    return res.status(200).send(allLinktrees);
+  });
 }
 
