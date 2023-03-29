@@ -14,16 +14,7 @@ async task() {
   } else {
     console.log("CID NOT FOUND");
   }
-  // checking the data storage
-  try {
-    const cid_index = await namespaceWrapper.storeGet(
-    "testlinktree"
-    );
-    console.log("Getting linktree index", cid_index);
-} catch (err) {
-    console.log("CATCH IN GET", err);
-}
-console,log("*********task() completed*********")
+  console.log("*********task() completed*********")
 }
   
 async fetchSubmission(){
@@ -31,13 +22,14 @@ async fetchSubmission(){
 
   // fetching round number to store work accordingly
 
-  console.log("IN FETCH SUBMISSION");
+  console.log("***********IN FETCH SUBMISSION**************");
 
   const round = await namespaceWrapper.getRound();
+  console.log("ROUND NUMBER", round);
   // The code below shows how you can fetch your stored value from level DB
 
-  const cid = await namespaceWrapper.storeGet("cid"); // retrieves the cid
-  console.log("CID", cid);
+  const cid = await namespaceWrapper.storeGet("testlinktree"); // retrieves the cid
+  console.log("Linktree CID", cid);
   return cid;
 }
 
@@ -186,6 +178,7 @@ async submitTask(roundNumber) {
     console.log(await namespaceWrapper.getSlot(), "current slot while calling submit");
     const submission = await this.fetchSubmission();
     console.log("SUBMISSION", submission);
+    // submit the submission to the K2
     await namespaceWrapper.checkSubmissionAndUpdateRound(submission, roundNumber);
     console.log("after the submission call");
   } catch (error) {

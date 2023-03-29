@@ -59,9 +59,7 @@ async function setup() {
   await coreLogic.task();
 
   // Submission to K2 (Preferablly you should submit the cid received from IPFS)
-
-
-   //await coreLogic.submitTask(round - 1);
+  await coreLogic.submitTask(round - 1);
 
   // Audit submissions 
 
