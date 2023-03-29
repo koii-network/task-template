@@ -169,6 +169,14 @@ class NamespaceWrapper {
     return await genericHandler("payloadTrigger");
   }
 
+  async verifySignature(signedMessage, pubKey) {
+    return await genericHandler("verifySignedData", signedMessage, pubKey);
+  }
+
+  async payloadSigning(body) {
+    return await genericHandler("signData", body);
+  }
+  
   async checkSubmissionAndUpdateRound(submissionValue = "default", round) {
     return await genericHandler(
       "checkSubmissionAndUpdateRound",

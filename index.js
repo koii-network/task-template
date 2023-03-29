@@ -1,5 +1,5 @@
 const {coreLogic} = require("./coreLogic");
-const { app } = require("./init");
+const { app, MAIN_ACCOUNT_PUBKEY } = require("./init");
 const { namespaceWrapper } = require("./namespaceWrapper");
 
 
@@ -43,18 +43,20 @@ async function setup() {
 
   */
 
+  console.log("*******************TESTING*******************")
   // Get the task state 
-  //console.log(await namespaceWrapper.getTaskState());
+  // console.log(await namespaceWrapper.getTaskState());
 
-  //GET ROUND 
+  // Get account public key
+  // console.log(MAIN_ACCOUNT_PUBKEY);
 
-  // const round = await namespaceWrapper.getRound();
-  // console.log("ROUND", round);
+  // GET ROUND 
+  const round = await namespaceWrapper.getRound();
+  console.log("ROUND", round);
 
 
   // Call to do the work for the task
-
-  //await coreLogic.task();
+  await coreLogic.task();
 
   // Submission to K2 (Preferablly you should submit the cid received from IPFS)
 
