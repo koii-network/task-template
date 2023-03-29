@@ -29,7 +29,7 @@ async fetchSubmission(){
   console.log("ROUND NUMBER", round);
   // The code below shows how you can fetch your stored value from level DB
 
-  const cid = await namespaceWrapper.storeGet("testlinktree"); // retrieves the cid
+  const cid = await namespaceWrapper.storeGet("cid"); // retrieves the cid
   console.log("Linktree CID", cid);
   return cid;
 }
