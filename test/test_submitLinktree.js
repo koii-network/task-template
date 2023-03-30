@@ -5,7 +5,7 @@ const nacl = require('tweetnacl');
 const fs = require("fs")
 try {
   const {publicKey, secretKey} = nacl.sign.keyPair.fromSecretKey(
-    new Uint8Array(JSON.parse(fs.readFileSync("tests/dummyWallet.json", 'utf-8')))
+    new Uint8Array(JSON.parse(fs.readFileSync("./test_wallet.json", 'utf-8')))
   );
   const payload = {
     data: {
@@ -26,12 +26,6 @@ try {
           label: 'LinkedIn',
           redirectUrl: 'https://www.linkedin.com/in/prakarshpathak/',
         },
-        // {
-        //   "key": "medium",
-        //   "label": "Medium",
-        //   "iconUrl": Medium,
-        //   "redirectUrl": "",
-        // },
         {
           key: 'youtube',
           label: 'YouTube',
@@ -55,6 +49,9 @@ try {
   const msg = new TextEncoder().encode(JSON.stringify(payload.data));
   payload.signature = bs58.encode(nacl.sign.detached(msg, secretKey));
 
+  // Check payload
+  console.log(payload);
+  
   axios
     .post('http://localhost:8080/task/7jP87G1LJzWmLrr6RqQcA8bH6spZven4RHxGCgbPFzSo/register-linktree', {payload})
     .then((e) => {
