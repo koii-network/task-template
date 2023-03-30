@@ -230,7 +230,11 @@ class NamespaceWrapper {
   }
 
   async getDistributionList(publicKey, round) {
-    return await genericHandler('getDistributionList', publicKey, round);
+    const response = await genericHandler('getDistributionList', publicKey, round);
+    if (response.error) {
+      return null;
+    }
+    return response
   }
 
   async validateAndVoteOnNodes(validate, round) {
