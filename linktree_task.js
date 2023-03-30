@@ -38,7 +38,7 @@ module.exports = async() => {
         // console.log("SIGNATURE ON HASH OF LINKTREE INDEX", signature);
 
         const indexSignature = {
-        data: linktree_data_payload,
+        data: linktree_data_payloalinktrees_list_object.lengthd,
         pubKey: MAIN_ACCOUNT_PUBKEY,
         // signature: signature,
         };

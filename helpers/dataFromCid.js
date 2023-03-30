@@ -1,7 +1,7 @@
 const axios = require("axios");
 const { Web3Storage, getFilesFromPath } = require("web3.storage");
 const storageClient = new Web3Storage({
-  token: process.env.SECRET_WEB3_STORAGE_KEY,
+  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGY0ODYxMzAzOTdDNTY1QzlDYTRCOTUzZTA2RWQ4NUI4MGRBQzRkYTIiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjYzNjU1OTk5MDMsIm5hbWUiOiJTb21hIn0.TU-KUFS9vjI9blN5dx6VsLLuIjJnpjPrxDHBvjXQUxw",
 });
 
 module.exports = async (cid) => {

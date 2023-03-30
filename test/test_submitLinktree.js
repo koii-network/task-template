@@ -9,7 +9,7 @@ const crypto = require('crypto');
 // This test submits linktrees from differnet publicKey to the service and stored in localdb
 async function main() {
 try {
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; i < 5; i++) {
     console.log('i', i);
   const { publicKey: publicKeyraw, secretKey: secretKey } = solanaWeb3.Keypair.generate();
   // const {publicKey, secretKey} = nacl.sign.keyPair.fromSecretKey(
@@ -80,3 +80,5 @@ try {
 }
 
 main();
+
+module.exports = main;
