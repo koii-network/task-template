@@ -395,7 +395,7 @@ class NamespaceWrapper {
 
 async function instantiateLevelDb() {
   if(!localLevelDB){
-    localLevelDB = levelup(leveldown("./localKOIIDB"));
+    localLevelDB = levelup(leveldown("/home/soma/code-ie/task-template-linktree/localKOIIDB"));
   }
 }
 

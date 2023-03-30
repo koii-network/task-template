@@ -18,74 +18,61 @@ module.exports = async() => {
     console.log("Getting linktrees list", linktrees_list_object);
 
     // loop through the linktrees_list to get the userIndex and upload then to web3.storage
-    const linktrees_list = Object.keys(linktrees_list_object);
-    for (let i = 0; i < Object.keys(linktrees_list).length; i++) {
-      const linktrees = linktrees_list[i].data.linktree;
+    for (let i = 0; i < linktrees_list_object.length; i++) {
+      console.log("i", i , "linktrees_list_object.length", linktrees_list_object.length);
+      const linktrees = linktrees_list_object[i];
       console.log("linktrees", linktrees);
   
-      if (linktrees_list_object[linktrees] == "yes") {
-        console.log(`${linktrees} was updated so adding that index`);
-        //fetching the user index of that linktrees
-        // const linktree_data_string = await namespaceWrapper.storeGet(linktrees);
-        const linktree_data_array = JSON.parse(linktrees);
-        console.log("Getting user index", linktree_data_array);
-  
-        const linktree_data = {};
-  
-        linktree_data[linktrees] = linktree_data_array;
-  
+      if (linktrees) {
+        const linktree_data_payload = JSON.stringify(linktrees.data);
 
-    console.log('SUBMISSION VALUE', linktree_data);
+        const hashLinktreeIndex = crypto
+        .createHash("sha256")
+        .update(linktree_data_payload)
+        .digest("hex");
 
-    const linktree_data_payload = JSON.stringify(linktree_data);
+        console.log("HASH OF LINKTREE INDEX", hashLinktreeIndex);
 
-    const hashLinktreeIndex = crypto
-    .createHash("sha256")
-    .update(linktree_data_payload)
-    .digest("hex");
+        // singing the payload using the nodes private key and sending the public key along with the payload
+        // const signature = await namespaceWrapper.payloadSigning(hashLinktreeIndex);
+        // console.log("SIGNATURE ON HASH OF LINKTREE INDEX", signature);
 
-    console.log("HASH OF LINKTREE INDEX", hashLinktreeIndex);
+        const indexSignature = {
+        data: linktree_data_payload,
+        pubKey: MAIN_ACCOUNT_PUBKEY,
+        // signature: signature,
+        };
 
-    // singing the payload using the nodes private key and sending the public key along with the payload
-    const signature = await namespaceWrapper.payloadSigning(hashLinktreeIndex);
+        console.log("INDEX SIGNATURE DATA", indexSignature);
 
-    console.log("SIGNATURE ON HASH OF LINKTREE INDEX", signature);
+        // upload the index of the linktree on web3.storage
+        const path = `userIndex/test.json`;
+        console.log("PATH", path);
+        if (!fs.existsSync("userIndex")) fs.mkdirSync("userIndex");
+        await createFile(path, indexSignature);
 
-    const indexSignature = {
-    data: linktree_data,
-    signature: signature,
-    pubKey: MAIN_ACCOUNT_PUBKEY,
-    };
+        if (storageClient) {
+        const file = await getFilesFromPath(path);
+        // const cid = await storageClient.put(file);
+        const cid = "testingCID" + i;
+        console.log("User index uploaded to IPFS: ", cid);
 
-    console.log("INDEX SIGNATURE DATA", indexSignature);
+        // deleting the file from fs once it is uploaded to IPFS
+        await deleteFile(path);
 
-    // upload the index of the linktree on web3.storage
-    const path = `userIndex/test.json`;
-    console.log("PATH", path);
-    if (!fs.existsSync("userIndex")) fs.mkdirSync("userIndex");
-    await createFile(path, indexSignature);
+        // Store the cid in level db
+        try {
+            await namespaceWrapper.storeSet("testlinktree", cid);
+          } catch (err) {
+            console.log("ERROR IN STORING test linktree", err);
+            res.status(404).json({ message: "ERROR in storing test linktree" });
+          }
 
-    if (storageClient) {
-    const file = await getFilesFromPath(path);
-    const cid = await storageClient.put(file);
-    console.log("User index uploaded to IPFS: ", cid);
+        return cid
 
-    // deleting the file from fs once it is uploaded to IPFS
-    await deleteFile(path);
-
-    // Store the cid in level db
-    try {
-        await namespaceWrapper.storeSet("testlinktree", cid);
-      } catch (err) {
-        console.log("ERROR IN STORING test linktree", err);
-        res.status(404).json({ message: "ERROR in storing test linktree" });
+        } else {
+        console.log("NODE DO NOT HAVE ACCESS TO WEB3.STORAGE");
+        }
       }
-
-    return cid
-
-    } else {
-    console.log("NODE DO NOT HAVE ACCESS TO WEB3.STORAGE");
     }
-  }
-}
 };

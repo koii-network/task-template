@@ -14,6 +14,7 @@
   "dependencies": {
     "@_koi/web3.js": "^0.0.6",
     "@_koii/create-task-cli": "^0.1.12",
+    "@solana/web3.js": "^1.74.0",
     "axios": "^0.27.2",
     "express": "^4.18.1",
     "leveldown": "^6.1.1",
