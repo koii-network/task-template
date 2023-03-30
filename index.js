@@ -1,6 +1,10 @@
 const {coreLogic} = require("./coreLogic");
-const { app, MAIN_ACCOUNT_PUBKEY } = require("./init");
-const { namespaceWrapper } = require("./namespaceWrapper");
+const { app, MAIN_ACCOUNT_PUBKEY, SERVICE_URL, TASK_ID } = require("./init");
+const express = require('express');
+const { namespaceWrapper, taskNodeAdministered } = require("./namespaceWrapper");
+const {default: axios} = require('axios');
+const bs58 = require('bs58');
+const nacl = require('tweetnacl');
 
 
 async function setup() {
@@ -143,9 +147,13 @@ async function setup() {
 
 }
 
-setup();
+if (taskNodeAdministered){
+  setup();
+}
+
 
 if (app) {
+  app.use(express.json());
   // Sample API that return your task state 
   app.get('/taskState', async (req, res) => {
     const state = await namespaceWrapper.getTaskState();
@@ -157,6 +165,14 @@ if (app) {
   // API to register the linktree
   app.post('/register-linktree', async (req, res) => {
     const linktree = req.body.payload;
+    // Check req.body
+    if (!linktree) {
+      res.status(400).json({ error: 'Invalid request' });
+      return;
+    } else {
+      console.log(linktree);
+    }
+
     // TODO: validate the linktree structure here
     /*
       1. Must have the following structure
@@ -174,13 +190,18 @@ if (app) {
         signature:"hjgasdjasbhmnbjhasgdkjsahjdkhgsakjdhgsajhyg"
       }
     */
-    // Use the code below to sign the data payload
-    // const msg = new TextEncoder().encode(JSON.stringify(data));
-    // const signature = nacl.sign.detached(msg, secretKey);
 
+    // Use the code below to sign the data payload
+
+    const msg = new TextEncoder().encode(JSON.stringify(linktree.data));
+    const secretKey = nacl.sign.keyPair().secretKey;
+    const signature = nacl.sign.detached(msg, secretKey);
+
+    console.log('Check Signature:', bs58.encode(signature));
     let allLinktrees = await namespaceWrapper.storeGet('linktrees');
     allLinktrees = JSON.parse(allLinktrees || '[]');
     allLinktrees.push(linktree);
+    console.log("NEW all Linktrees: ", allLinktrees);
     await namespaceWrapper.storeSet('linktrees', JSON.stringify(allLinktrees));
     return res.status(200).send({message: 'Linktree registered successfully'});
   });

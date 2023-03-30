@@ -24,9 +24,6 @@ async fetchSubmission(){
   // fetching round number to store work accordingly
 
   console.log("***********IN FETCH SUBMISSION**************");
-
-  const round = await namespaceWrapper.getRound();
-  console.log("ROUND NUMBER", round);
   // The code below shows how you can fetch your stored value from level DB
 
   const cid = await namespaceWrapper.storeGet("cid"); // retrieves the cid
@@ -112,7 +109,7 @@ async validateNode(submission_value, round) {
 // Write your logic for the validation of submission value here and return a boolean value in response
 
 console.log("Received submission_value", submission_value, round);
-const vote = await linktree_task(submission_value);
+const vote = await linktree_validate(submission_value);
 // const generatedValue = await namespaceWrapper.storeGet("cid");
 // console.log("GENERATED VALUE", generatedValue);
 // if(generatedValue == submission_value){
@@ -198,6 +195,4 @@ async auditDistribution(roundNumber) {
 }
 const coreLogic = new CoreLogic();
 
-module.exports = {
-  coreLogic
-};
+module.exports = coreLogic;

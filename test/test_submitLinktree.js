@@ -53,7 +53,7 @@ try {
   console.log(payload);
   
   axios
-    .post('http://localhost:8080/task/7jP87G1LJzWmLrr6RqQcA8bH6spZven4RHxGCgbPFzSo/register-linktree', {payload})
+    .post('http://localhost:10000/register-linktree', {payload})
     .then((e) => {
       if (e.status != 200) {
         console.log(e);
