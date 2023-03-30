@@ -12,15 +12,29 @@ const crypto = require("crypto");
 module.exports = async() => {
     console.log("******/  IN Linktree Task FUNCTION /******");
     // Customize linktree test data
-    const linktree_data = {
-        "name": "test",
-        "description": "test description",
-        "background": "test-image.png",
-        "links": [
-        {"testlink": "http://testapi.com"},
-        ],
-        "user_pubkey": MAIN_ACCOUNT_PUBKEY,
-    };
+    console.log("Getting linktrees list");
+    const linktrees_list_string = await namespaceWrapper.storeGet("linktrees");
+    const linktrees_list_object = JSON.parse(linktrees_list_string);
+    console.log("Getting linktrees list", linktrees_list_object);
+
+    // loop through the linktrees_list to get the userIndex and upload then to web3.storage
+    const linktrees_list = Object.keys(linktrees_list_object);
+    for (let i = 0; i < Object.keys(linktrees_list).length; i++) {
+      const linktrees = linktrees_list[i].data.linktree;
+      console.log("linktrees", linktrees);
+  
+      if (linktrees_list_object[linktrees] == "yes") {
+        console.log(`${linktrees} was updated so adding that index`);
+        //fetching the user index of that linktrees
+        // const linktree_data_string = await namespaceWrapper.storeGet(linktrees);
+        const linktree_data_array = JSON.parse(linktrees);
+        console.log("Getting user index", linktree_data_array);
+  
+        const linktree_data = {};
+  
+        linktree_data[linktrees] = linktree_data_array;
+  
+
     console.log('SUBMISSION VALUE', linktree_data);
 
     const linktree_data_payload = JSON.stringify(linktree_data);
@@ -72,4 +86,6 @@ module.exports = async() => {
     } else {
     console.log("NODE DO NOT HAVE ACCESS TO WEB3.STORAGE");
     }
+  }
+}
 };

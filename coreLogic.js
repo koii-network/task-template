@@ -9,6 +9,7 @@ async task() {
   // Write the logic to do the work required for submitting the values and optionally store the result in levelDB
 
   // run linktree task
+  console.log("*********task() started*********")
   const cid = await linktree_task();
   if (cid) {
     await namespaceWrapper.storeSet("cid", cid); // store CID in levelDB
