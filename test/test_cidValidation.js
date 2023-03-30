@@ -2,7 +2,7 @@ const { namespaceWrapper } = require("../namespaceWrapper");
 const dataFromCid = require("../helpers/dataFromCid");
 const getKeys = require("../helpers/getKey");
 const hashCompare = require("../helpers/hashCompare");
-const crypto = require('crypto');
+const nacl = require('tweetnacl');
 
 let submission_value = "bafybeienyavolrhhaphslyvvjkeby6kkcufnfmeigrf2xlsegoqdnj5ch4"
 async function test_cidValidation(submission_value) {
@@ -22,7 +22,8 @@ async function test_cidValidation(submission_value) {
         }
 
         // verify the signature
-        const check = await verifySignature( signature, linktreeIndexData, publicKey);
+        const linktreeIndexDataUint8Array = new Uint8Array(Buffer.from(linktreeIndexData));
+        const check = await verifySignature(linktreeIndexDataUint8Array, signature, publicKey);
         console.log("CHECK", check);
     
       
@@ -31,10 +32,8 @@ async function test_cidValidation(submission_value) {
     }
 }
 
-async function verifySignature( signature, linktreeIndexData, publicKey) {
-    const verifier = crypto.createVerify('SHA256');
-    verifier.update(linktreeIndexData);
-    return verifier.verify(publicKey, signature, 'base64');
+async function verifySignature(linktreeIndexData, signature, publicKey) {
+    return nacl.sign.detached.verify(linktreeIndexData, signature, publicKey);
 }
 
 module.exports = test_cidValidation;
