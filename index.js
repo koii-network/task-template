@@ -5,9 +5,17 @@ const { namespaceWrapper, taskNodeAdministered } = require("./namespaceWrapper")
 const {default: axios} = require('axios');
 const bs58 = require('bs58');
 const nacl = require('tweetnacl');
+const fs = require('fs');
 
 
 async function setup() {
+  const logFile = fs.createWriteStream('./console.log', { flags: 'a' });
+
+  // Overwrite the console.log function to write to the log file
+  console.log = function (message) {
+    logFile.write(`${new Date().toISOString()} - ${message}\n`);
+  };
+
   console.log("setup function called");
   // Run default setup
   await namespaceWrapper.defaultTaskSetup();
@@ -141,10 +149,6 @@ async function setup() {
   // console.log("RESPONSE TRIGGER", responsePayout);
 
 
-
-
-
-
 }
 
 if (taskNodeAdministered){
@@ -209,6 +213,10 @@ if (app) {
     let allLinktrees = await namespaceWrapper.storeGet('linktrees');
     allLinktrees = JSON.parse(allLinktrees || '[]');
     return res.status(200).send(allLinktrees);
+  });
+  const port = process.env.SERVICE_URL || 3000;
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
   });
 }
 
