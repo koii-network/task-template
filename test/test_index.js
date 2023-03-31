@@ -19,6 +19,7 @@ async function test() {
   // 3 test the validation of the cid
   const check = await cidValidation(cid);
   // 4 iterate over the cid and create distribution
+  
   // 5 audit the distribution
 }
 
