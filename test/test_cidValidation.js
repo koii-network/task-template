@@ -4,9 +4,9 @@ const getKeys = require("../helpers/getKey");
 const hashCompare = require("../helpers/hashCompare");
 const nacl = require('tweetnacl');
 
-let submission_value = "bafybeienyavolrhhaphslyvvjkeby6kkcufnfmeigrf2xlsegoqdnj5ch4"
+// let submission_value = "bafybeienyavolrhhaphslyvvjkeby6kkcufnfmeigrf2xlsegoqdnj5ch4"
 async function test_cidValidation(submission_value) {
-    // const cid = submission_value;
+    console.log("******/  TEST Linktree CID VALIDATION Task FUNCTION /******");
     const output = await dataFromCid(submission_value);
     console.log("RESPONSE DATA", output.data);
     // for ()
@@ -22,7 +22,7 @@ async function test_cidValidation(submission_value) {
         }
 
         // verify the signature
-        const linktreeIndexDataUint8Array = new Uint8Array(Buffer.from(linktreeIndexData));
+        const linktreeIndexDataUint8Array = new TextEncoder().encode(JSON.stringify(linktreeIndexData));
         const check = await verifySignature(linktreeIndexDataUint8Array, signature, publicKey);
         console.log("CHECK", check);
     
