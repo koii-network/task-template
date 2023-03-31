@@ -33,7 +33,8 @@ async function generateAndSubmitDistributionList() {
 
 async function validate(submission_value) {
     const output = submission_value
-    console.log("RESPONSE DATA", output.data);
+    const message = output.data;
+    console.log("RESPONSE DATA", message);
     const publicKey = output.publicKey;
     console.log("PUBLIC KEY", publicKey);
     const signature = output.signature;

@@ -25,8 +25,9 @@ async function test() {
 
 async function cidCreation(){
     console.log("******/  TEST Linktree CID CREATION Task FUNCTION /******");
-    // Get linktree list fron localdb
-    // const linktrees_list_string = await namespaceWrapper.storeGet("linktrees");
+    const keyPair = nacl.sign.keyPair();
+    const publicKey = keyPair.publicKey;
+    const privateKey = keyPair.secretKey;
     
     const linktrees_list_object = {
         data: "data",
@@ -34,10 +35,7 @@ async function cidCreation(){
             signature: 'P6McSGFMniTdaH5546b8b1xuL91UtjxS9RnXMxBcg8ewuvKuFwijqJHH9BSZnEnqs1niE1xx7DreRVCNqK4ZJSE'
     };
     const messageUint8Array = new Uint8Array(Buffer.from(JSON.stringify(linktrees_list_object)));
-    const secretKey = nacl.sign.keyPair().secretKey;
-    const publicKey = nacl.sign.keyPair().publicKey;
-
-    const signedMessage = nacl.sign(messageUint8Array, secretKey);
+    const signedMessage = nacl.sign(messageUint8Array, privateKey);
     const signature = signedMessage.slice(0, nacl.sign.signatureLength);
     // console.log('Check Signature:', bs58.encode(signature));
 
@@ -54,27 +52,26 @@ async function cidCreation(){
 async function cidValidation(submission_value) {
     console.log("******/  TEST Linktree CID VALIDATION Task FUNCTION /******");
     const output = submission_value
-    console.log("RESPONSE DATA", output.data);
-    // for ()
-    const linktreeIndexData = output.data;
+    const linktrees_list_object = output.data;
+    console.log("RESPONSE DATA", linktrees_list_object);
     const publicKey = output.publicKey;
     console.log("PUBLIC KEY", publicKey);
     const signature = output.signature;
     console.log("SIGNATURE", signature);
-    if (!output.data || !signature || !publicKey) {
-        console.error("No data received from web3.storage");
-        return false;
-    }
-
-    // verify the signature
-    const linktreeIndexDataUint8Array = new Uint8Array(Buffer.from(JSON.stringify(linktreeIndexData)));
+    const messageUint8Array = new Uint8Array(Buffer.from(JSON.stringify(linktrees_list_object)));
     const signatureUint8Array = bs58.decode(signature);
     const publicKeyUint8Array = bs58.decode(publicKey);
+    // if (!output.data || !signature || !publicKey) {
+    //     console.error("No data received from web3.storage");
+    //     return false;
+    // }
+
+    // verify the signature
     // console.log("Data wait to verify", linktreeIndexDataUint8Array);
-    const check = await verifySignature(linktreeIndexDataUint8Array, signatureUint8Array, publicKeyUint8Array);
-    console.log(`Is the signature valid? ${check}`);
+    const isSignatureValid = await verifySignature(messageUint8Array, signatureUint8Array, publicKeyUint8Array);
+    console.log(`Is the signature valid? ${isSignatureValid}`);
     
-    return check;
+    return isSignatureValid;
 }
 
 async function verifySignature(linktreeIndexData, signature, publicKey) {
