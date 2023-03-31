@@ -7,33 +7,34 @@ const nacl = require('tweetnacl');
 // let submission_value = "bafybeienyavolrhhaphslyvvjkeby6kkcufnfmeigrf2xlsegoqdnj5ch4"
 async function test_cidValidation(submission_value) {
     console.log("******/  TEST Linktree CID VALIDATION Task FUNCTION /******");
-    const output = await dataFromCid(submission_value);
-    console.log("RESPONSE DATA", output.data);
+    const outputraw = await dataFromCid(submission_value);
+    const output = outputraw.data
     // for ()
-    try {   
-        const linktreeIndexData = output.data.data;
-        const publicKey = output.data.publicKey;
-        console.log("PUBLIC KEY", publicKey);
-        const signature = output.data.signature;
-        console.log("SIGNATURE", signature);
-        if (!output.data || !signature || !publicKey) {
-            console.error("No data received from web3.storage");
-            return false;
-        }
+    const linktrees_list_object = output.data;
+    console.log("RESPONSE DATA", linktrees_list_object);
+    const publicKey = output.publicKey;
+    console.log("PUBLIC KEY", publicKey);
+    const signature = output.signature;
+    console.log("SIGNATURE", signature);
 
-        // verify the signature
-        const linktreeIndexDataUint8Array = new TextEncoder().encode(JSON.stringify(linktreeIndexData));
-        const check = await verifySignature(linktreeIndexDataUint8Array, signature, publicKey);
-        console.log("CHECK", check);
-    
-      
-    } catch {
-        console.log("ERROR");
+    const messageUint8Array = new Uint8Array(Buffer.from(JSON.stringify(linktrees_list_object)));
+    const signatureUint8Array = bs58.decode(signature);
+    const publicKeyUint8Array = bs58.decode(publicKey);
+
+    if (!linktrees_list_object || !signature || !publicKey) {
+        console.error("No data received from web3.storage");
+        return false;
     }
+
+    // verify the signature
+    const isSignatureValid = await verifySignature(messageUint8Array, signatureUint8Array, publicKeyUint8Array);
+    console.log(`Is the signature valid? ${isSignatureValid}`);
+    
+    return isSignatureValid;
 }
 
-async function verifySignature(linktreeIndexData, signature, publicKey) {
-    return nacl.sign.detached.verify(linktreeIndexData, signature, publicKey);
+async function verifySignature(message, signature, publicKey) {
+    return nacl.sign.detached.verify(message, signature, publicKey);
 }
 
 module.exports = test_cidValidation;

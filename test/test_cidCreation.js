@@ -11,16 +11,17 @@ const storageClient = new Web3Storage({
 
 async function cidcreation(){
     console.log("******/  TEST Linktree CID CREATION Task FUNCTION /******");
+    const keyPair = nacl.sign.keyPair();
+    const publicKey = keyPair.publicKey;
+    const privateKey = keyPair.secretKey;
     // Get linktree list fron localdb
     const linktrees_list_string = await namespaceWrapper.storeGet("linktrees");
     const linktrees_list_object = JSON.parse(linktrees_list_string);
-    console.log("Getting linktrees list", linktrees_list_object);
 
-    const msg = new TextEncoder().encode(JSON.stringify(linktrees_list_object));
-    const secretKey = nacl.sign.keyPair().secretKey;
-    const signature = nacl.sign.detached(msg, secretKey);
-    console.log('Check Signature:', bs58.encode(signature));
-    const publicKey = nacl.sign.keyPair().publicKey;
+    const messageUint8Array = new Uint8Array(Buffer.from(JSON.stringify(linktrees_list_object)));
+    const signedMessage = nacl.sign(messageUint8Array, privateKey);
+    const signature = signedMessage.slice(0, nacl.sign.signatureLength);
+
     const submission_value = {
         data: linktrees_list_object,
         publicKey: bs58.encode(publicKey),
@@ -47,7 +48,6 @@ async function cidcreation(){
             console.log("ERROR IN STORING test linktree", err);
             res.status(404).json({ message: "ERROR in storing test linktree" });
         }
-
         return cid
     } else {
         console.log("NODE DO NOT HAVE ACCESS TO WEB3.STORAGE");

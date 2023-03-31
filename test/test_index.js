@@ -96,7 +96,7 @@ async function cidValidation(submission_value) {
     return isSignatureValid;
 }
 
-async function verifySignature(linktreeIndexData, signature, publicKey) {
-    return nacl.sign.detached.verify(linktreeIndexData, signature, publicKey);
+async function verifySignature(message, signature, publicKey) {
+    return nacl.sign.detached.verify(message, signature, publicKey);
 }
 test();
