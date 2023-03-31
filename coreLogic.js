@@ -32,7 +32,7 @@ async fetchSubmission(){
   return cid;
 }
 
-async generateDistributionList(round){
+async generateDistributionList(round, _dummyTaskState){
   try{
   console.log("GenerateDistributionList called");
   console.log("I am selected node");
@@ -44,9 +44,10 @@ async generateDistributionList(round){
   
   let distributionList = {};
     const taskAccountDataJSON = await namespaceWrapper.getTaskState();
+    if (taskAccountDataJSON == null) taskAccountDataJSON = _dummyTaskState;
     const submissions = taskAccountDataJSON.submissions[round];
     const submissions_audit_trigger =
-                  taskAccountDataJSON.submissions_audit_trigger[round];
+              taskAccountDataJSON.submissions_audit_trigger[round];
     if (submissions == null) {
       console.log("No submisssions found in N-2 round");
       return distributionList;
@@ -142,16 +143,32 @@ async shallowEqual(object1, object2) {
   return true;
 }
 
-validateDistribution = async(distributionListSubmitter, round) => {
+validateDistribution = async (
+  distributionListSubmitter,
+  round,
+  _dummyDistributionList,
+  _dummyTaskState,
+) => {
+
 
 // Write your logic for the validation of submission value here and return a boolean value in response
 // this logic can be same as generation of distribution list function and based on the comparision will final object , decision can be made
 
 try{
   console.log("Distribution list Submitter", distributionListSubmitter);
-  const fetchedDistributionList = JSON.parse(await namespaceWrapper.getDistributionList(distributionListSubmitter,round));
+  const rawDistributionList = await namespaceWrapper.getDistributionList(
+    distributionListSubmitter,
+    round,
+  );
+  let fetchedDistributionList;
+  if (rawDistributionList == null) {
+    fetchedDistributionList = _dummyDistributionList;
+  } else {
+    fetchedDistributionList = JSON.parse(rawDistributionList);
+  }
+
   console.log("FETCHED DISTRIBUTION LIST",fetchedDistributionList);
-  const generateDistributionList = await this.generateDistributionList(round);
+  const generateDistributionList = await this.generateDistributionList(round, _dummyTaskState,);
 
   // compare distribution list 
 
