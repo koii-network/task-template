@@ -1,78 +1,59 @@
-const { namespaceWrapper } = require("./namespaceWrapper");
-const createFile = require("./helpers/createFile.js");
-const deleteFile = require("./helpers/deleteFile");
-const fs = require("fs");
-const { Web3Storage, getFilesFromPath } = require("web3.storage");
+const { namespaceWrapper } = require('./namespaceWrapper');
+const createFile = require('./helpers/createFile.js');
+const deleteFile = require('./helpers/deleteFile');
+const fs = require('fs');
+const { Web3Storage, getFilesFromPath } = require('web3.storage');
 const storageClient = new Web3Storage({
-  token: process.env.SECRET_WEB3_STORAGE_KEY,
+  token:
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGY0ODYxMzAzOTdDNTY1QzlDYTRCOTUzZTA2RWQ4NUI4MGRBQzRkYTIiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjYzNjU1OTk5MDMsIm5hbWUiOiJTb21hIn0.TU-KUFS9vjI9blN5dx6VsLLuIjJnpjPrxDHBvjXQUxw',
 });
-const { MAIN_ACCOUNT_PUBKEY } = require("./init");
-const crypto = require("crypto");
+const bs58 = require('bs58');
+const nacl = require('tweetnacl');
 
-module.exports = async() => {
-    console.log("******/  IN Linktree Task FUNCTION /******");
-    // Customize linktree test data
-    console.log("Getting linktrees list");
-    const linktrees_list_string = await namespaceWrapper.storeGet("linktrees");
-    const linktrees_list_object = JSON.parse(linktrees_list_string);
-    console.log("Getting linktrees list", linktrees_list_object);
+module.exports = async () => {
+  console.log('******/  IN Linktree Task FUNCTION /******');
+  // Customize linktree test data
+  const keyPair = nacl.sign.keyPair();
+  const publicKey = keyPair.publicKey;
+  const privateKey = keyPair.secretKey;
+  // Get linktree list fron localdb
+  const linktrees_list_string = await namespaceWrapper.storeGet('linktrees');
+  const linktrees_list_object = JSON.parse(linktrees_list_string);
 
-    // loop through the linktrees_list to get the userIndex and upload then to web3.storage
-    for (let i = 0; i < linktrees_list_object.length; i++) {
-      console.log("i", i , "linktrees_list_object.length", linktrees_list_object.length);
-      const linktrees = linktrees_list_object[i];
-      console.log("linktrees", linktrees);
-  
-      if (linktrees) {
-        const linktree_data_payload = JSON.stringify(linktrees.data);
+  const messageUint8Array = new Uint8Array(
+    Buffer.from(JSON.stringify(linktrees_list_object)),
+  );
+  const signedMessage = nacl.sign(messageUint8Array, privateKey);
+  const signature = signedMessage.slice(0, nacl.sign.signatureLength);
 
-        const hashLinktreeIndex = crypto
-        .createHash("sha256")
-        .update(linktree_data_payload)
-        .digest("hex");
+  const submission_value = {
+    data: linktrees_list_object,
+    publicKey: bs58.encode(publicKey),
+    signature: bs58.encode(signature),
+  };
+  // upload the index of the linktree on web3.storage
+  const path = `testLinktree/test.json`;
+  console.log('PATH', path);
+  if (!fs.existsSync('testLinktree')) fs.mkdirSync('testLinktree');
+  await createFile(path, submission_value);
 
-        console.log("HASH OF LINKTREE INDEX", hashLinktreeIndex);
+  if (storageClient) {
+    const file = await getFilesFromPath(path);
+    const cid = await storageClient.put(file);
+    console.log('User Linktrees uploaded to IPFS: ', cid);
 
-        // singing the payload using the nodes private key and sending the public key along with the payload
-        // const signature = await namespaceWrapper.payloadSigning(hashLinktreeIndex);
-        // console.log("SIGNATURE ON HASH OF LINKTREE INDEX", signature);
+    // deleting the file from fs once it is uploaded to IPFS
+    await deleteFile(path);
 
-        const indexSignature = {
-        data: linktree_data_payload,
-        pubKey: MAIN_ACCOUNT_PUBKEY,
-        // signature: signature,
-        };
-
-        console.log("INDEX SIGNATURE DATA", indexSignature);
-
-        // upload the index of the linktree on web3.storage
-        const path = `userIndex/test.json`;
-        console.log("PATH", path);
-        if (!fs.existsSync("userIndex")) fs.mkdirSync("userIndex");
-        await createFile(path, indexSignature);
-
-        if (storageClient) {
-        const file = await getFilesFromPath(path);
-        // const cid = await storageClient.put(file);
-        const cid = "testingCID" + i;
-        console.log("User index uploaded to IPFS: ", cid);
-
-        // deleting the file from fs once it is uploaded to IPFS
-        await deleteFile(path);
-
-        // Store the cid in level db
-        try {
-            await namespaceWrapper.storeSet("testlinktree", cid);
-          } catch (err) {
-            console.log("ERROR IN STORING test linktree", err);
-            res.status(404).json({ message: "ERROR in storing test linktree" });
-          }
-
-        return cid
-
-        } else {
-        console.log("NODE DO NOT HAVE ACCESS TO WEB3.STORAGE");
-        }
-      }
+    // Store the cid in localdb
+    try {
+      await namespaceWrapper.storeSet('testlinktree', cid);
+    } catch (err) {
+      console.log('ERROR IN STORING test linktree', err);
+      res.status(404).json({ message: 'ERROR in storing test linktree' });
     }
+    return cid;
+  } else {
+    console.log('NODE DO NOT HAVE ACCESS TO WEB3.STORAGE');
+  }
 };
