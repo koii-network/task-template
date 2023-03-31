@@ -32,21 +32,6 @@ try {
           redirectUrl: 'https://twitter.com/blockchainbalak',
         },
         {
-          key: 'linkedin',
-          label: 'LinkedIn',
-          redirectUrl: 'https://www.linkedin.com/in/prakarshpathak/',
-        },
-        {
-          key: 'youtube',
-          label: 'YouTube',
-          redirectUrl: 'https://www.youtube.com/channel/UCIe3FlAWg06kGOrm1-c8oJg',
-        },
-        {
-          key: 'discord',
-          label: 'Discord',
-          redirectUrl: 'https://discord.com/invite/ahxuCtm',
-        },
-        {
           key: 'github',
           label: 'GitHub',
           redirectUrl: 'https://github.com/spheronFdn/',
