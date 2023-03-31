@@ -1,3 +1,4 @@
+// test validation without cid
 const { namespaceWrapper } = require("../namespaceWrapper");
 const createFile = require("../helpers/createFile.js");
 const deleteFile = require("../helpers/deleteFile");
@@ -14,9 +15,9 @@ async function test() {
     // 1 test submission
     // await test_submission();
     // 2 test the cid creation (CID need to contain all of the linktree data and signature)
-    const cid = await cidCreation();
+    const submission_value = await cidCreation();
     // 3 test the validation of the cid
-    const check = await cidValidation(cid)
+    const check = await cidValidation(submission_value)
     // 4 iterate over the cid and create distribution
     // 5 audit the distribution
 }
@@ -25,16 +26,18 @@ async function test() {
 async function cidCreation(){
     console.log("******/  TEST Linktree CID CREATION Task FUNCTION /******");
     // Get linktree list fron localdb
-    const linktrees_list_string = await namespaceWrapper.storeGet("linktrees");
-    const linktrees_list_object = JSON.parse(linktrees_list_string);
-
+    // const linktrees_list_string = await namespaceWrapper.storeGet("linktrees");
+    
+    const linktrees_list_object = {
+        data: "data",
+            publicKey: '7AwybFMYogGa8LJ3n9i8QthUs6ybEcanC8UPejM76U7h',
+            signature: 'P6McSGFMniTdaH5546b8b1xuL91UtjxS9RnXMxBcg8ewuvKuFwijqJHH9BSZnEnqs1niE1xx7DreRVCNqK4ZJSE'
+    };
+    const messageUint8Array = new Uint8Array(Buffer.from(JSON.stringify(linktrees_list_object)));
     const secretKey = nacl.sign.keyPair().secretKey;
     const publicKey = nacl.sign.keyPair().publicKey;
 
-    const msg = new Uint8Array(Buffer.from(JSON.stringify(linktrees_list_object)));
-    console.log("MSG", msg);
-
-    const signedMessage = nacl.sign(msg, secretKey);
+    const signedMessage = nacl.sign(messageUint8Array, secretKey);
     const signature = signedMessage.slice(0, nacl.sign.signatureLength);
     // console.log('Check Signature:', bs58.encode(signature));
 
@@ -44,42 +47,19 @@ async function cidCreation(){
         signature: bs58.encode(signature),
     }
     // upload the index of the linktree on web3.storage
-    const path = `testLinktree/test.json`;
-    console.log("PATH", path);
-    if (!fs.existsSync("testLinktree")) fs.mkdirSync("testLinktree");
-    await createFile(path, submission_value);
-
-    if (storageClient) {
-        const file = await getFilesFromPath(path);
-        const cid = await storageClient.put(file);
-        console.log("User Linktrees uploaded to IPFS: ", cid);
-
-        // deleting the file from fs once it is uploaded to IPFS
-        await deleteFile(path);
-
-        // Store the cid in localdb
-        try {
-            await namespaceWrapper.storeSet("testlinktree", cid);
-        } catch (err) {
-            console.log("ERROR IN STORING test linktree", err);
-            res.status(404).json({ message: "ERROR in storing test linktree" });
-        }
-        return cid
-    } else {
-        console.log("NODE DO NOT HAVE ACCESS TO WEB3.STORAGE");
-    }
+    return submission_value
 }
 
 
 async function cidValidation(submission_value) {
     console.log("******/  TEST Linktree CID VALIDATION Task FUNCTION /******");
-    const output = await dataFromCid(submission_value);
+    const output = submission_value
     console.log("RESPONSE DATA", output.data);
     // for ()
-    const linktreeIndexData = output.data.data;
-    const publicKey = output.data.publicKey;
+    const linktreeIndexData = output.data;
+    const publicKey = output.publicKey;
     console.log("PUBLIC KEY", publicKey);
-    const signature = output.data.signature;
+    const signature = output.signature;
     console.log("SIGNATURE", signature);
     if (!output.data || !signature || !publicKey) {
         console.error("No data received from web3.storage");
