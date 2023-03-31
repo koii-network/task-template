@@ -10,5 +10,8 @@ module.exports={
     },
     stats:{
       moduleTrace:false
+    },
+    node:{
+      __dirname: true
     }
 }
