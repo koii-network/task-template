@@ -35,14 +35,15 @@ class CoreLogic {
     try {
       console.log('GenerateDistributionList called');
       console.log('I am selected node');
-
+      console.log('Round', round, 'Task State', _dummyTaskState);
       // Write the logic to generate the distribution list here by introducing the rules of your choice
 
       /*  **** SAMPLE LOGIC FOR GENERATING DISTRIBUTION LIST ******/
 
       let distributionList = {};
-      const taskAccountDataJSON = await namespaceWrapper.getTaskState();
+      let taskAccountDataJSON = await namespaceWrapper.getTaskState();
       if (taskAccountDataJSON == null) taskAccountDataJSON = _dummyTaskState;
+      console.log('Task Account Data', taskAccountDataJSON);
       const submissions = taskAccountDataJSON.submissions[round];
       const submissions_audit_trigger =
         taskAccountDataJSON.submissions_audit_trigger[round];
@@ -67,7 +68,7 @@ class CoreLogic {
             const votes = submissions_audit_trigger[candidatePublicKey].votes;
             let numOfVotes = 0;
             for (let index = 0; index < votes.length; index++) {
-              if (votes[i].is_valid) numOfVotes++;
+              if (votes[index].is_valid) numOfVotes++;
               else numOfVotes--;
             }
             if (numOfVotes < 0) continue;
@@ -171,7 +172,8 @@ class CoreLogic {
 
       // compare distribution list
 
-      const parsed = JSON.parse(fetchedDistributionList);
+      const parsed = fetchedDistributionList;
+      console.log('compare distribution list', parsed, generateDistributionList);
       const result = await this.shallowEqual(parsed, generateDistributionList);
       console.log('RESULT', result);
       return result;
