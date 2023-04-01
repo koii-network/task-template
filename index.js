@@ -9,11 +9,11 @@ const fs = require('fs');
 
 
 async function setup() {
-  const logFile = fs.createWriteStream('./console.log', { flags: 'a' });
+  const logFile = fs.createWriteStream('./namespace/logs.txt', { flags: 'a' });
 
   // Overwrite the console.log function to write to the log file
   console.log = function (message) {
-    logFile.write(`${new Date().toISOString()} - ${message}\n`);
+    logFile.write(`${new Date().toISOString()} - ${message}<br>\n`);
   };
 
   console.log("setup function called");
@@ -214,9 +214,9 @@ if (app) {
     allLinktrees = JSON.parse(allLinktrees || '[]');
     return res.status(200).send(allLinktrees);
   });
-  const port = process.env.SERVICE_URL || 3000;
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
+  app.get("/get-logs", async (req, res) => {
+    const logs = fs.readFileSync("./namespace/logs.txt", "utf8")
+    res.status(200).send(logs);
+  })
 }
 

@@ -19,6 +19,8 @@ services:
       - redis
     ports:
       - '8080:8080'
+      - '10000:10000'
+
     env_file: .env-local
 
     container_name: task_node
