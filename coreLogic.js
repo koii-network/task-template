@@ -69,7 +69,7 @@ async generateDistributionList(round){
           const votes = submissions_audit_trigger[candidatePublicKey].votes;
           let numOfVotes = 0;
           for (let index = 0; index < votes.length; index++) {
-            if(votes[i].is_valid)
+            if(votes[index].is_valid)
               numOfVotes++;
             else numOfVotes--;
           }

@@ -28,9 +28,9 @@ If this is your first time writing a Koii Task, you might want to use the [task 
 ## Runtime Options
 There are two ways to run your task when doing development:
 
-1. With Timer ON (see .env-local)- When the timer is ON, IPC calls are made by calculating the average time slots of all the task running your node. 
+1. With GLOBAL_TIMERS true (see .env-local)- When the timer is true, IPC calls are made by calculating the average time slots of all the task running your node. 
 
-2. With Timer OFF - This allows you to do manual calls to K2 and disables the triggers for round managemnt on K2. Transactions are only accepted during the correct period. Guide for manual calls is in index.js
+2. With GLOBAL_TIMERS False - This allows you to do manual calls to K2 and disables the triggers for round managemnt on K2. Transactions are only accepted during the correct period. Guide for manual calls is in index.js
 
 # Modifying CoreLogic.js
 Task nodes will trigger a set of predefined functions during operation. 
@@ -87,13 +87,17 @@ If you need to create a Koii wallet you can follow the instructions [here](https
 ### Deploy to K2
 To test the task with the [K2 Settlement Layer](https://docs.koii.network/settlement-layer/k2-tick-tock-fast-blocks) you'll need to deploy it. 
 
-We have included our CLI for creating and publish tasks to the K2 network in this repo. Tips on this flow can be found [in the docs](https://docs.koii.network/koii-software-toolkit-sdk/create-task-cli). One important thing to note is when you're presented with the choice of ARWEAVE, IPFS, or DEVELOPMENT you can select DEVELOPMENT and enter `main` in the following prompt. This will tell the task node to look for a `main.js` file in the `dist` folder. You can create this locally by running `yarn webpack`.
+You can use our CLI to publish your tasks on our testnet using `npx @_koii/create-task-cli`. Tips on using CLI to deploy the task can be found [in the docs](https://docs.koii.network/koii-software-toolkit-sdk/create-task-cli). 
+
+It is also  possible to create the task using `config-task.yml` file. When running CLI you can select the option to create task using YML and it expects takes the parameters mentioned on `config-task.yml` and look of `id.json` on your current directory. Makes sure to edit the  config file as per your requirements.
+
+One important thing to note is when you're presented with the choice of ARWEAVE, IPFS, or DEVELOPMENT you can select DEVELOPMENT and enter `main` in the following prompt. This will tell the task node to look for a `main.js` file in the `dist` folder. You can create this locally by running `yarn webpack`.
 
 ## Run a node locally
 If you want to get a closer look at the console and test environment variables, you'll want to use the included docker-compose stack to run a task node locally.
 
 1. Link or copy your wallet into the `config` folder as `id.json`
-2. Open `.env-local` and add your TaskID you obtained after deploying to K2 into the `TASKS` environment variable.\
+2. Open `.env-local` and add your TaskID you obtained after deploying to K2 into the `TASKS` environment variable.
 3. Run `docker compose up` and watch the output of the `task_node`. You can exit this process when your task has finished, or any other time if you have a long running persistent task.
 
 ### Redeploying
