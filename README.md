@@ -6,7 +6,7 @@ Tasks run following a periodic structure of 'rounds':
 
 Each round is set by a specific time period, and nodes participate by uploading data to IPFS, posting CIDs to the K2 settlement layer, and sending messages across REST APIs and WebSockets.
 
-For more information on how the Task Flow works, check out [the runtime environment docs](https://docs.koii.network/microservices-and-tasks/what-are-tasks/gradual-consensus).
+For more information on how the Task Flow works, check out [the runtime environment docs](https://docs.koii.network/develop/microservices-and-tasks/what-are-tasks/gradual-consensus#why-is-it-gradual).
 
 If this is your first time writing a Koii Task, you might want to use the [task organizer](https://www.figma.com/community/file/1220194939977550205/Task-Outline).
 
@@ -80,13 +80,13 @@ If you have already generated a Koii wallet on yoru filesystem you can obtain th
 
 The `Keypair Path` will be used to pay gas fees and fund your bounty wallet by inputting it into the task CLI.
 
-If you need to create a Koii wallet you can follow the instructions [here](https://docs.koii.network/koii-software-toolkit-sdk/using-the-cli#create-a-koii-wallet). Make sure to either copy your keypair path from the output, or use the method above to supply the task CLI with the proper wallet path.
+If you need to create a Koii wallet you can follow the instructions [here](https://docs.koii.network/develop/koii-software-toolkit-sdk/using-the-cli#create-a-koii-wallet). Make sure to either copy your keypair path from the output, or use the method above to supply the task CLI with the proper wallet path.
 
 ### Deploy to K2
 
-To test the task with the [K2 Settlement Layer](https://docs.koii.network/settlement-layer/k2-tick-tock-fast-blocks) you'll need to deploy it.
+To test the task with the [K2 Settlement Layer](https://docs.koii.network/develop/settlement-layer/k2-tick-tock-fast-blocks#docusaurus_skipToContent_fallback) you'll need to deploy it.
 
-To publish tasks to the K2 network use `npx @_koii/create-task-cli` . You have two options to create your task using `config-task.yml` and using the `cli`. Check out the sample `config-task.yml` attached in this repo, by default it will look for both `config-task.yml` and `id.json` in your current directory and if not deteched you will have an option to enter your path. Tips on this flow and detailed meaning of each task parameter can be found [in the docs](https://docs.koii.network/koii-software-toolkit-sdk/create-task-cli). One important thing to note is when you're presented with the choice of ARWEAVE, IPFS, or DEVELOPMENT you can select DEVELOPMENT and enter `main` in the following prompt. This will tell the task node to look for a `main.js` file in the `dist` folder. You can create this locally by running `yarn webpack`.
+To publish tasks to the K2 network use `npx @_koii/create-task-cli` . You have two options to create your task using `config-task.yml` and using the `cli`. Check out the sample `config-task.yml` attached in this repo, by default it will look for both `config-task.yml` and `id.json` in your current directory and if not deteched you will have an option to enter your path. Tips on this flow and detailed meaning of each task parameter can be found [in the docs](https://docs.koii.network/develop/koii-software-toolkit-sdk/create-task-cli). One important thing to note is when you're presented with the choice of ARWEAVE, IPFS, or DEVELOPMENT you can select DEVELOPMENT and enter `main` in the following prompt. This will tell the task node to look for a `main.js` file in the `dist` folder. You can create this locally by running `yarn webpack`.
 
 ## Run a node locally
 
@@ -102,4 +102,4 @@ You do not need to publish your task every time you make modifications. You do h
 
 ### Environment variables
 
-Open the `.env-local` file and make any modifications you need. You can include environment variables that your task expects to be present here, in case you're using [custom secrets](https://docs.koii.network/microservices-and-tasks/task-development-kit-tdk/using-the-task-namespace/keys-and-secrets).
+Open the `.env-local` file and make any modifications you need. You can include environment variables that your task expects to be present here, in case you're using [custom secrets](https://docs.koii.network/develop/microservices-and-tasks/task-development-kit-tdk/using-the-task-namespace/keys-and-secrets).
