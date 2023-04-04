@@ -1,36 +1,66 @@
-# Name and desciption sof your task
-task_name: "test-task"
-task_description: "This task is to test out the namespace function"
+#Provide the taskId if you are updating the task
+task_id: ''
+# Name and desciption of your task
+task_name: 'Your-task-name'
+task_description: 'This task is to test out the namespace function'
+
 # network value can be DEVELOPMENT , ARWEAVE or IPFS
-task_executable_network: "DEVELOPMENT"
-# Provide your web.storage key in case of IPFS otherwise leave blank
-secret_web3_storage_key: ""
+task_executable_network: 'DEVELOPMENT'
+
+# Provide your web3.storage key as it is needed for uploading your metadata
+secret_web3_storage_key: ''
 
 # Path to your executable webpack if the selected network is IPFS otherwise leave blank
-task_audit_program: ""
+task_audit_program: ''
 
 # Provide your transaction ID in case of ARWEAVE and in case of DEVELOPMENT give your executable name as main otherwise leave blank
-task_audit_program_id: "main"
+task_audit_program_id: 'main'
 
 # Total round time of your task : it must be given in slots and each slot is rougly equal to 4ms
-round_time: "600"
+round_time: 600
 
-audit_window: "200"
-submission_window: "200"
+audit_window: 200
+submission_window: 200
 
 # Amounts in KOII
 
-minimum_stake_amount: "5"
-total_bounty_amount: "10"
-bounty_amount_per_round: "1"
+minimum_stake_amount: 5
+
+# total_bounty_amount cannot be grater than bounty_amount_per_round
+# total bounty is not accepted in case of update task
+total_bounty_amount: 10
+
+bounty_amount_per_round: 1
 
 #Number of times allowed to re-submit the distribution  list in case the distribution list is audited
-allowed_failed_distributions: "4"
-
-# CID of metadata
-task_metadata: ""
-task_locals: ""
-koii_vars: ""
+allowed_failed_distributions: 4
 
 #Space in MBs
-space: "10"
+space: 10
+
+# Note that the value field in RequirementTag is optional, so it is up to you to include it or not based on your use case.
+# To add more global variables and task variables, please refer the type,value,description format shown below
+
+author: 'Your name'
+description: 'task-description'
+repositoryUrl: 'Github/gitlab link'
+imageUrl: 'Enter you image URL'
+requirementsTags:
+  - type: GLOBAL_VARIABLE
+    value: 'WEB3.STORAGE SECRET KEY'
+    description: 'used to connect web3.storage'
+  - type: TASK_VARIABLE
+    value: 'SCAPING URL'
+    description: 'url from which you want to scrape'
+  - type: CPU
+    value: '4-core'
+  - type: RAM
+    value: '5 GB'
+  - type: STORAGE
+    value: 'test'
+  - type: NETWORK
+    value: 'test'
+  - type: ARCHITECTURE
+    value: 'AMD'
+  - type: OS
+    value: 'OSX'
