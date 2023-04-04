@@ -114,7 +114,7 @@ async function setup() {
 
   */
 
-  console.log("*******************TESTING*******************")
+  // console.log("*******************TESTING*******************")
   // Get the task state 
   // console.log(await namespaceWrapper.getTaskState());
 
@@ -127,7 +127,7 @@ async function setup() {
 
 
   // Call to do the work for the task
-  await coreLogic.task();
+  // await coreLogic.task();
 
   // Submission to K2 (Preferablly you should submit the cid received from IPFS)
   // await coreLogic.submitTask(round - 1);
