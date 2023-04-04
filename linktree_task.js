@@ -4,8 +4,7 @@ const deleteFile = require('./helpers/deleteFile');
 const fs = require('fs');
 const { Web3Storage, getFilesFromPath } = require('web3.storage');
 const storageClient = new Web3Storage({
-  token:
-    '',
+  token: process.env.SECRET_WEB3_STORAGE_KEY,
 });
 const bs58 = require('bs58');
 const nacl = require('tweetnacl');
@@ -32,9 +31,9 @@ module.exports = async () => {
     signature: bs58.encode(signature),
   };
   // upload the index of the linktree on web3.storage
-  const path = `testLinktree/test.json`;
+  const path = `./testLinktree/test.json`;
+  if (!fs.existsSync('./testLinktree')) fs.mkdirSync('./testLinktree');
   console.log('PATH', path);
-  if (!fs.existsSync('testLinktree')) fs.mkdirSync('testLinktree');
   await createFile(path, submission_value);
 
   if (storageClient) {
