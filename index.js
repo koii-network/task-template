@@ -9,11 +9,18 @@ const fs = require('fs');
 
 
 async function setup() {
-  const logFile = fs.createWriteStream('./namespace/logs.txt', { flags: 'a' });
+  const originalConsoleLog = console.log;
+
+  // Create a writable stream to the log file
+  const logStream = fs.createWriteStream('./namespace/logs.txt', { flags: 'a' });
 
   // Overwrite the console.log function to write to the log file
-  console.log = function (message) {
-    logFile.write(`${new Date().toISOString()} - ${message}<br>\n`);
+  console.log = function (...args) {
+    originalConsoleLog.apply(console, args);
+    const message = args.map(arg => (typeof arg === 'object' ? JSON.stringify(arg) : arg)).join(' ') + '\n';
+
+    // Write the message to the log file
+    logStream.write(message);
   };
 
   console.log("setup function called");
