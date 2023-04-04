@@ -20,11 +20,10 @@ class NamespaceWrapper {
     return new Promise((resolve, reject) => {
       localLevelDB.get(key, { asBuffer: false }, (err, value) => {
         if (err) {
-          reject(err);
+          resolve(null);
         } else {
           resolve(value);
         }
-
       });
     });
   }
