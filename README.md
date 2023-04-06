@@ -103,3 +103,11 @@ You do not need to publish your task every time you make modifications. You do h
 ### Environment variables
 
 Open the `.env-local` file and make any modifications you need. You can include environment variables that your task expects to be present here, in case you're using [custom secrets](https://docs.koii.network/develop/microservices-and-tasks/task-development-kit-tdk/using-the-task-namespace/keys-and-secrets).
+
+### API endpoints
+
+By default your API's will be exposed on base URL: http://localhost:8080/task/{TASKID}
+
+You can check out the state of your task using the default API : http://localhost:8080/task/{TASKID}/taskState
+
+`TASKID` is the id that you get then you create your task using `npx`
