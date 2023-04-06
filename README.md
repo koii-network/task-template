@@ -110,4 +110,4 @@ By default your API's will be exposed on base URL: http://localhost:8080/task/{T
 
 You can check out the state of your task using the default API : http://localhost:8080/task/{TASKID}/taskState
 
-`TASKID` is the id that you get then you create your task using `npx`
+`TASKID` is the id that you get when you create your task using `npx`
