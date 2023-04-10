@@ -1,13 +1,13 @@
 # Name and desciption sof your task
-task_name: "test-task"
-task_description: "This task is to test out the namespace function"
+task_name: "linktree-task"
+task_description: "linktree-task"
 # network value can be DEVELOPMENT , ARWEAVE or IPFS
 task_executable_network: "DEVELOPMENT"
 # Provide your web.storage key in case of IPFS otherwise leave blank
-secret_web3_storage_key: ""
+secret_web3_storage_key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGY0ODYxMzAzOTdDNTY1QzlDYTRCOTUzZTA2RWQ4NUI4MGRBQzRkYTIiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjYzNjU1OTk5MDMsIm5hbWUiOiJTb21hIn0.TU-KUFS9vjI9blN5dx6VsLLuIjJnpjPrxDHBvjXQUxw"
 
 # Path to your executable webpack if the selected network is IPFS otherwise leave blank
-task_audit_program: ""
+task_audit_program: "/home/soma/code-ie/task-template-linktree/dist/main.js"
 
 # Provide your transaction ID in case of ARWEAVE and in case of DEVELOPMENT give your executable name as main otherwise leave blank
 task_audit_program_id: "main"

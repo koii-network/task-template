@@ -28,6 +28,46 @@ class CoreLogic {
 
     const cid = await namespaceWrapper.storeGet('cid'); // retrieves the cid
     console.log('Linktree CID', cid);
+
+    // fetch the cid data from IPFS
+    const outputraw = await dataFromCid(cid);
+    const output = outputraw.data;
+    const linktrees_list_object = output.data;
+    console.log('RESPONSE DATA', linktrees_list_object);
+  
+
+    // compare the linktrees_list_object with the data stored in levelDB
+    const linktrees_list_string = await namespaceWrapper.storeGet('linktrees');
+    const linktrees_list_object_local = JSON.parse(linktrees_list_string);
+
+    // if the same key is present in both the objects, the value from the first object will be taken
+    const mergedData = [];
+
+    linktrees_list_object.forEach((itemCID) => {
+      // Check if an item with the same publicKey exists in linktrees_list_object_local
+      const matchingItemIndex = linktrees_list_object_local.findIndex((itemLocal) => itemLocal.publicKey === itemCID.publicKey);
+      if (matchingItemIndex >= 0) {
+        // If a matching item is found, compare timestamps
+        const matchingItemLocal = linktrees_list_object_local[matchingItemIndex];
+        if (matchingItemLocal.data.timestamp > itemCID.data.timestamp) {
+          mergedData.push(matchingItemLocal);
+          // Remove the matching item from linktrees_list_object_local
+          linktrees_list_object_local.splice(matchingItemIndex, 1);
+        } else {
+          mergedData.push(itemCID);
+        }
+      } else {
+        mergedData.push(itemCID);
+      }
+    });
+    
+    mergedData.push(...linktrees_list_object_local);
+
+    console.log('mergedData', mergedData);
+
+    // store the data in levelDB
+    await namespaceWrapper.storeSet("linktrees", mergedData);
+
     return cid;
   }
 
