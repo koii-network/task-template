@@ -4,6 +4,7 @@ const express = require('express');
 const { namespaceWrapper, taskNodeAdministered } = require("./namespaceWrapper");
 const {default: axios} = require('axios');
 const bs58 = require('bs58');
+const solanaWeb3 = require('@solana/web3.js');
 const nacl = require('tweetnacl');
 const fs = require('fs');
 
@@ -183,7 +184,7 @@ if (app) {
     } else {
       console.log(linktree);
     }
-
+    const { secretKey: secretKey } = solanaWeb3.Keypair.generate();
     // TODO: validate the linktree structure here
     /*
       1. Must have the following structure
@@ -198,23 +199,33 @@ if (app) {
           timestamp:76576465,
         },
         publicKey:"FnQm11NXJxPSjza3fuhuQ6Cu4fKNqdaPkVSRyLSWf14d",
-        signature:"hjgasdjasbhmnbjhasgdkjsahjdkhgsakjdhgsajhyg"
       }
     */
 
     // Use the code below to sign the data payload
 
     const msg = new TextEncoder().encode(JSON.stringify(linktree.data));
-    const secretKey = nacl.sign.keyPair().secretKey;
-    const signature = nacl.sign.detached(msg, secretKey);
+    let signature = bs58.encode(nacl.sign.detached(msg, secretKey));
 
-    console.log('Check Signature:', bs58.encode(signature));
+    let proof = {
+      publicKey: linktree.publicKey,
+      signature: signature,
+    }
+    console.log('Check Proof:', proof);
+
     let allLinktrees = await namespaceWrapper.storeGet('linktrees');
     allLinktrees = JSON.parse(allLinktrees || '[]');
     allLinktrees.push(linktree);
     console.log("NEW all Linktrees: ", allLinktrees);
     await namespaceWrapper.storeSet('linktrees', JSON.stringify(allLinktrees));
-    return res.status(200).send({message: 'Linktree registered successfully'});
+
+    let allproofs = await namespaceWrapper.storeGet('proofs');
+    allproofs = JSON.parse(allproofs || '[]');
+    allproofs.push(proof);
+    console.log("NEW all Proofs: ", allproofs);
+    await namespaceWrapper.storeSet('proofs', JSON.stringify(allproofs));
+
+    return res.status(200).send({message: 'Proof and linktree registered successfully'});
   });
   app.get('/get-all-linktrees', async (req, res) => {
     let allLinktrees = await namespaceWrapper.storeGet('linktrees');

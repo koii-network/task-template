@@ -41,11 +41,9 @@ try {
     },
     publicKey: publicKey,
   };
-  const msg = new TextEncoder().encode(JSON.stringify(payload.data));
-  payload.signature = bs58.encode(nacl.sign.detached(msg, secretKey));
 
   // Check payload
-  console.log(payload);
+  // console.log(payload);
   
   await axios
     .post('http://localhost:10000/register-linktree', {payload})
