@@ -224,7 +224,7 @@ if (app) {
     let allproofs = await namespaceWrapper.storeGet(`proofs`);
     allproofs = JSON.parse(allproofs || '[]');
     allproofs.push(proof);
-    // console.log("NEW all Proofs: ", allproofs);
+    console.log("NEW all Proofs: ", allproofs);
     await namespaceWrapper.storeSet('proofs', JSON.stringify(allproofs));
 
     return res.status(200).send({message: 'Proof and linktree registered successfully'});

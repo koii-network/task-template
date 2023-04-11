@@ -16,19 +16,19 @@ module.exports = async () => {
   const publicKey = keyPair.publicKey;
   const privateKey = keyPair.secretKey;
   // Get linktree list fron localdb
-  const linktrees_list_string = await namespaceWrapper.storeGet('linktrees');
-  const linktrees_list_object = JSON.parse(linktrees_list_string);
+  const proofs_list_string = await namespaceWrapper.storeGet('proofs');
+  const proofs_list_object = JSON.parse(proofs_list_string);
 
   const messageUint8Array = new Uint8Array(
-    Buffer.from(JSON.stringify(linktrees_list_object)),
+    Buffer.from(JSON.stringify(proofs_list_object)),
   );
   const signedMessage = nacl.sign(messageUint8Array, privateKey);
   const signature = signedMessage.slice(0, nacl.sign.signatureLength);
 
   const submission_value = {
-    // data: linktrees_list_object,
-    publicKey: bs58.encode(publicKey),
-    signature: bs58.encode(signature),
+    proofs: proofs_list_object,
+    node_publicKey: bs58.encode(publicKey),
+    node_signature: bs58.encode(signature),
   };
   // upload the index of the linktree on web3.storage
   const path = `./Linktree/proofs.json`;
