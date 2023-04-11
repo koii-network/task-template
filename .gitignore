@@ -13,3 +13,4 @@ localKOIIDB
 .env
 taskStateInfoKeypair.json
 linktrees
+test/testdb
