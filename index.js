@@ -206,20 +206,21 @@ if (app) {
 
     const msg = new TextEncoder().encode(JSON.stringify(linktree.data));
     let signature = bs58.encode(nacl.sign.detached(msg, secretKey));
+    let pubkey = linktree.publicKey
 
     let proof = {
-      publicKey: linktree.publicKey,
+      publicKey: pubkey,
       signature: signature,
     }
     console.log('Check Proof:', proof);
+    // use fs to write the linktree and proof to a file
+    fs.writeFileSync(__dirname + "/linktrees/" + `linktree_${pubkey}.json`, JSON.stringify(linktree));
+    // fs.writeFileSync('proof.json', JSON.stringify(proof));
+    await namespaceWrapper.storeSet(`linktree:${pubkey}`, JSON.stringify(linktree));
 
-    let allLinktrees = await namespaceWrapper.storeGet('linktrees');
-    allLinktrees = JSON.parse(allLinktrees || '[]');
-    allLinktrees.push(linktree);
-    console.log("NEW all Linktrees: ", allLinktrees);
-    await namespaceWrapper.storeSet('linktrees', JSON.stringify(allLinktrees));
+    // Store all of the proofs into CID
 
-    let allproofs = await namespaceWrapper.storeGet('proofs');
+    let allproofs = await namespaceWrapper.storeGet(`proofs`);
     allproofs = JSON.parse(allproofs || '[]');
     allproofs.push(proof);
     console.log("NEW all Proofs: ", allproofs);
@@ -227,14 +228,27 @@ if (app) {
 
     return res.status(200).send({message: 'Proof and linktree registered successfully'});
   });
-  app.get('/get-all-linktrees', async (req, res) => {
-    let allLinktrees = await namespaceWrapper.storeGet('linktrees');
-    allLinktrees = JSON.parse(allLinktrees || '[]');
-    return res.status(200).send(allLinktrees);
-  });
+  // app.get('/get-all-linktrees', async (req, res) => {
+  //   let allLinktrees = await namespaceWrapper.storeGet('linktrees');
+  //   allLinktrees = JSON.parse(allLinktrees || '[]');
+  //   return res.status(200).send(allLinktrees);
+  // });
   app.get("/get-logs", async (req, res) => {
     const logs = fs.readFileSync("./namespace/logs.txt", "utf8")
     res.status(200).send(logs);
   })
+  // endpoint for specific linktree data by publicKey
+  app.get('/get-linktree', async (req, res) => {
+    const log = "Nothing to see here, check /:publicKey to get the linktree"
+    return res.status(200).send(log);
+  });
+  app.get('/get-linktree/:publicKey', async (req, res) => {
+    const { publicKey } = req.params;
+    let linktree = await namespaceWrapper.storeGet(`linktree:${publicKey}`);
+    linktree = JSON.parse(linktree || '[]');
+    return res.status(200).send(linktree);
+  }
+  );
+
 }
 

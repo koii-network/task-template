@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node test/unitTest.js",
+    "test:submit": "node test/submitLinktree.js",
+    "test:getdb": "node test/get_local_leveldb.js",
+    "status": "node test/check_task-status.js",
     "start": "node index.js",
     "webpack": "webpack",
     "webpack:prod": "webpack --mode production"

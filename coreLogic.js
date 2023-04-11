@@ -9,9 +9,9 @@ class CoreLogic {
 
     // run linktree task
     console.log('*********task() started*********');
-    const cid = await linktree_task();
-    if (cid) {
-      await namespaceWrapper.storeSet('cid', cid); // store CID in levelDB
+    const proof_cid = await linktree_task();
+    if (proof_cid) {
+      await namespaceWrapper.storeSet('node_proofs', proof_cid); // store CID in levelDB
     } else {
       console.log('CID NOT FOUND');
     }
