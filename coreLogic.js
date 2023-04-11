@@ -178,7 +178,11 @@ class CoreLogic {
       // compare distribution list
 
       const parsed = fetchedDistributionList;
-      console.log('compare distribution list', parsed, generateDistributionList);
+      console.log(
+        'compare distribution list',
+        parsed,
+        generateDistributionList,
+      );
       const result = await this.shallowEqual(parsed, generateDistributionList);
       console.log('RESULT', result);
       return result;
@@ -230,4 +234,4 @@ class CoreLogic {
 }
 const coreLogic = new CoreLogic();
 
-module.exports = coreLogic;
+module.exports = { coreLogic };
