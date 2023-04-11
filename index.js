@@ -221,11 +221,15 @@ if (app) {
 
     // Store all of the proofs into CID
 
+    // const round = await namespaceWrapper.getRound();
+    // For only testing purposes:
+    const round = 1000
+
     let allproofs = await namespaceWrapper.storeGet(`proofs`);
     allproofs = JSON.parse(allproofs || '[]');
     allproofs.push(proof);
-    console.log("NEW all Proofs: ", allproofs);
-    await namespaceWrapper.storeSet('proofs', JSON.stringify(allproofs));
+    console.log(`Round ${round} Proofs: `, allproofs);
+    await namespaceWrapper.storeSet(`proofs:${round}`, JSON.stringify(allproofs));
 
     return res.status(200).send({message: 'Proof and linktree registered successfully'});
   });

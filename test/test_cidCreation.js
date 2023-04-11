@@ -17,7 +17,7 @@ async function cidcreation() {
   const publicKey = keyPair.publicKey;
   const privateKey = keyPair.secretKey;
   // Get linktree list fron localdb
-  const proofs_list_string = await namespaceWrapper.storeGet('proofs');
+  const proofs_list_string = await namespaceWrapper.storeGet(`proofs:${round}`);
   const proofs_list_object = JSON.parse(proofs_list_string);
 
   const messageUint8Array = new Uint8Array(

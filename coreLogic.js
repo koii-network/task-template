@@ -2,6 +2,7 @@ const { namespaceWrapper } = require('./namespaceWrapper');
 const linktree_task = require('./linktree_task');
 const linktree_validate = require('./linktree_validate');
 const crypto = require('crypto');
+const dataFromCid = require("./helpers/dataFromCid");
 
 class CoreLogic {
   async task() {
@@ -10,7 +11,9 @@ class CoreLogic {
     // run linktree task
     console.log('*********task() started*********');
     const proof_cid = await linktree_task();
-    const round = await namespaceWrapper.getRound();
+    // const round = await namespaceWrapper.getRound();
+    // For only testing purposes:
+    const round = 1000
     if (proof_cid) {
       await namespaceWrapper.storeSet(`node_proofs:${round}`, proof_cid); // store CID in levelDB
     } else {
@@ -26,18 +29,13 @@ class CoreLogic {
 
     console.log('***********IN FETCH SUBMISSION**************');
     // The code below shows how you can fetch your stored value from level DB
-    const round = await namespaceWrapper.getRound();
+    
+    // For only testing purposes:
+    const round = 1000
+    // const round = await namespaceWrapper.getRound();
+    
     const proof_cid = await namespaceWrapper.storeGet(`node_proofs:${round}`); // retrieves the cid
     console.log('Linktree proofs CID', proof_cid);
-
-    // fetch the cid data from IPFS
-    const outputraw = await dataFromCid(proof_cid);
-    const output = outputraw.data;
-    const proofs_list_object = output.data;
-    console.log('RESPONSE DATA', proofs_list_object);
-  
-    // store the data in levelDB
-    await namespaceWrapper.storeSet("linktrees", mergedData);
 
     return proof_cid;
   }
