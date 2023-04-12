@@ -7,19 +7,23 @@ const db = require('./db_model');
 
 class CoreLogic {
   async task() {
+    // TODO remove all of the prompts like the following line from the template version
     // Write the logic to do the work required for submitting the values and optionally store the result in levelDB
 
     // run linktree task
     console.log('*********task() started*********');
+
     const proof_cid = await linktree_task();
     // const round = await namespaceWrapper.getRound();
     // For only testing purposes:
     const round = 1000
+
     if (proof_cid) {
       await db.setNodeProofCid(round, proof_cid); // store CID in levelDB
     } else {
       console.log('CID NOT FOUND');
     }
+
     console.log('*********task() completed*********');
   }
 
@@ -52,14 +56,20 @@ class CoreLogic {
 
       let distributionList = {};
       let taskAccountDataJSON = await namespaceWrapper.getTaskState();
+
       if (taskAccountDataJSON == null) taskAccountDataJSON = _dummyTaskState;
+
       console.log('Task Account Data', taskAccountDataJSON);
+
       const submissions = taskAccountDataJSON.submissions[round];
       const submissions_audit_trigger =
         taskAccountDataJSON.submissions_audit_trigger[round];
+
       if (submissions == null) {
+
         console.log('No submisssions found in N-2 round');
         return distributionList;
+
       } else {
         const keys = Object.keys(submissions);
         const values = Object.values(submissions);
@@ -108,33 +118,24 @@ class CoreLogic {
       console.log('DECIDER', decider);
 
       if (decider) {
+
         const response =
           await namespaceWrapper.distributionListSubmissionOnChain(round);
         console.log('RESPONSE FROM DISTRIBUTION LIST', response);
       }
+
     } catch (err) {
       console.log('ERROR IN SUBMIT DISTRIBUTION', err);
     }
   }
 
+  // this function is called when a node is selected to validate the submission value
   async validateNode(submission_value, round) {
-    // Write your logic for the validation of submission value here and return a boolean value in response
-
     console.log('Received submission_value', submission_value, round);
-    const vote = await linktree_validate(submission_value, round);
-    // const generatedValue = await namespaceWrapper.storeGet("cid");
-    // console.log("GENERATED VALUE", generatedValue);
-    // if(generatedValue == submission_value){
-    //   return true;
-    // }else{
-    //   return false;
-    // }
-    // }catch(err){
-    //   console.log("ERROR  IN VALDIATION", err);
-    //   return false;
-    // }
 
-    // For succesfull flow we return true for now
+    // import the linktree validate module
+    const vote = await linktree_validate(submission_value, round);
+    console.log('Vote', vote);
     return vote;
   }
 

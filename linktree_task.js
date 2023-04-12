@@ -4,20 +4,24 @@ const deleteFile = require('./helpers/deleteFile');
 const fs = require('fs');
 const { Web3Storage, getFilesFromPath } = require('web3.storage');
 const storageClient = new Web3Storage({
-  token: process.env.SECRET_WEB3_STORAGE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGY0ODYxMzAzOTdDNTY1QzlDYTRCOTUzZTA2RWQ4NUI4MGRBQzRkYTIiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjYzNjU1OTk5MDMsIm5hbWUiOiJTb21hIn0.TU-KUFS9vjI9blN5dx6VsLLuIjJnpjPrxDHBvjXQUxw",
-});
+  token: process.env.SECRET_WEB3_STORAGE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGY0ODYxMzAzOTdDNTY1QzlDYTRCOTUzZTA2RWQ4NUI4MGRBQzRkYTIiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjYzNjU1OTk5MDMsIm5hbWUiOiJTb21hIn0.TU-KUFS9vjI9blN5dx6VsLLuIjJnpjPrxDHBvjXQUxw", 
+}); // TODO remove the default web3.storage key for production
 const bs58 = require('bs58');
 const nacl = require('tweetnacl');
 const db = require('./db_model');
 
-module.exports = async () => {
+const main = async () => {
   console.log('******/  IN Linktree Task FUNCTION /******');
+
+  // TODO - remove the new keypair generation below and use the keypairs already held on the node
+  // TODO - https://docs.koii.network/develop/microservices-and-tasks/task-development-kit-tdk/using-the-task-namespace/wallet-signatures
+
   // Customize linktree test data
   const keyPair = nacl.sign.keyPair();
   const publicKey = keyPair.publicKey;
   const privateKey = keyPair.secretKey;
-  // Get linktree list fron localdb
 
+  // Get linktree list fron localdb
   const proofs_list_object =  await db.getAllProofs();
 
   const messageUint8Array = new Uint8Array(
@@ -31,13 +35,18 @@ module.exports = async () => {
     node_publicKey: bs58.encode(publicKey),
     node_signature: bs58.encode(signature),
   };
+
   // upload the index of the linktree on web3.storage
   const path = `./Linktree/proofs.json`;
+
   if (!fs.existsSync('./Linktree')) fs.mkdirSync('./Linktree');
+
   console.log('PATH', path);
+
   await createFile(path, submission_value);
 
   if (storageClient) {
+
     const file = await getFilesFromPath(path);
     const proof_cid = await storageClient.put(file);
     console.log('User Linktrees proof uploaded to IPFS: ', proof_cid);
@@ -48,6 +57,10 @@ module.exports = async () => {
     return proof_cid;
     
   } else {
+
     console.log('NODE DO NOT HAVE ACCESS TO WEB3.STORAGE');
+
   }
 };
+
+module.exports = main;

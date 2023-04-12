@@ -24,14 +24,14 @@ const setLinktree = async (publicKey, linktree) => {
 const getAllLinktrees = async () => {
   return new Promise((resolve, reject) => {
   let dataStore = [];
-  const linktreesStream = db.createReadStream({
-    lt: 'linktree~',
-    reverse: true,
-    keys: true,
-    values: true
-})
-  linktreesStream
-    .on('data', function (data) {
+
+  db.createReadStream({
+      lt: 'linktree~',
+      reverse: true,
+      keys: true,
+      values: true
+  })
+  .on('data', function (data) {
       console.log( data.key.toString(), '=', data.value.toString())
       dataStore.push({ key: data.key.toString(), value: JSON.parse(data.value.toString()) });
     })
@@ -71,13 +71,12 @@ const setProofs = async (pubkey, proofs) => {
 const getAllProofs = async () => {
   return new Promise((resolve, reject) => {
     let dataStore = [];
-    const proofsStream = db.createReadStream({
+    db.createReadStream({
       gte: 'proofs',
       reverse: true,
       keys: true,
       values: true
-  })
-    proofsStream
+    })
       .on('data', function (data) {
         console.log( data.key.toString(), '=', data.value.toString())
         dataStore.push({ key: data.key.toString(), value: JSON.parse(data.value.toString())});
