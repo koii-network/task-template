@@ -7,6 +7,8 @@ router.use((req, res, next) => {
   next();
 });
 
+
+
     router.get('/taskState', async (req, res) => {
         const state = await namespaceWrrouterer.getTaskState();
         console.log("TASK STATE", state);
@@ -87,8 +89,15 @@ router.use((req, res, next) => {
     });
     router.get('/linktree/all', async (req, res) => {
     linktree = await db.getAllLinktrees() || '[]';
-    return res.status(200).send(linktree);
-    }
+        return res.status(200).send(linktree);
+        }
+
+    );
+
+    router.get('/linktree/list', async (req, res) => {
+        linktree = await db.getAllLinktrees(false) || '[]';
+        return res.status(200).send(linktree);
+        }
     );
     router.get('/proofs/all', async (req, res) => {
     linktree = await db.getAllProofs() || '[]';
@@ -105,9 +114,12 @@ router.use((req, res, next) => {
     authlist = authlist || '[]';
     return res.status(200).send(authlist);
     });
-    router.get('/authlist/all', async (req, res) => {
-    authlist = await db.getAllAuthLists() || '[]';
-    return res.status(200).send(authlist);
+    router.get('/authlist/list', async (req, res) => {
+        authlist = await db.getAllAuthLists(false) || '[]';
+        authlist.forEach((authuser) => {
+            authuser = authuser.split("authlist:")[0] // TODO verify that this properly trims the 'authlist:' prefix
+        });
+        return res.status(200).send(authlist);
     });
   // router.post('/register-authlist', async (req, res) => {
   //   const pubkey = req.body.pubkey;

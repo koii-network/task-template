@@ -21,15 +21,16 @@ const setLinktree = async (publicKey, linktree) => {
    return console.log("Linktree set");
 }
 
-const getAllLinktrees = async () => {
+const getAllLinktrees = async (values) => {
   return new Promise((resolve, reject) => {
   let dataStore = [];
 
+  if (!values) values = true;
   db.createReadStream({
       lt: 'linktree~',
       reverse: true,
       keys: true,
-      values: true
+      values: values
   })
   .on('data', function (data) {
       console.log( data.key.toString(), '=', data.value.toString())
@@ -162,7 +163,8 @@ const setAuthList = async (pubkey) => {
     return console.log("Auth List set");
 }
 
-const getAllAuthLists = async () => {
+const getAllAuthLists = async (values) => {
+  if (!values) values = true;
   return new Promise((resolve, reject) => {
     let dataStore = [];
     const authListStream = db.createReadStream({
@@ -170,7 +172,7 @@ const getAllAuthLists = async () => {
       lt: 'auth_list~',
       reverse: true,
       keys: true,
-      values: true
+      values: values
   })
     authListStream
       .on('data', function (data) {
