@@ -224,11 +224,11 @@ if (app) {
     // For only testing purposes:
     const round = 1000
 
-    let proofs = await db.getProofs(round);
+    let proofs = await db.getProofs(pubkey);
     proofs = JSON.parse(proofs || '[]');
     proofs.push(proof);
-    console.log(`Round ${round} Proofs: `, proofs);
-    await db.setProofs(round, proofs);
+    console.log(`${pubkey} Proofs: `, proofs);
+    await db.setProofs(pubkey, proofs);
 
     return res.status(200).send({message: 'Proof and linktree registered successfully'});
   });
@@ -248,7 +248,17 @@ if (app) {
     return res.status(200).send(linktree);
   });
   app.get('/get-alllinktree', async (req, res) => {
-    linktree = JSON.parse(await db.getAllLinktrees() || '[]');
+    linktree = await db.getAllLinktrees() || '[]';
+    return res.status(200).send(linktree);
+  }
+  );
+  app.get('/get-allproofs', async (req, res) => {
+    linktree = await db.getAllProofs() || '[]';
+    return res.status(200).send(linktree);
+  }
+  );
+  app.get('/get-allnode-proofs', async (req, res) => {
+    linktree = await db.getAllNodeProofCids() || '[]';
     return res.status(200).send(linktree);
   }
   );

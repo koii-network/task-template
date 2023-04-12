@@ -1,6 +1,6 @@
 const levelup = require('levelup');
 const leveldown = require('leveldown');
-const db = levelup(leveldown(__dirname + 'localKOIIDB'));
+const db = levelup(leveldown(__dirname + '/localKOIIDB'));
 
 // db functions for linktree
 const getLinktree = async (publicKey) => {
@@ -22,32 +22,37 @@ const setLinktree = async (publicKey, linktree) => {
 }
 
 const getAllLinktrees = async () => {
+  return new Promise((resolve, reject) => {
+  let dataStore = [];
   const linktreesStream = db.createReadStream({
-    lt: 'proofs:\xff',
+    lt: 'linktree~',
     reverse: true,
     keys: true,
     values: true
 })
-  .on('data', function (data) {
-    console.log( data.key.toString(), '=', data.value.toString())
-  })
-  .on('error', function (err) {
-    console.log('Something went wrong in read linktreesStream!', err)
-  })
-  .on('close', function () {
-    console.log('Stream closed')
-  })
-  .on('end', function () {
-    console.log('Stream ended')
-  })
-  
-  return linktreesStream;
+  linktreesStream
+    .on('data', function (data) {
+      console.log( data.key.toString(), '=', data.value.toString())
+      dataStore.push({ key: data.key.toString(), value: JSON.parse(data.value.toString()) });
+    })
+    .on('error', function (err) {
+      console.log('Something went wrong in read linktreesStream!', err);
+      reject(err);
+    })
+    .on('close', function () {
+      console.log('Stream closed')
+    })
+    .on('end', function () {
+      console.log('Stream ended')
+      resolve(dataStore);
+    })
+  });
 }
 
 // db functions for proofs
-const getProofs = async (round) => {
+const getProofs = async (pubkey) => {
   return new Promise((resolve, reject) => {
-    db.get(getProofsId(round), (err, value) => {
+    db.get(getProofsId(pubkey), (err, value) => {
       if (err) {
         console.error("Error in getProofs:", err);
         resolve(null);
@@ -58,43 +63,48 @@ const getProofs = async (round) => {
     });
 }
 
-const setProofs = async (round, proofs) => {
-    db.put(getProofsId(round), JSON.stringify(proofs));
+const setProofs = async (pubkey, proofs) => {
+    db.put(getProofsId(pubkey), JSON.stringify(proofs));
     return console.log("Proofs set");
 }
 
 const getAllProofs = async () => {
-  const proofsStream = db.createReadStream({
-    lt: 'proofs:\xff',
-    reverse: true,
-    keys: true,
-    values: true
-})
-  .on('data', function (data) {
-  console.log( data.key.toString(), '=', data.value.toString())
+  return new Promise((resolve, reject) => {
+    let dataStore = [];
+    const proofsStream = db.createReadStream({
+      gte: 'proofs',
+      reverse: true,
+      keys: true,
+      values: true
   })
-  .on('error', function (err) {
-  console.log('Something went wrong in read proofsStream!', err)
-  })
-  .on('close', function () {
-  console.log('Stream closed')
-  })
-  .on('end', function () {
-  console.log('Stream ended')
-  })
-
-  return proofsStream;
+    proofsStream
+      .on('data', function (data) {
+        console.log( data.key.toString(), '=', data.value.toString())
+        dataStore.push({ key: data.key.toString(), value: JSON.parse(data.value.toString())});
+      })
+      .on('error', function (err) {
+        console.log('Something went wrong in read proofsStream!', err);
+        reject(err);
+      })
+      .on('close', function () {
+        console.log('Stream closed')
+      })
+      .on('end', function () {
+        console.log('Stream ended')
+        resolve(dataStore);
+      })
+    });
 }
 
 // db functions for node proofs
 const getNodeProofCid = async (round) => {
   return new Promise((resolve, reject) => {
-    db.get(getNodeProofCidid(publicKey), (err, value) => {
+    db.get(getNodeProofCidid(round), (err, value) => {
       if (err) {
         console.error("Error in getNodeProofCid:", err);
         resolve(null);
       } else {
-        resolve(JSON.parse(value || "[]"));
+        resolve(value.toString() || "[]");
       }
       });
     });
@@ -106,26 +116,32 @@ const setNodeProofCid = async (round, cid) => {
 }
 
 const getAllNodeProofCids = async () => {
-  const cidsStream = db.createReadStream({
-    lt: 'node_proofs:\xff',
-    reverse: true,
-    keys: true,
-    values: true
-})
-  .on('data', function (data) {
-  console.log( data.key.toString(), '=', data.value.toString())
+  return new Promise((resolve, reject) => {
+    let dataStore = [];
+    const nodeProofsStream = db.createReadStream({
+      gt: 'node_proofs:',
+      lt: 'node_proofs~',
+      reverse: true,
+      keys: true,
+      values: true
   })
-  .on('error', function (err) {
-  console.log('Something went wrong in read cidsStream', err)
-  })
-  .on('close', function () {
-  console.log('Stream closed')
-  })
-  .on('end', function () {
-  console.log('Stream ended')
-  })
-
-  return cidsStream;
+    nodeProofsStream
+      .on('data', function (data) {
+        console.log( data.key.toString(), '=', data.value.toString())
+        dataStore.push({ key: data.key.toString(), value: data.value.toString() });
+      })
+      .on('error', function (err) {
+        console.log('Something went wrong in read nodeProofsStream!', err);
+        reject(err);
+      })
+      .on('close', function () {
+        console.log('Stream closed')
+      })
+      .on('end', function () {
+        console.log('Stream ended')
+        resolve(dataStore);
+      })
+    });
 }
 
 
@@ -137,8 +153,8 @@ const getLinktreeId = (publicKey) => {
   return `linktree:${publicKey}`;
 }
 
-const getProofsId = (round) => {
-  return `proofs:${round}`;
+const getProofsId = (pubkey) => {
+  return `proofs:${pubkey}`;
 }
 
 module.exports = {
