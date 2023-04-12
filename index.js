@@ -259,8 +259,16 @@ if (app) {
   app.get('/get-allnode-proofs', async (req, res) => {
     linktree = await db.getAllNodeProofCids() || '[]';
     return res.status(200).send(linktree);
-  }
-  );
-
+  });
+  app.get('/get-authlist/:round', async (req, res) => {
+    const { round } = req.params;
+    let authlist = await db.getAuthList(round);
+    authlist = authlist || '[]';
+    return res.status(200).send(authlist);
+  });
+  app.get('/get-allauthlist', async (req, res) => {
+    authlist = await db.getAllAuthLists() || '[]';
+    return res.status(200).send(authlist);
+  });
 }
 
