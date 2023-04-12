@@ -145,9 +145,9 @@ const getAllNodeProofCids = async () => {
 }
 
 //db functions fro Auth list
-const getAuthList = async (round) => {
+const getAuthList = async (pubkey) => {
   return new Promise((resolve, reject) => {
-    db.get(getAuthListId(round), (err, value) => {
+    db.get(getAuthListId(pubkey), (err, value) => {
       if (err) {
         console.error("Error in getAuthList:", err);
         resolve(null);
@@ -158,8 +158,8 @@ const getAuthList = async (round) => {
     });
 }
 
-const setAuthList = async (round, auth_list) => {
-    db.put(getAuthListId(round), JSON.stringify(auth_list));
+const setAuthList = async (pubkey) => {
+    db.put(getAuthListId(pubkey), JSON.stringify(pubkey));
     return console.log("Auth List set");
 }
 

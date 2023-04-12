@@ -176,7 +176,7 @@ if (app) {
   })
 
   // API to register the linktree
-  app.post('/register-linktree', async (req, res) => {
+  app.post('/linktree', async (req, res) => {
     const linktree = req.body.payload;
     // Check req.body
     if (!linktree) {
@@ -231,44 +231,50 @@ if (app) {
 
     return res.status(200).send({message: 'Proof and linktree registered successfully'});
   });
-  app.get("/get-logs", async (req, res) => {
+  app.get("/logs", async (req, res) => {
     const logs = fs.readFileSync("./namespace/logs.txt", "utf8")
     res.status(200).send(logs);
   })
   // endpoint for specific linktree data by publicKey
-  app.get('/get-linktree', async (req, res) => {
+  app.get('/linktree/get', async (req, res) => {
     const log = "Nothing to see here, check /:publicKey to get the linktree"
     return res.status(200).send(log);
   });
-  app.get('/get-linktree/:publicKey', async (req, res) => {
+  app.get('/linktree/get/:publicKey', async (req, res) => {
     const { publicKey } = req.params;
     let linktree = await db.getLinktree(publicKey);
     linktree = JSON.parse(linktree || '[]');
     return res.status(200).send(linktree);
   });
-  app.get('/get-alllinktree', async (req, res) => {
+  app.get('/linktree/all', async (req, res) => {
     linktree = await db.getAllLinktrees() || '[]';
     return res.status(200).send(linktree);
   }
   );
-  app.get('/get-allproofs', async (req, res) => {
+  app.get('/proofs/all', async (req, res) => {
     linktree = await db.getAllProofs() || '[]';
     return res.status(200).send(linktree);
   }
   );
-  app.get('/get-allnode-proofs', async (req, res) => {
+  app.get('/node-proof/all', async (req, res) => {
     linktree = await db.getAllNodeProofCids() || '[]';
     return res.status(200).send(linktree);
   });
-  app.get('/get-authlist/:round', async (req, res) => {
+  app.get('/authlist/get/:round', async (req, res) => {
     const { round } = req.params;
     let authlist = await db.getAuthList(round);
     authlist = authlist || '[]';
     return res.status(200).send(authlist);
   });
-  app.get('/get-allauthlist', async (req, res) => {
+  app.get('/authlist/all', async (req, res) => {
     authlist = await db.getAllAuthLists() || '[]';
     return res.status(200).send(authlist);
   });
+  // app.post('/register-authlist', async (req, res) => {
+  //   const { round, authlist } = req.body;
+  //   await db.setAuthList(round, authlist);
+  //   return res.status(200).send({message: 'Authlist registered successfully'});
+  // }
+  // )
 }
 

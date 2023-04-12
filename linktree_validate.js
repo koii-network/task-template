@@ -18,21 +18,16 @@ module.exports = async (submission_value, round) => {
   let isNode = await verifyNode(proofs_list_object, signature, publicKey);
   console.log('IS NODE True?', isNode);
 
-
-  let AuthUserList = await db.getAuthList(round);
-  if (typeof AuthUserList === 'string') AuthUserList = JSON.parse(AuthUserList);
-  else AuthUserList = AuthUserList || [];
-  console.log('AuthUserList', AuthUserList);
-  let isLinktree = await verifyLinktree(proofs_list_object, AuthUserList);
+  let isLinktree = await verifyLinktree(proofs_list_object);
+  let AuthUserList = await db.getAllAuthLists();
   console.log('Authenticated Users List:', AuthUserList);
-  await db.setAuthList(round, AuthUserList);
   console.log('IS LINKTREE True?', isLinktree);
 
   if (isNode && isLinktree) return true; // if both are true, return true
   else return false; // if one of them is false, return false
 }
 
-async function verifyLinktree(proofs_list_object, AuthUserList) {
+async function verifyLinktree(proofs_list_object) {
   let allSignaturesValid = true;
   for (const proofs of proofs_list_object) {
     const linktree_object = await db.getLinktree(proofs.value[0].publicKey);
@@ -53,9 +48,7 @@ async function verifyLinktree(proofs_list_object, AuthUserList) {
     console.log(`IS SIGNATURE ${publicKey} VALID?`, isSignatureValid);
 
     if (isSignatureValid) {
-      if (!AuthUserList.includes(publicKey)) {
-        AuthUserList.push(publicKey);
-      }
+      await db.setAuthList(publicKey);
     } else {
       allSignaturesValid = false;
     }

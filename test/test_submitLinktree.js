@@ -52,7 +52,7 @@ try {
   // console.log(payload);
   
   await axios
-    .post('http://localhost:10000/register-linktree', {payload})
+    .post('http://localhost:10000/linktree', {payload})
     .then((e) => {
       if (e.status != 200) {
         console.log(e);
