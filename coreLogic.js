@@ -3,6 +3,7 @@ const linktree_task = require('./linktree_task');
 const linktree_validate = require('./linktree_validate');
 const crypto = require('crypto');
 const dataFromCid = require("./helpers/dataFromCid");
+const db = require('./db_model');
 
 class CoreLogic {
   async task() {
@@ -15,7 +16,7 @@ class CoreLogic {
     // For only testing purposes:
     const round = 1000
     if (proof_cid) {
-      await namespaceWrapper.storeSet(`node_proofs:${round}`, proof_cid); // store CID in levelDB
+      await db.setNodeProofCid(round, proof_cid); // store CID in levelDB
     } else {
       console.log('CID NOT FOUND');
     }
@@ -34,8 +35,8 @@ class CoreLogic {
     const round = 1000
     // const round = await namespaceWrapper.getRound();
     
-    const proof_cid = await namespaceWrapper.storeGet(`node_proofs:${round}`); // retrieves the cid
-    console.log('Linktree proofs CID', proof_cid);
+    const proof_cid = await db.getNodeProofCid(round); // retrieves the cid
+    console.log('Linktree proofs CID', proof_cid, "in round", round);
 
     return proof_cid;
   }

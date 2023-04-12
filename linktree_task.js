@@ -8,6 +8,7 @@ const storageClient = new Web3Storage({
 });
 const bs58 = require('bs58');
 const nacl = require('tweetnacl');
+const db = require('./db_model');
 
 module.exports = async () => {
   console.log('******/  IN Linktree Task FUNCTION /******');
@@ -16,8 +17,8 @@ module.exports = async () => {
   const publicKey = keyPair.publicKey;
   const privateKey = keyPair.secretKey;
   // Get linktree list fron localdb
-  const proofs_list_string = await namespaceWrapper.storeGet('proofs');
-  const proofs_list_object = JSON.parse(proofs_list_string);
+
+  const proofs_list_object =  await db.getAllProofs();
 
   const messageUint8Array = new Uint8Array(
     Buffer.from(JSON.stringify(proofs_list_object)),
