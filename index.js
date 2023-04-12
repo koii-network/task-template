@@ -7,6 +7,7 @@ const bs58 = require('bs58');
 const solanaWeb3 = require('@solana/web3.js');
 const nacl = require('tweetnacl');
 const fs = require('fs');
+const db = require('./db_model');
 
 
 async function setup() {
@@ -68,7 +69,7 @@ async function setup() {
           return e.data.url;
         });
         console.log(nodeUrlList);
-        let allLinktrees = await namespaceWrapper.storeGet('linktrees');
+        let allLinktrees = await db.getLinktree(publicKey);
         allLinktrees = JSON.parse(allLinktrees || '[]');
         for (let url of nodeUrlList) {
           console.log(url);
@@ -217,7 +218,7 @@ if (app) {
     if (!fs.existsSync(__dirname + '/linktrees')) fs.mkdirSync(__dirname + '/linktrees');
     fs.writeFileSync(__dirname + "/linktrees/" + `linktree_${pubkey}.json`, JSON.stringify(linktree));
     // fs.writeFileSync('proof.json', JSON.stringify(proof));
-    await namespaceWrapper.storeSet(`linktree:${pubkey}`, JSON.stringify(linktree));
+    await db.setLinktree(pubkey, linktree);
 
     // Store all of the proofs into CID
 
@@ -225,7 +226,7 @@ if (app) {
     // For only testing purposes:
     const round = 1000
 
-    let allproofs = await namespaceWrapper.storeGet(`proofs`);
+    let allproofs = await db.getProofs(round);
     allproofs = JSON.parse(allproofs || '[]');
     allproofs.push(proof);
     console.log(`Round ${round} Proofs: `, allproofs);

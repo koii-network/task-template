@@ -47,7 +47,7 @@ const getAllLinktrees = async () => {
 // db functions for proofs
 const getProofs = async (round) => {
   return new Promise((resolve, reject) => {
-    db.get(getProofsId(publicKey), (err, value) => {
+    db.get(getProofsId(round), (err, value) => {
       if (err) {
         console.error("Error in getProofs:", err);
         resolve(null);
