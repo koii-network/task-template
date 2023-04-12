@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node test/unitTest.js",
-    "test:submit": "node test/submitLinktree.js",
+    "test:submit": "node test/test_submitLinktree.js",
     "test:getdb": "node test/get_local_leveldb.js",
     "status": "node test/check_task-status.js",
     "start": "node index.js",

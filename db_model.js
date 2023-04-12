@@ -144,6 +144,55 @@ const getAllNodeProofCids = async () => {
     });
 }
 
+//db functions fro Auth list
+const getAuthList = async (round) => {
+  return new Promise((resolve, reject) => {
+    db.get(getAuthListId(round), (err, value) => {
+      if (err) {
+        console.error("Error in getAuthList:", err);
+        resolve(null);
+      } else {
+        resolve(JSON.parse(value || "[]"));
+      }
+      });
+    });
+}
+
+const setAuthList = async (round, auth_list) => {
+    db.put(getAuthListId(round), JSON.stringify(auth_list));
+    return console.log("Auth List set");
+}
+
+const getAllAuthLists = async () => {
+  return new Promise((resolve, reject) => {
+    let dataStore = [];
+    const authListStream = db.createReadStream({
+      gt: 'auth_list:',
+      lt: 'auth_list~',
+      reverse: true,
+      keys: true,
+      values: true
+  })
+    authListStream
+      .on('data', function (data) {
+        console.log( data.key.toString(), '=', data.value.toString())
+        dataStore.push({ key: data.key.toString(), value: JSON.parse(data.value.toString()) });
+      })
+      .on('error', function (err) {
+        console.log('Something went wrong in read authListStream!', err);
+        reject(err);
+      })
+      .on('close', function () {
+        console.log('Stream closed')
+      })
+      .on('end', function () {
+        console.log('Stream ended')
+        resolve(dataStore);
+      })
+    });
+}
+
+
 
 const getNodeProofCidid = (round) => {
   return `node_proofs:${round}`;
@@ -157,6 +206,10 @@ const getProofsId = (pubkey) => {
   return `proofs:${pubkey}`;
 }
 
+const getAuthListId = (round) => {
+  return `auth_list:${round}`;
+}
+
 module.exports = {
   getLinktree,
   setLinktree,
@@ -166,5 +219,8 @@ module.exports = {
   getAllProofs,
   getNodeProofCid,
   setNodeProofCid,
-  getAllNodeProofCids
+  getAllNodeProofCids,
+  getAuthList,
+  setAuthList,
+  getAllAuthLists
 }

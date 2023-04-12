@@ -9,35 +9,43 @@ const crypto = require('crypto');
 // This test submits linktrees from differnet publicKey to the service and stored in localdb
 async function main() {
 try {
-  const { publicKey: publicKeyraw, secretKey: secretKey } = solanaWeb3.Keypair.generate();
+  const keyPair = nacl.sign.keyPair();
+  const publicKey = keyPair.publicKey;
+  const privateKey = keyPair.secretKey;
   // const {publicKey, secretKey} = nacl.sign.keyPair.fromSecretKey(
   //   new Uint8Array(JSON.parse(fs.readFileSync("./test_wallet.json", 'utf-8')))
   // );
-  const publicKey = publicKeyraw.toBase58();
-  console.log('publicKey', publicKey);
+  console.log('publicKey', bs58.encode(publicKey));
+  const data = {
+    uuid: uuidv4(),
+    linktree: [
+      {
+        key: 'official',
+        label: 'Official Website',
+        redirectUrl: 'https://spheron.network/',
+      },
+      {
+        key: 'twitter',
+        label: 'Twitter',
+        redirectUrl: 'https://twitter.com/blockchainbalak',
+      },
+      {
+        key: 'github',
+        label: 'GitHub',
+        redirectUrl: 'https://github.com/spheronFdn/',
+      },
+    ],
+    timestamp: Date.now(),
+  }
+  const messageUint8Array = new Uint8Array(
+    Buffer.from(JSON.stringify(data)),
+  );
+  const signedMessage = nacl.sign(messageUint8Array, privateKey);
+  const signature = signedMessage.slice(0, nacl.sign.signatureLength);
   const payload = {
-    data: {
-      uuid: uuidv4(),
-      linktree: [
-        {
-          key: 'official',
-          label: 'Official Website',
-          redirectUrl: 'https://spheron.network/',
-        },
-        {
-          key: 'twitter',
-          label: 'Twitter',
-          redirectUrl: 'https://twitter.com/blockchainbalak',
-        },
-        {
-          key: 'github',
-          label: 'GitHub',
-          redirectUrl: 'https://github.com/spheronFdn/',
-        },
-      ],
-      timestamp: Date.now(),
-    },
-    publicKey: publicKey,
+    data,
+    publicKey: bs58.encode(publicKey),
+    signature: bs58.encode(signature),
   };
 
   // Check payload

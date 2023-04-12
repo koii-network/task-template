@@ -1,39 +1,86 @@
-const { namespaceWrapper } = require("./namespaceWrapper");
 const dataFromCid = require("./helpers/dataFromCid");
-const getKeys = require("./helpers/getKey");
-const hashCompare = require("./helpers/hashCompare");
+const db = require('./db_model');
 const nacl = require('tweetnacl');
 const bs58 = require('bs58');
 
-module.exports = async (submission_value) => {
-  console.log('******/  Linktree CID VALIDATION Task FUNCTION /******');
+module.exports = async (submission_value, round) => {
+  console.log('******/ Linktree CID VALIDATION Task FUNCTION /******');
   const outputraw = await dataFromCid(submission_value);
   const output = outputraw.data;
-  const linktrees_list_object = output.data;
-  console.log('RESPONSE DATA', linktrees_list_object);
-  const publicKey = output.publicKey;
+
+  const proofs_list_object = output.proofs;
+  console.log('RESPONSE DATA', proofs_list_object);
+  const publicKey = output.node_publicKey;
   console.log('PUBLIC KEY', publicKey);
-  const signature = output.signature;
+  const signature = output.node_signature;
   console.log('SIGNATURE', signature);
 
+  let isNode = await verifyNode(proofs_list_object, signature, publicKey);
+  console.log('IS NODE True?', isNode);
+
+
+  let AuthUserList = await db.getAuthList(round);
+  if (typeof AuthUserList === 'string') AuthUserList = JSON.parse(AuthUserList);
+  else AuthUserList = AuthUserList || [];
+  console.log('AuthUserList', AuthUserList);
+  let isLinktree = await verifyLinktree(proofs_list_object, AuthUserList);
+  console.log('Authenticated Users List:', AuthUserList);
+  await db.setAuthList(round, AuthUserList);
+  console.log('IS LINKTREE True?', isLinktree);
+
+  if (isNode && isLinktree) return true; // if both are true, return true
+  else return false; // if one of them is false, return false
+}
+
+async function verifyLinktree(proofs_list_object, AuthUserList) {
+  let allSignaturesValid = true;
+  for (const proofs of proofs_list_object) {
+    const linktree_object = await db.getLinktree(proofs.value[0].publicKey);
+    const messageUint8Array = new Uint8Array(
+      Buffer.from(JSON.stringify(linktree_object.data)),
+    );
+    const signature = proofs.value[0].signature;
+    const publicKey = proofs.value[0].publicKey;
+    const signatureUint8Array = bs58.decode(signature);
+    const publicKeyUint8Array = bs58.decode(publicKey);
+
+    // verify the linktree signature
+    const isSignatureValid = await verifySignature(
+      messageUint8Array,
+      signatureUint8Array,
+      publicKeyUint8Array,
+    );
+    console.log(`IS SIGNATURE ${publicKey} VALID?`, isSignatureValid);
+
+    if (isSignatureValid) {
+      if (!AuthUserList.includes(publicKey)) {
+        AuthUserList.push(publicKey);
+      }
+    } else {
+      allSignaturesValid = false;
+    }
+  }
+  return allSignaturesValid;
+}
+
+async function verifyNode(proofs_list_object, signature, publicKey) {    
   const messageUint8Array = new Uint8Array(
-    Buffer.from(JSON.stringify(linktrees_list_object)),
+    Buffer.from(JSON.stringify(proofs_list_object)),
   );
   const signatureUint8Array = bs58.decode(signature);
   const publicKeyUint8Array = bs58.decode(publicKey);
 
-  if (!linktrees_list_object || !signature || !publicKey) {
+  if (!proofs_list_object || !signature || !publicKey) {
     console.error('No data received from web3.storage');
     return false;
   }
 
-  // verify the signature
+  // verify the node signature
   const isSignatureValid = await verifySignature(
     messageUint8Array,
     signatureUint8Array,
     publicKeyUint8Array,
   );
-  console.log(`Is the signature valid? ${isSignatureValid}`);
 
   return isSignatureValid;
 };
