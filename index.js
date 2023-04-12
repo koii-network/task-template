@@ -220,25 +220,18 @@ if (app) {
     // fs.writeFileSync('proof.json', JSON.stringify(proof));
     await db.setLinktree(pubkey, linktree);
 
-    // Store all of the proofs into CID
-
     // const round = await namespaceWrapper.getRound();
     // For only testing purposes:
     const round = 1000
 
-    let allproofs = await db.getProofs(round);
-    allproofs = JSON.parse(allproofs || '[]');
-    allproofs.push(proof);
-    console.log(`Round ${round} Proofs: `, allproofs);
-    await namespaceWrapper.storeSet(`proofs:${round}`, JSON.stringify(allproofs));
+    let proofs = await db.getProofs(round);
+    proofs = JSON.parse(proofs || '[]');
+    proofs.push(proof);
+    console.log(`Round ${round} Proofs: `, proofs);
+    await db.setProofs(round, proofs);
 
     return res.status(200).send({message: 'Proof and linktree registered successfully'});
   });
-  // app.get('/get-all-linktrees', async (req, res) => {
-  //   let allLinktrees = await namespaceWrapper.storeGet('linktrees');
-  //   allLinktrees = JSON.parse(allLinktrees || '[]');
-  //   return res.status(200).send(allLinktrees);
-  // });
   app.get("/get-logs", async (req, res) => {
     const logs = fs.readFileSync("./namespace/logs.txt", "utf8")
     res.status(200).send(logs);
@@ -250,8 +243,12 @@ if (app) {
   });
   app.get('/get-linktree/:publicKey', async (req, res) => {
     const { publicKey } = req.params;
-    let linktree = await namespaceWrapper.storeGet(`linktree:${publicKey}`);
+    let linktree = await db.getLinktree(publicKey);
     linktree = JSON.parse(linktree || '[]');
+    return res.status(200).send(linktree);
+  });
+  app.get('/get-alllinktree', async (req, res) => {
+    linktree = JSON.parse(await db.getAllLinktrees() || '[]');
     return res.status(200).send(linktree);
   }
   );
