@@ -28,6 +28,7 @@ const getAllLinktrees = async (values) => {
   if (!values) values = true;
   db.createReadStream({
       lt: 'linktree~',
+      gt: `linktree`,
       reverse: true,
       keys: true,
       values: values
@@ -80,7 +81,7 @@ const getAllProofs = async () => {
     })
       .on('data', function (data) {
         console.log( data.key.toString(), '=', data.value.toString())
-        dataStore.push({ key: data.key.toString(), value: JSON.parse(data.value.toString())});
+        dataStore.push( JSON.parse(data.value.toString()));
       })
       .on('error', function (err) {
         console.log('Something went wrong in read proofsStream!', err);
@@ -177,7 +178,7 @@ const getAllAuthLists = async (values) => {
     authListStream
       .on('data', function (data) {
         console.log( data.key.toString(), '=', data.value.toString())
-        dataStore.push({ key: data.key.toString(), value: JSON.parse(data.value.toString()) });
+        dataStore.push( JSON.parse(data.value.toString()) );
       })
       .on('error', function (err) {
         console.log('Something went wrong in read authListStream!', err);
@@ -223,5 +224,6 @@ module.exports = {
   getAllNodeProofCids,
   getAuthList,
   setAuthList,
-  getAllAuthLists
+  getAllAuthLists,
+  getAuthListId
 }

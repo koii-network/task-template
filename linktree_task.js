@@ -9,13 +9,16 @@ const storageClient = new Web3Storage({
 const bs58 = require('bs58');
 const nacl = require('tweetnacl');
 const db = require('./db_model');
+const { Keypair } = require('@solana/web3.js'); // TEST For local testing
 
 const main = async () => {
   console.log('******/  IN Linktree Task FUNCTION /******');
 
   // Load node's keypair from the JSON file
-  // ! return error, ask Syed
-  const keypair = await namespaceWrapper.getSubmitterAccount();
+  // const keypair = await namespaceWrapper.getSubmitterAccount();
+
+  // TEST For local testing, hardcode the keypair
+  const keypair = Keypair.generate(); 
 
   // Get linktree list fron localdb
   const proofs_list_object =  await db.getAllProofs();
@@ -30,7 +33,7 @@ const main = async () => {
 
   const submission_value = {
     proofs: proofs_list_object,
-    node_publicKey: bs58.encode(keypair.publicKey),
+    node_publicKey: keypair.publicKey,
     node_signature: bs58.encode(signature),
   };
 

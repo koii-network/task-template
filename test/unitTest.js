@@ -2,12 +2,17 @@ const coreLogic = require('../coreLogic');
 const index = require('../index');
 
 async function test_coreLogic() {
-  await coreLogic.task();
-  const submission = await coreLogic.fetchSubmission();
-  // let submission= "bafybeih6xpbghwjrq4vryo4p6ps6vcv7zp5ng3rvuffoouzs63ri6ybqdy"
+  // await coreLogic.task();
+
+  // const submission = await coreLogic.fetchSubmission();
+
+  // TEST hardcode the submission
+  let submission= "bafybeiaipp6owksgigqx73putgxr7qfiuly32isubrqjc4meqwty6xu5xa"
   console.log('SUBMISSION', submission);
+  
   const vote = await coreLogic.validateNode(submission, 1000);
   console.log('VOTE', vote);
+
   // let vote = true;
   // const _dummyTaskState = {
   //   submissions: {

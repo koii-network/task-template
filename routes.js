@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const db = require('./db_model');
+const fs = require('fs');
 
 // Middleware to log incoming requests
 router.use((req, res, next) => {
@@ -66,7 +68,7 @@ router.use((req, res, next) => {
     router.get('/linktree/get/:publicKey', async (req, res) => {
     const { publicKey } = req.params;
     let linktree = await db.getLinktree(publicKey);
-    linktree = JSON.parse(linktree || '[]');
+    linktree = linktree || '[]';
     return res.status(200).send(linktree);
     });
     router.get('/linktree/all', async (req, res) => {
@@ -77,7 +79,7 @@ router.use((req, res, next) => {
     );
 
     router.get('/linktree/list', async (req, res) => {
-        linktree = await db.getAllLinktrees(false) || '[]';
+        linktree = await db.getAllLinktrees(true) || '[]';
         return res.status(200).send(linktree);
         }
     );
@@ -86,20 +88,27 @@ router.use((req, res, next) => {
     return res.status(200).send(linktree);
     }
     );
+    router.get('/proofs/get/:publicKey', async (req, res) => {
+    const { publicKey } = req.params;
+    let proof = await db.getProofs(publicKey);
+    proof = proof || '[]';
+    return res.status(200).send(proof);
+    }
+    );
     router.get('/node-proof/all', async (req, res) => {
     linktree = await db.getAllNodeProofCids() || '[]';
     return res.status(200).send(linktree);
     });
-    router.get('/authlist/get/:round', async (req, res) => {
-    const { round } = req.params;
-    let authlist = await db.getAuthList(round);
+    router.get('/authlist/get/:publicKey', async (req, res) => {
+    const { publicKey } = req.params;
+    let authlist = await db.getAuthList(publicKey);
     authlist = authlist || '[]';
     return res.status(200).send(authlist);
     });
     router.get('/authlist/list', async (req, res) => {
         authlist = await db.getAllAuthLists(false) || '[]';
         authlist.forEach((authuser) => {
-            authuser = authuser.split("authlist:")[0] // TODO verify that this properly trims the 'authlist:' prefix
+            authuser = authuser.toString().split("auth_list:")[0] 
         });
         return res.status(200).send(authlist);
     });

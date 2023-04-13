@@ -2,24 +2,25 @@ const dataFromCid = require("./helpers/dataFromCid");
 const db = require('./db_model');
 const nacl = require('tweetnacl');
 const bs58 = require('bs58');
+const {default: axios} = require('axios');
 const { namespaceWrapper } = require("./namespaceWrapper");
 
 module.exports = async (submission_value, round) => {
   console.log('******/ Linktree CID VALIDATION Task FUNCTION /******');
   const outputraw = await dataFromCid(submission_value);
   const output = outputraw.data;
-
-  console.log('RESPONSE DATA length', output.proofs.LENGTH);
-  console.log('PUBLIC KEY', output.publicKey);
-  console.log('SIGNATURE', output.signature);
+  console.log('OUTPUT', output);
+  console.log('RESPONSE DATA length', output.proofs[0].LENGTH);
+  console.log('PUBLIC KEY', output.node_publicKey);
+  console.log('SIGNATURE', output.node_signature);
 
   // TODO - can we safely remove this, from a game theory perspective?
   // Check that the node who submitted the proofs is a valid staked node
-  let isNode = await verifyNode(output.proofs, output.signature, output.publicKey);
+  let isNode = await verifyNode(output.proofs, output.node_signature, output.node_publicKey);
   console.log("Is the node's signature on the CID payload correct?", isNode);
 
   // check each item in the linktrees list and verify that the node is holding that payload, and the signature matches
-  let isLinktree = await verifyLinktree(output.proofs);
+  let isLinktree = await verifyLinktrees(output.proofs);
   console.log('IS LINKTREE True?', isLinktree);
 
   if (isNode && isLinktree) return true; // if both are true, return true
@@ -27,7 +28,7 @@ module.exports = async (submission_value, round) => {
 }
 
 // verify the linktree signature by querying the other node to get it's copy of the linktree
-async function verifyLinktree(proofs_list_object) {
+async function verifyLinktrees(proofs_list_object) {
   let allSignaturesValid = true;
   let AuthUserList = await db.getAllAuthLists();
   console.log('Authenticated Users List:', AuthUserList);
@@ -37,14 +38,22 @@ async function verifyLinktree(proofs_list_object) {
     let publicKey = proofs.value[0].publicKey
 
     // call other nodes to get the node list
-    const nodeUrlList = await namespaceWrapper.getNodes();
+    // * const nodeUrlList = await namespaceWrapper.getNodes();
+
+    // TEST hardcode the node list
+    const nodeUrlList = [
+      "http://localhost:10000",
+    ]
 
     // verify the signature of the linktree for each nodes
     for (const nodeUrl of nodeUrlList) {
       console.log("cheking linktree on ", nodeUrl)
 
       // get all linktree in this node
-      const res = await axios.get(`${url}/task/${TASK_ID}/linktree/get/${publicKey}`);
+      // * const res = await axios.get(`${url}/task/${TASK_ID}/linktree/get/${publicKey}`);
+
+      // TEST hardcode the node endpoint
+      const res = await axios.get(`${nodeUrl}/linktree/get/${publicKey}`);
 
       // check node's status
       if (res.status != 200) {
@@ -56,9 +65,9 @@ async function verifyLinktree(proofs_list_object) {
       const linktree = res.data;
 
       // check if the user's pubkey is on the authlist
-      if ( !AuthUserList.contains(linktree.publicKey) ) {
+      if (AuthUserList.hasOwnProperty(linktree.publicKey) ) {
 
-        // TODO write logic to query other node and verify registration events
+        // TODO write logic to quersy other node and verify registration events
       /*
         1. REST API that returns a user's registration proof and accepts :pubkey
         2. Add logic here to verify 'proofs' from (1) and then add the user to the AuthUserList
@@ -67,6 +76,9 @@ async function verifyLinktree(proofs_list_object) {
       } else {
 
         // Verify the signature
+        const messageUint8Array = new Uint8Array(
+          Buffer.from(JSON.stringify(linktree.data)),
+        );
         const signature = linktree.signature;
         const publicKey = linktree.publicKey;
         const signatureUint8Array = bs58.decode(signature);
@@ -79,7 +91,7 @@ async function verifyLinktree(proofs_list_object) {
         console.log(`IS SIGNATURE ${publicKey} VALID?`, isSignatureValid);
 
         if (isSignatureValid) {
-          await db.setAuthList(publicKey)
+          await db.setAuthList(publicKey) // TODO refactor for direct database usage and read / writes of individual authorized users by pubkey (otherwise full rewrite could risk overwriting another write if running in parallel)
         } else {
           allSignaturesValid = false;
         }
