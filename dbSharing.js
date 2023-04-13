@@ -1,6 +1,12 @@
+const { app, MAIN_ACCOUNT_PUBKEY, SERVICE_URL, TASK_ID } = require("./init");
+const {default: axios} = require('axios');
+
 const share = async () => {
       try {
+        // find another node
         const nodesUrl = `${SERVICE_URL}/nodes/${TASK_ID}`;
+
+        // check if the node is online
         const res = await axios.get(nodesUrl);
         if (res.status != 200) {
           console.error('Error', res.status);
@@ -11,12 +17,20 @@ const share = async () => {
           console.error('res has no valid urls');
           return;
         }
+
         let nodeUrlList = res.data.map((e) => {
           return e.data.url;
         });
+        
         console.log(nodeUrlList);
+        
+        // fetch local linktrees
         let allLinktrees = await db.getLinktree(publicKey); // TODO
         allLinktrees = JSON.parse(allLinktrees || '[]');
+
+        // for each node, get all linktrees? 
+        // TODO - get only one linktree per node, and compare them 
+        // it will be cleaner to focus on one pubkey, and compare with many nodes (maybe 3 nodes)
         for (let url of nodeUrlList) {
           console.log(url);
           const res = await axios.get(`${url}/task/${TASK_ID}/get-all-linktrees`);
@@ -25,6 +39,15 @@ const share = async () => {
             continue;
           }
           const payload = res.data;
+
+
+          // TODO - there are several things to compare
+          /* 
+            1. the list of all linktrees held by each node (the list of public keys)
+            2. the linktree data for each public key
+            3. the timestamp of each linktree item on each node (we should only download newer data)
+          */
+
           /*
         1. Verify the signature
         2. Only update your db if incoming timestamp > your timestamp or you don't have the data

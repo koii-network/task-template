@@ -2,6 +2,7 @@ const dataFromCid = require("./helpers/dataFromCid");
 const db = require('./db_model');
 const nacl = require('tweetnacl');
 const bs58 = require('bs58');
+const { namespaceWrapper } = require("./namespaceWrapper");
 
 module.exports = async (submission_value, round) => {
   console.log('******/ Linktree CID VALIDATION Task FUNCTION /******');
@@ -19,6 +20,7 @@ module.exports = async (submission_value, round) => {
 
   // check each item in the linktrees list and verify that the node is holding that payload, and the signature matches
   let isLinktree = await verifyLinktree(output.proofs);
+  console.log('IS LINKTREE True?', isLinktree);
 
   if (isNode && isLinktree) return true; // if both are true, return true
   else return false; // if one of them is false, return false
@@ -29,41 +31,46 @@ async function verifyLinktree(proofs_list_object) {
   let allSignaturesValid = true;
   let AuthUserList = await db.getAllAuthLists();
   console.log('Authenticated Users List:', AuthUserList);
-  console.log('IS LINKTREE True?', isLinktree);
   
   for (const proofs of proofs_list_object) {
 
-    const linktree_object = await db.getLinktree(proofs.value[0].publicKey); // TODO - replace this with a call to the other node
-    // TODO #2  - once you've done this, be sure to ignore any duplicates for the same node for the same pubkey, otherwise multiple updates in one round will cause audits
-    const messageUint8Array = new Uint8Array(
-      Buffer.from(JSON.stringify(linktree_object.data)),
-    );
+    let publicKey = proofs.value[0].publicKey
 
-    // check if the user's pubkey is on the authlist
-    if ( !AuthUserList.contains(proofs.value[0].publicKey) ) {
-        // if not, check the node that supplied this proof, and verify that this user is in fact authorized
+    // call other nodes to get the node list
+    const nodeUrlList = await namespaceWrapper.getNodes();
+
+    // verify the signature of the linktree for each nodes
+    for (const nodeUrl of nodeUrlList) {
+      console.log("cheking linktree on ", nodeUrl)
+
+      // get all linktree in this node
+      const res = await axios.get(`${url}/task/${TASK_ID}/linktree/get/${publicKey}`);
+
+      // check node's status
+      if (res.status != 200) {
+        console.error('ERROR', res.status);
+        continue;
+      }
+
+      // get the payload
+      const linktree = res.data;
+
+      // check if the user's pubkey is on the authlist
+      if ( !AuthUserList.contains(linktree.publicKey) ) {
 
         // TODO write logic to query other node and verify registration events
-        /*
-          1. REST API that returns a user's registration proof and accepts :pubkey
-          2. Add logic here to verify 'proofs' from (1) and then add the user to the AuthUserList
-        */
-
-        // TODO - add the user to the AuthUserList (might need to be updated later)
-        await db.setAuthList(publicKey);
+      /*
+        1. REST API that returns a user's registration proof and accepts :pubkey
+        2. Add logic here to verify 'proofs' from (1) and then add the user to the AuthUserList
+      */
         
-    } else {
-        // TODO - flush this out more, might need to add an automatic update on the AuthUserList to ensure that this node is always up to date
-        console.log('found invalid linktree data')
-              
+      } else {
 
-        // TODO - fix the array structure so you don't have to do this lol
-        const signature = proofs.value[0].signature;
-        const publicKey = proofs.value[0].publicKey;
+        // Verify the signature
+        const signature = linktree.signature;
+        const publicKey = linktree.publicKey;
         const signatureUint8Array = bs58.decode(signature);
         const publicKeyUint8Array = bs58.decode(publicKey);
-
-        // verify the linktree signature
         const isSignatureValid = await verifySignature(
           messageUint8Array,
           signatureUint8Array,
@@ -71,15 +78,15 @@ async function verifyLinktree(proofs_list_object) {
         );
         console.log(`IS SIGNATURE ${publicKey} VALID?`, isSignatureValid);
 
+        if (isSignatureValid) {
+          await db.setAuthList(publicKey)
+        } else {
+          allSignaturesValid = false;
+        }
+
+      }     
       }
-
-    if (isSignatureValid) {
-            
-    } else {
-      allSignaturesValid = false;
     }
-
-  }
   return allSignaturesValid;
 }
 

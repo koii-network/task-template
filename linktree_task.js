@@ -13,30 +13,28 @@ const db = require('./db_model');
 const main = async () => {
   console.log('******/  IN Linktree Task FUNCTION /******');
 
-  // TODO - remove the new keypair generation below and use the keypairs already held on the node
-  // TODO - https://docs.koii.network/develop/microservices-and-tasks/task-development-kit-tdk/using-the-task-namespace/wallet-signatures
-
-  // Customize linktree test data
-  const keyPair = nacl.sign.keyPair();
-  const publicKey = keyPair.publicKey;
-  const privateKey = keyPair.secretKey;
+  // Load node's keypair from the JSON file
+  // ! return error, ask Syed
+  const keypair = await namespaceWrapper.getSubmitterAccount();
 
   // Get linktree list fron localdb
   const proofs_list_object =  await db.getAllProofs();
 
+  // Use the node's keypair to sign the linktree list
   const messageUint8Array = new Uint8Array(
     Buffer.from(JSON.stringify(proofs_list_object)),
   );
-  const signedMessage = nacl.sign(messageUint8Array, privateKey);
+
+  const signedMessage = nacl.sign(messageUint8Array, keypair.secretKey);
   const signature = signedMessage.slice(0, nacl.sign.signatureLength);
 
   const submission_value = {
     proofs: proofs_list_object,
-    node_publicKey: bs58.encode(publicKey),
+    node_publicKey: bs58.encode(keypair.publicKey),
     node_signature: bs58.encode(signature),
   };
 
-  // upload the index of the linktree on web3.storage
+  // upload the proofs of the linktree on web3.storage
   const path = `./Linktree/proofs.json`;
 
   if (!fs.existsSync('./Linktree')) fs.mkdirSync('./Linktree');

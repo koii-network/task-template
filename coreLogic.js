@@ -8,13 +8,14 @@ const db = require('./db_model');
 class CoreLogic {
   async task() {
     // TODO remove all of the prompts like the following line from the template version
-    // Write the logic to do the work required for submitting the values and optionally store the result in levelDB
 
     // run linktree task
     console.log('*********task() started*********');
 
     const proof_cid = await linktree_task();
+
     // const round = await namespaceWrapper.getRound();
+
     // For only testing purposes:
     const round = 1000
 
@@ -28,7 +29,7 @@ class CoreLogic {
   }
 
   async fetchSubmission() {
-    // Write the logic to fetch the submission values here and return the cid string
+    // The logic to fetch the submission values and return the cid string
 
     // fetching round number to store work accordingly
 
@@ -50,9 +51,7 @@ class CoreLogic {
       console.log('GenerateDistributionList called');
       console.log('I am selected node');
       console.log('Round', round, 'Task State', _dummyTaskState);
-      // Write the logic to generate the distribution list here by introducing the rules of your choice
-
-      /*  **** SAMPLE LOGIC FOR GENERATING DISTRIBUTION LIST ******/
+      // The logic to generate the distribution list here
 
       let distributionList = {};
       let taskAccountDataJSON = await namespaceWrapper.getTaskState();
@@ -104,7 +103,7 @@ class CoreLogic {
   }
 
   async submitDistributionList(round) {
-    // This function just upload your generated dustribution List and do the transaction for that
+    // This upload the generated dustribution List
 
     console.log('SubmitDistributionList called');
 
@@ -159,8 +158,6 @@ class CoreLogic {
     _dummyDistributionList,
     _dummyTaskState,
   ) => {
-    // Write your logic for the validation of submission value here and return a boolean value in response
-    // this logic can be same as generation of distribution list function and based on the comparision will final object , decision can be made
 
     try {
       console.log('Distribution list Submitter', distributionListSubmitter);
@@ -216,7 +213,7 @@ class CoreLogic {
   }
 
   async auditTask(roundNumber) {
-    // No need to edit this function
+
     console.log('auditTask called with round', roundNumber);
     console.log(
       await namespaceWrapper.getSlot(),

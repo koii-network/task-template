@@ -27,24 +27,6 @@ router.use((req, res, next) => {
         console.log(linktree);
     }
 
-    // TODO: validate the linktree structure here
-    /*
-        1. Must have the following structure
-        2. Signature must be verified by the publicKey
-    */
-
-    /*
-        {
-        data:{
-            uuid:jhasjdbjhguyt23764vhyt
-            linktree:linktree,
-            timestamp:76576465,
-        },
-        publicKey:"FnQm11NXJxPSjza3fuhuQ6Cu4fKNqdaPkVSRyLSWf14d",
-        signature:""
-        }
-    */
-
     // Use the code below to sign the data payload
     let signature = linktree.signature;
     let pubkey = linktree.publicKey

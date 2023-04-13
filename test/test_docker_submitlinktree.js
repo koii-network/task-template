@@ -9,8 +9,6 @@ const crypto = require('crypto');
 // This test submits linktrees from differnet publicKey to the service and stored in localdb
 async function main() {
 try {
-  for (let i = 0; i < 5; i++) {
-    console.log('i', i);
   const { publicKey: publicKeyraw, secretKey: secretKey } = solanaWeb3.Keypair.generate();
   // const {publicKey, secretKey} = nacl.sign.keyPair.fromSecretKey(
   //   new Uint8Array(JSON.parse(fs.readFileSync("./test_wallet.json", 'utf-8')))
@@ -46,7 +44,7 @@ try {
   // console.log(payload);
   
   await axios
-    .post('http://localhost:8080/task/HjWJmb2gcwwm99VhyNVJZir3ToAJTfUB4j7buWnMMUEP/register-linktree', {payload})
+    .post('http://localhost:8080/task/7jP87G1LJzWmLrr6RqQcA8bH6spZven4RHxGCgbPFzSo/linktree', {payload})
     .then((e) => {
       if (e.status != 200) {
         console.log(e);
@@ -56,7 +54,6 @@ try {
     .catch((e) => {
       console.error(e);
     });
-  }
 } catch (e) {
     console.error(e)
 }
