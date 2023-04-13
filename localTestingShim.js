@@ -1,3 +1,6 @@
+const coreLogic = require("./coreLogic");
+// TEST Set round
+let round = 1000
 const localShim = async () => {
 
   /* GUIDE TO CALLS K2 FUNCTIONS MANUALLY
@@ -17,7 +20,7 @@ const localShim = async () => {
   // console.log(await namespaceWrapper.getTaskState());
 
   // Get account public key
-  console.log(MAIN_ACCOUNT_PUBKEY);
+  // console.log(MAIN_ACCOUNT_PUBKEY);
 
   // GET ROUND 
   // const round = await namespaceWrapper.getRound();
