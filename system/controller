@@ -3,3 +3,10 @@ const leveldown = require('leveldown');
 
 const db = levelup(leveldown(__dirname + '/localKOIIDB'));
 
+const data = require(__dirname + '/model/data.js');
+const gatherer = require(__dirname + '/model/gatherer.js');
+
+const tweets = new data('tweets', []);
+const links = new data('links', []);
+
+const gatherer = new gatherer(db);

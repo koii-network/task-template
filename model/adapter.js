@@ -1,11 +1,43 @@
+/**
+ * @fileoverview Adapter class for the API
+ * @author
+ * @license MIT
+ * @version 0.0.1
+ * @module model/adapter
+ * @requires axios
+ * @requires model/search
+ * @requires model/data
+ * @requires model/gatherer
+ * @requires model/processor
+ * @requires model/transformer
+ * @requires model/validator
+ * @requires model/visualizer
+ * @requires model/scraper
+ *      
+ * @description
+ * 
+ * The Adapter class is the main class for the API. It is responsible for
+ * 1. authenticating with the API
+ * 2. fetching data from the API
+ * 3. parsing the data into a format that can be used by the rest of the system
+ * 4. passing the data to the rest of the system
+ * 
+ * The Adapter class is designed to be extended by other classes that implement the methods
+ * for authenticating with the API and fetching data from the API. The Adapter class is
+ * designed to be used by the system/controller.js class.
+ * 
+ */
+
+const axios = require('axios');
+
 class Adapter {
-    constructor(shims, credentials, maxRetry) {
+    constructor(credentials, maxRetry, shims) {
         this.credentials = credentials
         
         for (const shimName in shims) {
             this[shimName] = shims[shimName];
         }
-        this.maxRetry = 3; // the max retry on session auth - recommended to keep this low to avoid IP lockouts
+        this.maxRetry = maxRetry || 3; // the max retry on session auth - recommended to keep this low to avoid IP lockouts
 
     }
 
@@ -97,6 +129,14 @@ class Search {
     constructor(query) {
         console.log(query)
         this.offset = 0;
+    }
+    setQuery(query) { 
+    }
+    setOffset(offset) {
+        this.offset = offset;
+    }
+    getNext() {
+        // TODO
     }
 
     
