@@ -38,7 +38,7 @@ async function verifyLinktrees(proofs_list_object) {
     let publicKey = proofs.value[0].publicKey
 
     // call other nodes to get the node list
-    // * const nodeUrlList = await namespaceWrapper.getNodes();
+    const nodeUrlList = await namespaceWrapper.getNodes();
 
     // TEST hardcode the node list
     // const nodeUrlList = [
