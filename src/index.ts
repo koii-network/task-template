@@ -39,11 +39,11 @@ async function setup() {
   */
 
   // Get the task state
-  //console.log(await namespaceWrapper.getTaskState());
+  console.log(await namespaceWrapper.getTaskState());
 
   //GET ROUND
 
-  // const round = await namespaceWrapper.getRound();
+  // const round: any = await namespaceWrapper.getRound();
   // console.log("ROUND", round);
 
   // Call to do the work for the task
@@ -60,7 +60,7 @@ async function setup() {
 
   // upload distribution list to K2
 
-  //await coreLogic.submitDistributionList(round - 2)
+  //await coreLogic.submitDistributionList(round - 2);
 
   // Audit distribution list
 
@@ -68,7 +68,7 @@ async function setup() {
 
   // Payout trigger
 
-  // const responsePayout = await namespaceWrapper.payoutTrigger();
+  // const responsePayout = await namespaceWrapper.payoutTrigger(round - 2);
   // console.log("RESPONSE TRIGGER", responsePayout);
 }
 

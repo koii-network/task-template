@@ -58,6 +58,10 @@ class NamespaceWrapper {
     return await genericHandler("getCurrentSlot");
   }
 
+  async getRound() {
+    return await genericHandler("getRound");
+  }
+
   async submissionOnChain(
     submitterKeypair: Keypair,
     submission: string
@@ -110,8 +114,8 @@ class NamespaceWrapper {
     return await genericHandler("distributionListSubmissionOnChain", round);
   }
 
-  async payOutTrigger() {
-    return await genericHandler("payloadTrigger");
+  async payoutTrigger(round: number) {
+    return await genericHandler("payloadTrigger", round);
   }
 
   async stakeOnChain(

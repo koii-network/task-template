@@ -23,7 +23,19 @@ class CoreLogic {
   }
   async fetchSubmission() {
     // Write the logic to fetch the submission values here and return the cid string
+
+    console.log("IN FETCH SUBMISSION");
+
+    // The code below shows how you can fetch your stored value from level DB
+
+    const cid = await namespaceWrapper.storeGet("cid"); // retrieves the cid
+    console.log("CID", cid);
+    return cid;
   }
+
+  // change this function immensly
+  // 1. 80 % based on the staking list
+
 
   async generateDistributionList(round) {
     console.log("GenerateDistributionList called");
@@ -57,7 +69,7 @@ class CoreLogic {
           const votes = submissions_audit_trigger[candidatePublicKey].votes;
           let numOfVotes = 0;
           for (let index = 0; index < votes.length; index++) {
-            if (votes[i].is_valid) numOfVotes++;
+            if (votes[index].is_valid) numOfVotes++;
             else numOfVotes--;
           }
           if (numOfVotes < 0) continue;
