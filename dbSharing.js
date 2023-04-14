@@ -27,7 +27,7 @@ const share = async () => {
         
         // fetch local linktrees
         let allLinktrees = await db.getAllLinktrees(); // TODO
-        allLinktrees = JSON.parse(allLinktrees || '[]');
+        allLinktrees = allLinktrees || '[]';
 
         // for each node, get all linktrees? 
         // TODO - get only one linktree per node, and compare them 

@@ -21,6 +21,7 @@ class CoreLogic {
 
     if (proof_cid) {
       await db.setNodeProofCid(round, proof_cid); // store CID in levelDB
+      console.log('Node Proof CID stored in round', round)
     } else {
       console.log('CID NOT FOUND');
     }
@@ -40,8 +41,8 @@ class CoreLogic {
     // const round = 1000
     const round = await namespaceWrapper.getRound();
     
-    const proof_cid = await db.getNodeProofCid(round); // retrieves the cid
-    console.log('Linktree proofs CID', proof_cid, "in round", round);
+    const proof_cid = await db.getNodeProofCid(round - 1); // retrieves the cid
+    console.log('Linktree proofs CID', proof_cid, "in round", round - 1);
 
     return proof_cid;
   }

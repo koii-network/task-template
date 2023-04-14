@@ -1,6 +1,6 @@
 const coreLogic = require("./coreLogic");
 const dbSharing = require("./dbSharing");
-const localShim = require("./localTestingShim"); // to enable testing with K2 without round timers, enable this line and line 59
+// const localShim = require("./localTestingShim"); // TEST to enable testing with K2 without round timers, enable this line and line 59
 const { app, MAIN_ACCOUNT_PUBKEY, SERVICE_URL, TASK_ID } = require("./init");
 const express = require('express');
 const { namespaceWrapper, taskNodeAdministered } = require("./namespaceWrapper");
@@ -58,7 +58,7 @@ async function setup() {
       dbSharing.share();
     }, 20000);
 
-    localShim(); // enable this to run the localShim for testing with K2 without timers
+    // localShim(); // TEST enable this to run the localShim for testing with K2 without timers
 
 }
 

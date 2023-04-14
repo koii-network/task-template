@@ -15,10 +15,10 @@ const main = async () => {
   console.log('******/  IN Linktree Task FUNCTION /******');
 
   // Load node's keypair from the JSON file
-  // const keypair = await namespaceWrapper.getSubmitterAccount();
+  const keypair = await namespaceWrapper.getSubmitterAccount();
 
   // TEST For local testing, hardcode the keypair
-  const keypair = Keypair.generate(); 
+  // const keypair = Keypair.generate(); 
 
   // Get linktree list fron localdb
   const proofs_list_object =  await db.getAllProofs();

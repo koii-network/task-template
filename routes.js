@@ -99,6 +99,11 @@ router.use((req, res, next) => {
     linktree = await db.getAllNodeProofCids() || '[]';
     return res.status(200).send(linktree);
     });
+    router.get('/node-proof/:round', async (req, res) => {
+        const { round } = req.params;
+        let nodeproof = await db.getNodeProofCid(round) || '[]';
+        return res.status(200).send(nodeproof);
+        });
     router.get('/authlist/get/:publicKey', async (req, res) => {
     const { publicKey } = req.params;
     let authlist = await db.getAuthList(publicKey);
