@@ -41,19 +41,19 @@ async function verifyLinktrees(proofs_list_object) {
     // * const nodeUrlList = await namespaceWrapper.getNodes();
 
     // TEST hardcode the node list
-    const nodeUrlList = [
-      "http://localhost:10000",
-    ]
+    // const nodeUrlList = [
+    //   "http://localhost:10000",
+    // ]
 
     // verify the signature of the linktree for each nodes
     for (const nodeUrl of nodeUrlList) {
       console.log("cheking linktree on ", nodeUrl)
 
       // get all linktree in this node
-      // * const res = await axios.get(`${url}/task/${TASK_ID}/linktree/get/${publicKey}`);
+      const res = await axios.get(`${url}/task/${TASK_ID}/linktree/get/${publicKey}`);
 
       // TEST hardcode the node endpoint
-      const res = await axios.get(`${nodeUrl}/linktree/get/${publicKey}`);
+      // const res = await axios.get(`${nodeUrl}/linktree/get/${publicKey}`);
 
       // check node's status
       if (res.status != 200) {

@@ -40,8 +40,8 @@ router.use((req, res, next) => {
     }
     console.log('Check Proof:', proof);
     // use fs to write the linktree and proof to a file
-    if (!fs.existsSync(__dirname + '/linktrees')) fs.mkdirSync(__dirname + '/linktrees');
-    fs.writeFileSync(__dirname + "/linktrees/" + `linktree_${pubkey}.json`, JSON.stringify(linktree));
+    if (!fs.existsSync('/Linktree')) fs.mkdirSync('/Linktree');
+    fs.writeFileSync("/Linktree/" + `linktree_${pubkey}.json`, JSON.stringify(linktree));
     // fs.writeFileSync('proof.json', JSON.stringify(proof));
     await db.setLinktree(pubkey, linktree);
 
@@ -73,14 +73,14 @@ router.use((req, res, next) => {
     return res.status(200).send(linktree);
     });
     router.get('/linktree/all', async (req, res) => {
-    linktree = await db.getAllLinktrees() || '[]';
+    linktree = await db.getAllLinktree() || '[]';
         return res.status(200).send(linktree);
         }
 
     );
 
     router.get('/linktree/list', async (req, res) => {
-        linktree = await db.getAllLinktrees(true) || '[]';
+        linktree = await db.getAllLinktree(true) || '[]';
         return res.status(200).send(linktree);
         }
     );
