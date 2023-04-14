@@ -26,7 +26,7 @@ const share = async () => {
         console.log(nodeUrlList);
         
         // fetch local linktrees
-        let allLinktrees = await db.getLinktree(publicKey); // TODO
+        let allLinktrees = await db.getAllLinktrees(); // TODO
         allLinktrees = JSON.parse(allLinktrees || '[]');
 
         // for each node, get all linktrees? 

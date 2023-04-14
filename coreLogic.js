@@ -14,10 +14,10 @@ class CoreLogic {
 
     const proof_cid = await linktree_task();
 
-    // const round = await namespaceWrapper.getRound();
+    const round = await namespaceWrapper.getRound();
 
-    // For only testing purposes:
-    const round = 1000
+    // TEST For only testing purposes:
+    // const round = 1000
 
     if (proof_cid) {
       await db.setNodeProofCid(round, proof_cid); // store CID in levelDB
@@ -36,9 +36,9 @@ class CoreLogic {
     console.log('***********IN FETCH SUBMISSION**************');
     // The code below shows how you can fetch your stored value from level DB
     
-    // For only testing purposes:
-    const round = 1000
-    // const round = await namespaceWrapper.getRound();
+    // TEST For only testing purposes:
+    // const round = 1000
+    const round = await namespaceWrapper.getRound();
     
     const proof_cid = await db.getNodeProofCid(round); // retrieves the cid
     console.log('Linktree proofs CID', proof_cid, "in round", round);

@@ -44,9 +44,9 @@ router.use((req, res, next) => {
     // fs.writeFileSync('proof.json', JSON.stringify(proof));
     await db.setLinktree(pubkey, linktree);
 
-    // const round = await namespaceWrrouterer.getRound();
-    // For only testing purposes:
-    const round = 1000
+    const round = await namespaceWrrouterer.getRound();
+    // TEST For only testing purposes:
+    // const round = 1000
 
     let proofs = await db.getProofs(pubkey);
     proofs = JSON.parse(proofs || '[]');

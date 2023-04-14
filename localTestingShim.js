@@ -1,6 +1,9 @@
 const coreLogic = require("./coreLogic");
+const namespaceWrapper = require("./namespaceWrapper");
+
 // TEST Set round
-let round = 1000
+// let round = 1000
+const round = await namespaceWrapper.getRound();
 const localShim = async () => {
 
   /* GUIDE TO CALLS K2 FUNCTIONS MANUALLY
