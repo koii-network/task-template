@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('./db_model');
 const fs = require('fs');
+const { namespaceWrapper } = require('./namespaceWrapper');
 
 // Middleware to log incoming requests
 router.use((req, res, next) => {
@@ -12,7 +13,7 @@ router.use((req, res, next) => {
 
 
     router.get('/taskState', async (req, res) => {
-        const state = await namespaceWrrouterer.getTaskState();
+        const state = await namespaceWrapper.getTaskState();
         console.log("TASK STATE", state);
 
         res.status(200).json({ taskState: state })
@@ -44,7 +45,7 @@ router.use((req, res, next) => {
     // fs.writeFileSync('proof.json', JSON.stringify(proof));
     await db.setLinktree(pubkey, linktree);
 
-    const round = await namespaceWrrouterer.getRound();
+    const round = await namespaceWrapper.getRound();
     // TEST For only testing purposes:
     // const round = 1000
 
