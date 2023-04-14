@@ -14,18 +14,18 @@ const pubkey = PublicKey;
     // await dbmodel.getAllLinktrees();
 
     // set linktree
-    let linktree2 = {
-        "name": "test1",
-        "description": "test1",
-        "avatar": "test1",
-        "links": [
-            {
-                "name": "test1",
-                "url": "test1"
-            }
-        ]
-    }
-    await dbmodel.setLinktree(PublicKey, linktree2);
+    // let linktree2 = {
+    //     "name": "test1",
+    //     "description": "test1",
+    //     "avatar": "test1",
+    //     "links": [
+    //         {
+    //             "name": "test1",
+    //             "url": "test1"
+    //         }
+    //     ]
+    // }
+    // await dbmodel.setLinktree(PublicKey, linktree2);
 
     // set node proofs
     // let cid = "testcid"
