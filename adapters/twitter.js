@@ -11,16 +11,17 @@ module.exports = new Adapter({
     "maxRetry": 3,
     "shims": {
         "newSearch" : async (query) => {
-            return getRecentTweets(query)
+            return getRecentTweets(query);
         },
         "parseOne" : async (search) => {
             // TODO fetch an item from the correct dataDb (pending:) and then parse it and add the results under (data:)
+            return parseOneTweet(id);
         },
         "checkSession" : async () => {
             // TODO check if the session is valid
         }
     },
-    "data": []
+    data : new Data('tweets', []) 
 });
 
 // Function to get recent tweets about a keyword
@@ -40,7 +41,14 @@ async function getRecentTweets(keyword) {
     });
 
     if (response.data && response.data.data) {
-      return response.data.data;
+      let tweets = response.data.data;
+      tweets.forEach((tweet) => {
+        console.log(`[${tweet.created_at}] ${tweet.text}`);
+        // before we can add the tweet to the dataDb, we need to parse it
+        let tweetItem = parseTweet(tweet);
+
+        Data.create(tweetItem)
+      });
     } else {
       console.error('No tweets found.');
       return [];
@@ -51,10 +59,20 @@ async function getRecentTweets(keyword) {
   }
 }
 
-// Example usage: Get recent tweets about the keyword "javascript"
-getRecentTweets('javascript').then((tweets) => {
-  console.log('Recent tweets about "javascript":');
-  tweets.forEach((tweet) => {
-    console.log(`[${tweet.created_at}] ${tweet.text}`);
-  });
-});
+const parseTweet = async (tweet) => {
+    console.log('new tweet!', tweet)
+    let item = {
+        id: tweet.id,
+        data: tweet,
+        list: getIdListFromTweet(tweet)
+    }
+
+    return item;
+}
+
+const getIdListFromTweet = (tweet) => {
+    // parse the tweet for IDs from comments and replies and return an array
+    
+    return [];
+}
+

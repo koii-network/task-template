@@ -29,6 +29,7 @@
  */
 
 const axios = require('axios');
+const Search = require(__dirname + '/model/search.js');
 
 class Adapter {
     constructor(credentials, maxRetry, shims) {
@@ -125,21 +126,5 @@ class Adapter {
 
 }
 
-class Search {
-    constructor(query) {
-        console.log(query)
-        this.offset = 0;
-    }
-    setQuery(query) { 
-    }
-    setOffset(offset) {
-        this.offset = offset;
-    }
-    getNext() {
-        // TODO
-    }
-
-    
-}
 
 module.exports = Adapter;

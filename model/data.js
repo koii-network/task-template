@@ -1,9 +1,11 @@
 const levelup = require('levelup');
 const leveldown = require('leveldown');
+const Item = require('model/item.js');
 
-class data {
-    constructor (name, data) {
+class Data {
+    constructor (name, db, data) {
         this.name = name;
+        this.db = db;
         this.dbprefix = `${name} + ":"`;
         data.forEach((item) => {
             this.create(item)
@@ -16,7 +18,7 @@ class data {
     // returns items by id
     get (id) {
         return new Promise((resolve, reject) => {
-            db.get( createId(itemId), (err, value) => {
+            db.get( createId(id), (err, value) => {
               if (err) {
                 console.error("Error in getData", err);
                 resolve(null);
@@ -58,14 +60,10 @@ class data {
     }
 
     // adds a new item 
-    create (itemId, item) {
+    create (item) {
+        item = new Item(item); // item must be an instance of Item
         return db.put( createId(itemId), JSON.stringify(item));
     }  
-
-    // reutrns a string ID with proper prefix
-    createId = async (id) => {
-        return `${ itemId } ${ this.dbprefix }`
-    } 
 }
 
-module.exports = data;
+module.exports = Data;
