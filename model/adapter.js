@@ -77,8 +77,23 @@ class Adapter {
     // default methods can be overriden by passing shims[methods]
     newSearch = async (query) => {
         if (!this.session || !this.session.isValid) 
-        return new Search(query);
+        // fetch a list using the query provided
+        let result = await axios.post('https://api.example.com/search', {
+            session: this.session,
+            query: query
+        })
 
+        return this.listFromSearch(result);
+    }
+
+    listFromSearch (searchResults) {
+        // converts a search query result into a list of item ids
+        // i.e.
+        let list = [];
+        for (item in searchResults) {
+            list.push(item.id);
+        }
+        return list;
     }
     
     parseOne = async (search) => {

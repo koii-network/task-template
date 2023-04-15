@@ -9,7 +9,22 @@ class Search {
         this.list = []; // holds the list of items returned by the search
         this.lists = []; // holds the list of lists returned by the search
     }
+    getList = async () => {
+        
+        let status = await this.adapter.checkSession()
+        if (status == 200) {
+            // session is valid
+            // TODO - add logic to check if the search has already been run
+            // if so, return the existing list
+            // if not, run the search and return the list
+            let result = await this.adapter.newSearch(this.query, this.options);
+            this.list = result.list;
+            this.lists = result.lists;
+            return this.list;
+        }
 
+
+    }
     setOffset(offset) {
         // manages getting and setting the offset for the search queue
         this.options.offset = offset;
