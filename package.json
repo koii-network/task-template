@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "go" : "yarn && yarn start > log.txt |  tail -f log.txt | yarn test:api ",
+    "go": "yarn && yarn start > log.txt |  tail -f log.txt | yarn test:api ",
     "test": "node tests/full.js",
-    "test:api" : "node tests/api.js",
+    "test:api": "node tests/api.js",
     "start": "node index.js",
     "webpack": "webpack",
     "webpack:prod": "webpack --mode production"
@@ -22,6 +22,7 @@
     "levelup": "^5.1.1",
     "node-cron": "^3.0.2",
     "request": "^2.88.2",
+    "twitter-api-v2": "^1.14.2",
     "web3.storage": "^4.4.0"
   },
   "devDependencies": {

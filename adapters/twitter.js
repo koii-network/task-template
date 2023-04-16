@@ -3,26 +3,59 @@ require('dotenv').config();
 const axios = require('axios');
 const Data = require(__dirname + '/../model/data.js');
 const Adapter = require(__dirname + '/../model/adapter.js');
+const { TwitterApi } = require('twitter-api-v2')
 
-module.exports = async (credentials, maxRetry) => {
-  return new Adapter({
-    "credentials": credentials,
-    "maxRetry": maxRetry,
-    "shims": {
-        "newSearch" : async (query) => {
-            return getRecentTweets(query);
-        },
-        "parseOne" : async (search) => {
-            // TODO fetch an item from the correct dataDb (pending:) and then parse it and add the results under (data:)
-            return parseOneTweet(id);
-        },
-        "checkSession" : async () => {
-            // TODO check if the session is valid
+class Twitter extends Adapter {
+  constructor(credentials, maxRetry) {
+      super(credentials, maxRetry);
+      this.credentials = credentials;
+      if (! this.credentials.api || !this.credentials.apiSecretKey || !this.credentials.accessToken || !this.credentials.accessTokenSecret ) {
+        throw new Error('Twitter API credentials are missing');
+      }
+      this.maxRetry = maxRetry;
+      this.shims = {
+            "newSearch" : async (query) => {
+                return getRecentTweets(query);
+            },
+            "parseOne" : async (search) => {
+                // TODO fetch an item from the correct dataDb (pending:) and then parse it and add the results under (data:)
+                return parseOneTweet(id);
+            },
+            "checkSession" : async () => {
+                // TODO check if the session is valid
+            }
         }
-    },
-    data : new Data('tweets', []) 
-  });
+      // this.data = new Data('tweets', []);
+  }
+
+  negotiateSession = async () => {
+    console.log('received keys', this.credentials)
+    const client = new TwitterApi({
+      // appKey: this.credentials.apiKey,
+      // appSecret: this.credentials.apiSecretKey,
+      accessToken: this.credentials.accessToken,
+      accessSecret: this.credentials.accessTokenSecret,
+    });  
+    this.session = client;
+    return this.checkSession();
+  }
+
+  checkSession = async () => {
+    try {
+      const userDetails = await this.session.v1.get('account/verify_credentials.json');
+      console.log('User details:', userDetails);
+      console.log('Twitter session is valid.');
+      this.session.isValid = true; 
+      return userDetails;
+    } catch (error) {
+      console.error('Error verifying Twitter session:', error);
+      this.session.isValid = false;
+      return error
+    }  
+  }
 }
+
+ 
 
 // Function to get recent tweets about a keyword
 async function getRecentTweets(keyword) {
@@ -76,3 +109,6 @@ const getIdListFromTweet = (tweet) => {
     return [];
 }
 
+
+
+module.exports = Twitter;
