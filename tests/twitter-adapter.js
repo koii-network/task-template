@@ -5,8 +5,6 @@ const leveldown = require('leveldown');
 const db = levelup(leveldown(__dirname + '/localKOIIDB'));
 
 const credentials = {
-    api: process.env.TWITTER_CONSUMER_KEY,
-    apiSecretKey: process.env.TWITTER_CONSUMER_SECRET,
     accessToken: process.env.TWITTER_BEARER_TOKEN,
     accessTokenSecret: process.env.TWITTER_BEARER_TOKEN_SECRET
 };

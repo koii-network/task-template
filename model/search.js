@@ -11,8 +11,7 @@ class Search {
     }
     getList = async () => {
         
-        let status = await this.adapter.checkSession()
-        if (status == 200) {
+        if (this.adapter.session.isValid) {
             // session is valid
             // TODO - add logic to check if the search has already been run
             // if so, return the existing list
@@ -21,6 +20,8 @@ class Search {
             this.list = result.list;
             this.lists = result.lists;
             return this.list;
+        } else {
+            console.error('no valid session on adapter')
         }
 
 

@@ -37,8 +37,11 @@ class Gatherer {
         // generate a new search
         let search = new Search(this.options.startQuery, this.options, this.adapter);
         
+        console.log('search', search);
+
         // parse items and crawl links for more items
-        let items = this.search.getList();
+        let items = await search.getList();
+        console.log('gatherer got items', items)
 
         // save items to the db
         for (const item of items) {

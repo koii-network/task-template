@@ -9,14 +9,11 @@ class Twitter extends Adapter {
   constructor(credentials, maxRetry) {
       super(credentials, maxRetry);
       this.credentials = credentials;
-      if (! this.credentials.api || !this.credentials.apiSecretKey || !this.credentials.accessToken || !this.credentials.accessTokenSecret ) {
+      if ( !this.credentials.accessToken || !this.credentials.accessTokenSecret ) {
         throw new Error('Twitter API credentials are missing');
       }
       this.maxRetry = maxRetry;
       this.shims = {
-            "newSearch" : async (query) => {
-                return getRecentTweets(query);
-            },
             "parseOne" : async (search) => {
                 // TODO fetch an item from the correct dataDb (pending:) and then parse it and add the results under (data:)
                 return parseOneTweet(id);
@@ -37,7 +34,7 @@ class Twitter extends Adapter {
       accessSecret: this.credentials.accessTokenSecret,
     });  
     this.session = client;
-    return this.checkSession();
+    return await this.checkSession();
   }
 
   checkSession = async () => {
@@ -53,44 +50,30 @@ class Twitter extends Adapter {
       return error
     }  
   }
-}
 
- 
-
-// Function to get recent tweets about a keyword
-async function getRecentTweets(keyword) {
-  try {
-    const twitterApiUrl = 'https://api.twitter.com/2/tweets/search/recent';
-    const queryParams = new URLSearchParams({
-      query: keyword,
-      'tweet.fields': 'created_at,public_metrics',
-      max_results: 10,
-    });
-
-    const response = await axios.get(`${twitterApiUrl}?${queryParams}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.TWITTER_API_KEY}`,
-      },
-    });
-
-    if (response.data && response.data.data) {
-      let tweets = response.data.data;
-      tweets.forEach((tweet) => {
-        console.log(`[${tweet.created_at}] ${tweet.text}`);
-        // before we can add the tweet to the dataDb, we need to parse it
-        let tweetItem = parseTweet(tweet);
-
-        Data.create(tweetItem)
+  newSearch = async (query) => {
+    try {
+      const queryParams = new URLSearchParams({
+        query: keyword,
+        'tweet.fields': 'created_at,public_metrics',
+        max_results: 10,
       });
-    } else {
-      console.error('No tweets found.');
+
+      const result = await client.v2.get('tweets/search/recent', { query: 'nodeJS', max_results: 100 });
+      console.log(result.data); // TweetV2[]
+      // if (result.data) {
+
+      // } else {
+      //   console.error('No tweets found.');
+      //   return [];
+      // }
+    } catch (error) {
+      console.error('Error fetching tweets:', error.message);
       return [];
     }
-  } catch (error) {
-    console.error('Error fetching tweets:', error.message);
-    return [];
   }
 }
+
 
 const parseTweet = async (tweet) => {
     console.log('new tweet!', tweet)
