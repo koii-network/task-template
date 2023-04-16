@@ -29,7 +29,7 @@
  */
 
 const axios = require('axios');
-const Search = require(__dirname + '/model/search.js');
+const Search = require(__dirname + '/search');
 
 class Adapter {
     constructor(credentials, maxRetry, shims) {
@@ -78,7 +78,7 @@ class Adapter {
     newSearch = async (query) => {
         if (!this.session || !this.session.isValid) 
         // fetch a list using the query provided
-        let result = await axios.post('https://api.example.com/search', {
+        var result = await axios.post('https://api.example.com/search', {
             session: this.session,
             query: query
         })

@@ -1,14 +1,13 @@
 // Import required modules
 require('dotenv').config();
 const axios = require('axios');
-const Data = require(__dirname + '/model/data.js');
+const Data = require(__dirname + '/../model/data.js');
 const Adapter = require(__dirname + '/../model/adapter.js');
 
-module.exports = new Adapter({
-    "credentials": {
-        "key": process.env.TWITTER_API_KEY,
-    },
-    "maxRetry": 3,
+module.exports = async (credentials, maxRetry) => {
+  return new Adapter({
+    "credentials": credentials,
+    "maxRetry": maxRetry,
     "shims": {
         "newSearch" : async (query) => {
             return getRecentTweets(query);
@@ -22,7 +21,8 @@ module.exports = new Adapter({
         }
     },
     data : new Data('tweets', []) 
-});
+  });
+}
 
 // Function to get recent tweets about a keyword
 async function getRecentTweets(keyword) {

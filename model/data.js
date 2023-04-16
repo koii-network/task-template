@@ -1,6 +1,6 @@
 const levelup = require('levelup');
 const leveldown = require('leveldown');
-const Item = require('model/item.js');
+const Item = require(__dirname + '/item');
 
 class Data {
     constructor (name, db, data) {
