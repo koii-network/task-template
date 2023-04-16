@@ -27,46 +27,44 @@ class Twitter extends Adapter {
 
   negotiateSession = async () => {
     console.log('received keys', this.credentials)
-    const client = new TwitterApi({
-      // appKey: this.credentials.apiKey,
-      // appSecret: this.credentials.apiSecretKey,
-      accessToken: this.credentials.accessToken,
-      accessSecret: this.credentials.accessTokenSecret,
-    });  
-    this.session = client;
-    return await this.checkSession();
-  }
-
-  checkSession = async () => {
     try {
-      const userDetails = await this.session.v1.get('account/verify_credentials.json');
-      console.log('User details:', userDetails);
-      console.log('Twitter session is valid.');
-      this.session.isValid = true; 
-      return userDetails;
+      const client = new TwitterApi({
+        // appKey: this.credentials.apiKey,
+        // appSecret: this.credentials.apiSecretKey,
+        accessToken: this.credentials.accessToken,
+        accessSecret: this.credentials.accessTokenSecret,
+      });  
+      this.session = client;
+      return await this.checkSession();
     } catch (error) {
       console.error('Error verifying Twitter session:', error);
       this.session.isValid = false;
-      return error
-    }  
+      return error  
+    }
+  }
+
+  checkSession = async () => {
+    // TODO - need a clean way  to reintroduce this, for now it's wasting API credits
+    this.session.isValid = true
+    return true;
+    // try {
+    //   const userDetails = await this.session.v1.get('account/verify_credentials.json');
+    //   console.log('User details:', userDetails);
+    //   console.log('Twitter session is valid.');
+    //   this.session.isValid = true; 
+    //   return userDetails;
+    // } catch (error) {
+    //   console.error('Error checking Twitter session:', error);
+    //   this.session.isValid = false;
+    //   return error
+    // }  
   }
 
   newSearch = async (query) => {
     try {
-      const queryParams = new URLSearchParams({
-        query: keyword,
-        'tweet.fields': 'created_at,public_metrics',
-        max_results: 10,
-      });
-
-      const result = await client.v2.get('tweets/search/recent', { query: 'nodeJS', max_results: 100 });
-      console.log(result.data); // TweetV2[]
-      // if (result.data) {
-
-      // } else {
-      //   console.error('No tweets found.');
-      //   return [];
-      // }
+      const result = await this.session.v2.get('tweets/search/recent', { query: query, max_results: 100, expansions: 'author_id', 'tweet.fields': 'created_at,author_id,public_metrics', 'user.fields': 'username' });
+      console.log(result.data); 
+      return result.data;
     } catch (error) {
       console.error('Error fetching tweets:', error.message);
       return [];

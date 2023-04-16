@@ -3,6 +3,7 @@ const levelup = require('levelup');
 const Twitter = require('../adapters/twitter');
 const leveldown = require('leveldown');
 const db = levelup(leveldown(__dirname + '/localKOIIDB'));
+const Data = require('../model/data');
 
 const credentials = {
     accessToken: process.env.TWITTER_BEARER_TOKEN,
@@ -14,7 +15,9 @@ const run = async () => {
 
     let query = "web3"; // the query our twitter search will use
 
-    const gatherer = new Gatherer(db, adapter, 3, query);
+    let dataDb = new Data('tweets', db);
+
+    const gatherer = new Gatherer(dataDb, adapter, 3, query);
 
     // run a gatherer to get 100 items
     let results = await gatherer.gather(100);

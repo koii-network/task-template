@@ -7,18 +7,18 @@ class Data {
         this.name = name;
         this.db = db;
         this.dbprefix = `${name} + ":"`;
-        data.forEach((item) => {
+        if (data) data.forEach((item) => {
             this.create(item)
+            console.log(`Created ${this.fullList.length} new items from a list of ${ data.length}`)
         })
-        console.log(`Created ${this.fullList.length} new items from a list of ${ data.length}`)
-        this.fullList = getList();
+        this.fullList = this.getList();
         this.lastUpdate = Date.now();
     }
 
     // returns items by id
     get (id) {
         return new Promise((resolve, reject) => {
-            db.get( createId(id), (err, value) => {
+            this.db.get( createId(id), (err, value) => {
               if (err) {
                 console.error("Error in getData", err);
                 resolve(null);
@@ -39,7 +39,7 @@ class Data {
           };
         return new Promise((resolve, reject) => {
             let dataStore = [];
-            db.createReadStream(options)
+            this.db.createReadStream(options)
               .on('data', function (data) {
                 console.log( data.key.toString(), '=', data.value.toString())
                 dataStore.push({ key: data.key.toString(), value: JSON.parse(data.value.toString()) });

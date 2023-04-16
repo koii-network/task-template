@@ -32,7 +32,7 @@ class Gatherer {
 
         // set up an adapter
         // authenticate with the adapter
-        let session = this.adapter.negotiateSession();
+        let session = await this.adapter.negotiateSession();
 
         // generate a new search
         let search = new Search(this.options.startQuery, this.options, this.adapter);
@@ -43,17 +43,18 @@ class Gatherer {
         let items = await search.getList();
         console.log('gatherer got items', items)
 
-        // save items to the db
-        for (const item of items) {
-            if ( allItems.length < limit) {
-                let newId = this.db.create(items);
-                allItems[newId] = item;
-            } else {
-                return allItems;
+        if (items && items.length && items.length > 0) {
+            // save items to the db
+            for (const item of items) {
+                if ( allItems.length < limit) {
+                    let newId = this.db.create(items);
+                    allItems[newId] = item;
+                } else {
+                    return allItems;
+                }
+
             }
-
         }
-
         // TODO - save search to the db
         // this.db.create(search);
 
