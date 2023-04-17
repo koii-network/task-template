@@ -272,4 +272,4 @@ class CoreLogic {
 }
 const coreLogic = new CoreLogic();
 
-module.exports = coreLogic;
+module.exports = { coreLogic };

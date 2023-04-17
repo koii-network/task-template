@@ -5,19 +5,28 @@ const BASE_ROOT_URL = 'http://localhost:8080/namespace-wrapper';
 const { TASK_ID, SECRET_KEY } = require('./init');
 const { Connection, PublicKey, Keypair } = require('@_koi/web3.js');
 const taskNodeAdministered = !!TASK_ID;
-let localLevelDB;
 class NamespaceWrapper {
+  levelDB;
+
+  constructor() {
+    if(taskNodeAdministered){
+      this.getTaskLevelDBPath().then((path)=>{
+        this.levelDB = levelup(leveldown(path));
+      }).catch((err)=>{
+        console.error(err)
+        this.levelDB=levelup(leveldown(`../namespace/${TASK_ID}/KOIILevelDB`))
+      })
+    }else{
+      this.levelDB = levelup(leveldown('./localKOIIDB'));
+    }
+  }
   /**
    * Namespace wrapper of storeGetAsync
    * @param {string} key // Path to get
    */
   async storeGet(key) {
-    if (taskNodeAdministered) {
-      return await genericHandler('storeGet', key);
-    }
-    instantiateLevelDb();
     return new Promise((resolve, reject) => {
-      localLevelDB.get(key, { asBuffer: false }, (err, value) => {
+      this.levelDB.get(key, { asBuffer: false }, (err, value) => {
         if (err) {
           reject(err);
         } else {
@@ -32,12 +41,8 @@ class NamespaceWrapper {
    * @param {*} value Data to set
    */
   async storeSet(key, value) {
-    if (taskNodeAdministered) {
-      return await genericHandler('storeSet', key, value);
-    }
-    instantiateLevelDb();
     return new Promise((resolve, reject) => {
-      localLevelDB.put(key, value, {}, err => {
+      this.levelDB.put(key, value, {}, err => {
         if (err) {
           reject(err);
         } else {
@@ -430,10 +435,8 @@ class NamespaceWrapper {
       }
     }
   }
-}
-async function instantiateLevelDb() {
-  if (!localLevelDB) {
-    localLevelDB = levelup(leveldown('./localKOIIDB'));
+  async getTaskLevelDBPath() {
+    return await genericHandler('getTaskLevelDBPath');
   }
 }
 

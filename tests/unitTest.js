@@ -2,8 +2,9 @@ const coreLogic = require('../coreLogic');
 const index = require('../index');
 
 async function test_coreLogic() {
-  // await coreLogic.task();
-  // const submission = await coreLogic.fetchSubmission();
+  await coreLogic.task();
+  const submission = await coreLogic.fetchSubmission();
+  console.log(submission)
   // const vote = await coreLogic.validateNode(submission, 1);
   // let vote = true;
   const _dummyTaskState = {
