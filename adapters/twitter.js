@@ -13,15 +13,17 @@ class Twitter extends Adapter {
         throw new Error('Twitter API credentials are missing');
       }
       this.maxRetry = maxRetry;
-      this.shims = {
-            "parseOne" : async (search) => {
-                // TODO fetch an item from the correct dataDb (pending:) and then parse it and add the results under (data:)
-                return parseOneTweet(id);
-            },
-            "checkSession" : async () => {
-                // TODO check if the session is valid
-            }
-        }
+      
+      // don't need shims, duh
+      // this.shims = {
+      //       "parseOne" : async (search) => {
+      //           // TODO fetch an item from the correct dataDb (pending:) and then parse it and add the results under (data:)
+      //           return parseOneTweet(id);
+      //       },
+      //       "checkSession" : async () => {
+      //           // TODO check if the session is valid
+      //       }
+      //   }
       // this.data = new Data('tweets', []);
   }
 
