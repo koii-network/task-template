@@ -5,7 +5,7 @@ const nacl = require('tweetnacl');
 const fs = require("fs")
 try {
   axios
-    .get('http://localhost:10000/get-alllinktree')
+    .get('https://k2-tasknet-ports-2.koii.live/task/HjWJmb2gcwwm99VhyNVJZir3ToAJTfUB4j7buWnMMUEP/linktree/list')
     .then((e) => {
       if (e.status != 200) {
         console.log(e);

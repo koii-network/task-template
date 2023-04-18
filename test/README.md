@@ -5,7 +5,7 @@ Under test folder, you will find several files that are used for testing the tas
 # Testing Steps Locally
 
 1. Run `yarn install` to install all the dependencies. Node version 18.0.0 or higher is required.
-2. Run `node test_submitlinktree.js` to submit the test data to the local. The test data is in `test_submitLinktree`. You can customize the test data to fit your task logic.
+2. Run `node test_local_submitlinktree.js` to submit the test data to the local. The test data is in `test_submitLinktree`. You can customize the test data to fit your task logic.
 3. Now you have some linktree data stored locally, you can use `test_demodle.js` to check your local data.
  - Use `dbmodel.getLinktree(PublicKey)` to get the specific data by Public Key, which you can find in the `test_submitLinktree`.
  - Use `dbmodel.getAllLinktrees();` to get all the data.
@@ -26,6 +26,17 @@ Under test folder, you will find several files that are used for testing the tas
 
     - `coreLogic.generateDistributionList` and `coreLogic.validateDistribution`. In case you do not want to run the `task()` and `fetchsubmission()` again, you can uncommon line:15 and `let vote = true` to directly run the test. You can use example task state to test your proofs validation. Uncommon line:71 - line:85 to test thess functions. If the `vote` return true it will run the `generateDistributionList` and `validateDistribution` functions. The final return would be looks like: _RESULT true_
 
+# Testing Steps on K2
+
+Due to the task is already on K2 and several nodes are running the task. You do not need to run the task again. You can use the test code below to check the information of the task.
+    
+- `check_task-status.js` is used to check the task status. It will check the task status and return the result. The result will be the task status that running on the K2. `<HjWJmb2gcwwm99VhyNVJZir3ToAJTfUB4j7buWnMMUEP>` is the linktree task ID so do not need to change this. You will return a list of `ip_address_list`, which are the nodes url that running the task. You can use this url to check the data status.
+
+- `test_endpoint.js` is used to call the endpoint from node to get the info you need. For example, use `https://k2-tasknet-ports-2.koii.live/task/HjWJmb2gcwwm99VhyNVJZir3ToAJTfUB4j7buWnMMUEP/linktree/list` to send a GET request to get the list of linktree data. For more endpoint and usage, you can check the `routes.js` file.
+
+- `test_node_submiLinktree.js` is used to submit the linktree data to the node. You can use the `ip_address_list` from `check_task-status.js` to submit the data to the node. The data is in `test_submitLinktree`. You can customize the test data to fit your task logic. After sending some data you can use `test_endpoint` tp get your data.
+
+# Testing File Explanation
 ## unitTest.js
 
 This file is used to test the core logic functions of the task. The file contains a set of test cases that can be used to test the core logic functions.
@@ -76,8 +87,10 @@ To check the data you just submistted, you can use `test_endpoint.js`.
 
 Use this file to test the GET endpoint. It will call the nodes endpoint and return the result. The endpoint url format is `<nodeurl>/task/<taskID>/<endpoint>`.
 
-For example: use `https://k2-tasknet.koii.live/task/HjWJmb2gcwwm99VhyNVJZir3ToAJTfUB4j7buWnMMUEP/linktree/list` to get the list of linktree.
+For example: use `https://k2-tasknet.koii.live/task/HjWJmb2gcwwm99VhyNVJZir3ToAJTfUB4j7buWnMMUEP/linktree/list` to get the list of linktree. For more endpoint and usage, you can check the `routes.js` file.
 
-- 
+## test_nacl.js
+
+This file is used to test the nacl module. It will generate the keypair and sign the message. It will return the result. The result will be the boolean of signature.
 
 
