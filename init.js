@@ -13,7 +13,7 @@ const app = express();
 
 console.log('SETTING UP EXPRESS');
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Linktree task running');
 });
 
 app.listen(EXPRESS_PORT, () => {

@@ -9,16 +9,11 @@ const crypto = require('crypto');
 // This test submits linktrees from differnet publicKey to the service and stored in localdb
 async function main() {
 try {
-  for (let i = 0; i < 5; i++) {
-    console.log('i', i);
-  const { publicKey: publicKeyraw, secretKey: secretKey } = solanaWeb3.Keypair.generate();
-  // const {publicKey, secretKey} = nacl.sign.keyPair.fromSecretKey(
-  //   new Uint8Array(JSON.parse(fs.readFileSync("./test_wallet.json", 'utf-8')))
-  // );
-  const publicKey = publicKeyraw.toBase58();
-  console.log('publicKey', publicKey);
-  const payload = {
-    data: {
+  const keyPair = nacl.sign.keyPair();
+  const publicKey = keyPair.publicKey;
+  const privateKey = keyPair.secretKey;
+
+  const data = {
       uuid: uuidv4(),
       linktree: [
         {
@@ -38,15 +33,25 @@ try {
         },
       ],
       timestamp: Date.now(),
-    },
-    publicKey: publicKey,
   };
+
+  const messageUint8Array = new Uint8Array(
+    Buffer.from(JSON.stringify(data)),
+  );
+  const signedMessage = nacl.sign(messageUint8Array, privateKey);
+  const signature = signedMessage.slice(0, nacl.sign.signatureLength);
+  const payload = {
+    data,
+    publicKey: bs58.encode(publicKey),
+    signature: bs58.encode(signature),
+  };
+
 
   // Check payload
   // console.log(payload);
   
   await axios
-    .post('http://localhost:8080/task/HjWJmb2gcwwm99VhyNVJZir3ToAJTfUB4j7buWnMMUEP/register-linktree', {payload})
+    .post('https://k2-tasknet-ports-2.koii.live/task/HjWJmb2gcwwm99VhyNVJZir3ToAJTfUB4j7buWnMMUEP/linktree', {payload})
     .then((e) => {
       if (e.status != 200) {
         console.log(e);
@@ -56,7 +61,6 @@ try {
     .catch((e) => {
       console.error(e);
     });
-  }
 } catch (e) {
     console.error(e)
 }

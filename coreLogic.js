@@ -7,36 +7,42 @@ const db = require('./db_model');
 
 class CoreLogic {
   async task() {
-    // Write the logic to do the work required for submitting the values and optionally store the result in levelDB
+    // TODO remove all of the prompts like the following line from the template version
 
     // run linktree task
     console.log('*********task() started*********');
+
     const proof_cid = await linktree_task();
-    // const round = await namespaceWrapper.getRound();
-    // For only testing purposes:
-    const round = 1000
+
+    const round = await namespaceWrapper.getRound();
+
+    // TEST For only testing purposes:
+    // const round = 1000
+
     if (proof_cid) {
       await db.setNodeProofCid(round, proof_cid); // store CID in levelDB
+      console.log('Node Proof CID stored in round', round)
     } else {
       console.log('CID NOT FOUND');
     }
+
     console.log('*********task() completed*********');
   }
 
   async fetchSubmission() {
-    // Write the logic to fetch the submission values here and return the cid string
+    // The logic to fetch the submission values and return the cid string
 
     // fetching round number to store work accordingly
 
     console.log('***********IN FETCH SUBMISSION**************');
     // The code below shows how you can fetch your stored value from level DB
     
-    // For only testing purposes:
-    const round = 1000
-    // const round = await namespaceWrapper.getRound();
+    // TEST For only testing purposes:
+    // const round = 1000
+    const round = await namespaceWrapper.getRound();
     
-    const proof_cid = await db.getNodeProofCid(round); // retrieves the cid
-    console.log('Linktree proofs CID', proof_cid, "in round", round);
+    const proof_cid = await db.getNodeProofCid(round - 1); // retrieves the cid
+    console.log('Linktree proofs CID', proof_cid, "in round", round - 1);
 
     return proof_cid;
   }
@@ -46,25 +52,32 @@ class CoreLogic {
       console.log('GenerateDistributionList called');
       console.log('I am selected node');
       console.log('Round', round, 'Task State', _dummyTaskState);
-      // Write the logic to generate the distribution list here by introducing the rules of your choice
-
-      /*  **** SAMPLE LOGIC FOR GENERATING DISTRIBUTION LIST ******/
+      // The logic to generate the distribution list here
 
       let distributionList = {};
+      let distributionCandidates = [];
       let taskAccountDataJSON = await namespaceWrapper.getTaskState();
+
       if (taskAccountDataJSON == null) taskAccountDataJSON = _dummyTaskState;
+
       console.log('Task Account Data', taskAccountDataJSON);
+
       const submissions = taskAccountDataJSON.submissions[round];
       const submissions_audit_trigger =
         taskAccountDataJSON.submissions_audit_trigger[round];
+
       if (submissions == null) {
+
         console.log('No submisssions found in N-2 round');
         return distributionList;
+
       } else {
         const keys = Object.keys(submissions);
         const values = Object.values(submissions);
         const size = values.length;
         console.log('Submissions from last round: ', keys, values, size);
+
+         // Logic for slashing the stake of the candidate who has been audited and found to be false
         for (let i = 0; i < size; i++) {
           const candidatePublicKey = keys[i];
           if (
@@ -72,21 +85,59 @@ class CoreLogic {
             submissions_audit_trigger[candidatePublicKey]
           ) {
             console.log(
-              submissions_audit_trigger[candidatePublicKey].votes,
               'distributions_audit_trigger votes ',
+              submissions_audit_trigger[candidatePublicKey].votes,
             );
             const votes = submissions_audit_trigger[candidatePublicKey].votes;
-            let numOfVotes = 0;
-            for (let index = 0; index < votes.length; index++) {
-              if (votes[index].is_valid) numOfVotes++;
-              else numOfVotes--;
+            if (votes.length === 0) {
+              // slash 70% of the stake as still the audit is triggered but no votes are casted
+              // Note that the votes are on the basis of the submission value
+              // to do so we need to fetch the stakes of the candidate from the task state
+              const stake_list = taskAccountDataJSON.stake_list;
+              const candidateStake = stake_list[candidatePublicKey];
+              const slashedStake = candidateStake * 0.7;
+              distributionList[candidatePublicKey] = -slashedStake;
+              console.log('Candidate Stake', candidateStake);
+            } else {
+              let numOfVotes = 0;
+              for (let index = 0; index < votes.length; index++) {
+                if (votes[index].is_valid) numOfVotes++;
+                else numOfVotes--;
+              }
+
+              if (numOfVotes < 0) {
+                // slash 70% of the stake as the number of false votes are more than the number of true votes
+                // Note that the votes are on the basis of the submission value
+                // to do so we need to fetch the stakes of the candidate from the task state
+                const stake_list = taskAccountDataJSON.stake_list;
+                const candidateStake = stake_list[candidatePublicKey];
+                const slashedStake = candidateStake * 0.7;
+                distributionList[candidatePublicKey] = -slashedStake;
+                console.log('Candidate Stake', candidateStake);
+              }
+
+              if (numOfVotes > 0) {
+                distributionCandidates.push(candidatePublicKey);
+              }
             }
-            if (numOfVotes < 0) continue;
-          }
-          distributionList[candidatePublicKey] = 1;
+
+            }
         }
       }
+
+       // now distribute the rewards based on the valid submissions
+      // Here it is assumed that all the nodes doing valid submission gets the same reward
+
+      const reward =
+        taskAccountDataJSON.bounty_amount_per_round /
+        distributionCandidates.length;
+      console.log('REWARD RECEIVED BY EACH NODE', reward);
+      for (let i = 0; i < distributionCandidates.length; i++) {
+        distributionList[distributionCandidates[i]] = reward;
+      }
+
       console.log('Distribution List', distributionList);
+
       return distributionList;
     } catch (err) {
       console.log('ERROR IN GENERATING DISTRIBUTION LIST', err);
@@ -94,7 +145,7 @@ class CoreLogic {
   }
 
   async submitDistributionList(round) {
-    // This function just upload your generated dustribution List and do the transaction for that
+    // This upload the generated dustribution List
 
     console.log('SubmitDistributionList called');
 
@@ -108,33 +159,24 @@ class CoreLogic {
       console.log('DECIDER', decider);
 
       if (decider) {
+
         const response =
           await namespaceWrapper.distributionListSubmissionOnChain(round);
         console.log('RESPONSE FROM DISTRIBUTION LIST', response);
       }
+
     } catch (err) {
       console.log('ERROR IN SUBMIT DISTRIBUTION', err);
     }
   }
 
+  // this function is called when a node is selected to validate the submission value
   async validateNode(submission_value, round) {
-    // Write your logic for the validation of submission value here and return a boolean value in response
-
     console.log('Received submission_value', submission_value, round);
-    const vote = await linktree_validate(submission_value, round);
-    // const generatedValue = await namespaceWrapper.storeGet("cid");
-    // console.log("GENERATED VALUE", generatedValue);
-    // if(generatedValue == submission_value){
-    //   return true;
-    // }else{
-    //   return false;
-    // }
-    // }catch(err){
-    //   console.log("ERROR  IN VALDIATION", err);
-    //   return false;
-    // }
 
-    // For succesfull flow we return true for now
+    // import the linktree validate module
+    const vote = await linktree_validate(submission_value, round);
+    console.log('Vote', vote);
     return vote;
   }
 
@@ -158,8 +200,6 @@ class CoreLogic {
     _dummyDistributionList,
     _dummyTaskState,
   ) => {
-    // Write your logic for the validation of submission value here and return a boolean value in response
-    // this logic can be same as generation of distribution list function and based on the comparision will final object , decision can be made
 
     try {
       console.log('Distribution list Submitter', distributionListSubmitter);
@@ -215,7 +255,7 @@ class CoreLogic {
   }
 
   async auditTask(roundNumber) {
-    // No need to edit this function
+
     console.log('auditTask called with round', roundNumber);
     console.log(
       await namespaceWrapper.getSlot(),
