@@ -9,14 +9,18 @@ class NamespaceWrapper {
   levelDB;
 
   constructor() {
-    if(taskNodeAdministered){
-      this.getTaskLevelDBPath().then((path)=>{
-        this.levelDB = levelup(leveldown(path));
-      }).catch((err)=>{
-        console.error(err)
-        this.levelDB=levelup(leveldown(`../namespace/${TASK_ID}/KOIILevelDB`))
-      })
-    }else{
+    if (taskNodeAdministered) {
+      this.getTaskLevelDBPath()
+        .then(path => {
+          this.levelDB = levelup(leveldown(path));
+        })
+        .catch(err => {
+          console.error(err);
+          this.levelDB = levelup(
+            leveldown(`../namespace/${TASK_ID}/KOIILevelDB`),
+          );
+        });
+    } else {
       this.levelDB = levelup(leveldown('./localKOIIDB'));
     }
   }
@@ -51,25 +55,25 @@ class NamespaceWrapper {
       });
     });
   }
-  // /**
-  //  * Namespace wrapper over fsPromises methods
-  //  * @param {*} method The fsPromise method to call
-  //  * @param {*} path Path for the express call
-  //  * @param  {...any} args Remaining parameters for the FS call
-  //  */
-  // async fs(method, path, ...args) {
-  //   return await genericHandler('fs', method, path, ...args);
-  // }
-  // async fsStaking(method, path, ...args) {
-  //   return await genericHandler('fsStaking', method, path, ...args);
-  // }
+  /**
+   * Namespace wrapper over fsPromises methods
+   * @param {*} method The fsPromise method to call
+   * @param {*} path Path for the express call
+   * @param  {...any} args Remaining parameters for the FS call
+   */
+  async fs(method, path, ...args) {
+    return await genericHandler('fs', method, path, ...args);
+  }
+  async fsStaking(method, path, ...args) {
+    return await genericHandler('fsStaking', method, path, ...args);
+  }
 
-  // async fsWriteStream(imagepath) {
-  //   return await genericHandler('fsWriteStream', imagepath);
-  // }
-  // async fsReadStream(imagepath) {
-  //   return await genericHandler('fsReadStream', imagepath);
-  // }
+  async fsWriteStream(imagepath) {
+    return await genericHandler('fsWriteStream', imagepath);
+  }
+  async fsReadStream(imagepath) {
+    return await genericHandler('fsReadStream', imagepath);
+  }
 
   /**
    * Namespace wrapper for getting current slots
@@ -82,7 +86,6 @@ class NamespaceWrapper {
     return await genericHandler('signData', body);
   }
 
-
   /**
    * Namespace wrapper of storeGetAsync
    * @param {string} signedMessage r // Path to get
@@ -92,7 +95,6 @@ class NamespaceWrapper {
     return await genericHandler('verifySignedData', signedMessage, pubKey);
   }
 
-  
   // async submissionOnChain(submitterKeypair, submission) {
   //   return await genericHandler(
   //     'submissionOnChain',
@@ -139,26 +141,26 @@ class NamespaceWrapper {
     );
   }
 
-  // /**
-  //  * sendAndConfirmTransaction wrapper that injects mainSystemWallet as the first signer for paying the tx fees
-  //  * @param {connection} method // Receive method ["get", "post", "put", "delete"]
-  //  * @param {transaction} path // Endpoint path appended to namespace
-  //  * @param {Function} callback // Callback function on traffic receive
-  //  */
-  // async sendAndConfirmTransactionWrapper(transaction, signers) {
-  //   const blockhash = (await connection.getRecentBlockhash('finalized'))
-  //     .blockhash;
-  //   transaction.recentBlockhash = blockhash;
-  //   transaction.feePayer = new PublicKey(MAIN_ACCOUNT_PUBKEY);
-  //   return await genericHandler(
-  //     'sendAndConfirmTransactionWrapper',
-  //     transaction.serialize({
-  //       requireAllSignatures: false,
-  //       verifySignatures: false,
-  //     }),
-  //     signers,
-  //   );
-  // }
+  /**
+   * sendAndConfirmTransaction wrapper that injects mainSystemWallet as the first signer for paying the tx fees
+   * @param {connection} method // Receive method ["get", "post", "put", "delete"]
+   * @param {transaction} path // Endpoint path appended to namespace
+   * @param {Function} callback // Callback function on traffic receive
+   */
+  async sendAndConfirmTransactionWrapper(transaction, signers) {
+    const blockhash = (await connection.getRecentBlockhash('finalized'))
+      .blockhash;
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = new PublicKey(MAIN_ACCOUNT_PUBKEY);
+    return await genericHandler(
+      'sendAndConfirmTransactionWrapper',
+      transaction.serialize({
+        requireAllSignatures: false,
+        verifySignatures: false,
+      }),
+      signers,
+    );
+  }
 
   // async signArweave(transaction) {
   //   let tx = await genericHandler('signArweave', transaction.toJSON());
