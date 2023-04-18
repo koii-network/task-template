@@ -12,7 +12,7 @@ router.use((req, res, next) => {
 
 router.get('/taskState', async (req, res) => {
     const state = await namespaceWrapper.getTaskState();
-    console.log("TASK STATE", state);
+    console.log('TASK STATE', state);
 
     res.status(200).json({ taskState: state })
 })
@@ -39,7 +39,7 @@ router.post('/linktree', async (req, res) => {
     console.log('Check Proof:', proof);
     // use fs to write the linktree and proof to a file
     if (!fs.existsSync('./Linktree')) fs.mkdirSync('./Linktree');
-    fs.writeFileSync("./Linktree/" + `linktree_${pubkey}.json`, JSON.stringify(linktree));
+    fs.writeFileSync('./Linktree/' + `linktree_${pubkey}.json`, JSON.stringify(linktree));
     // fs.writeFileSync('proof.json', JSON.stringify(proof));
     await db.setLinktree(pubkey, linktree);
 
@@ -56,14 +56,14 @@ router.post('/linktree', async (req, res) => {
     return res.status(200).send({message: 'Proof and linktree registered successfully'});
 });
 
-router.get("/logs", async (req, res) => {
-    const logs = fs.readFileSync("./namespace/logs.txt", "utf8")
+router.get('/logs', async (req, res) => {
+    const logs = fs.readFileSync('./namespace/logs.txt', 'utf8')
     res.status(200).send(logs);
 })
 
 // endpoint for specific linktree data by publicKey
 router.get('/linktree/get', async (req, res) => {
-    const log = "Nothing to see here, check /:publicKey to get the linktree"
+    const log = 'Nothing to see here, check /:publicKey to get the linktree'
     return res.status(200).send(log);
 });
 
@@ -119,7 +119,7 @@ router.get('/authlist/get/:publicKey', async (req, res) => {
 router.get('/authlist/list', async (req, res) => {
     authlist = await db.getAllAuthLists(false) || '[]';
     authlist.forEach((authuser) => {
-        authuser = authuser.toString().split("auth_list:")[0] 
+        authuser = authuser.toString().split('auth_list:')[0] 
     });
     return res.status(200).send(authlist);
 });

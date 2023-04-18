@@ -1,4 +1,4 @@
-const fsPromise = require("fs/promises");
+const fsPromise = require('fs/promises');
 
 module.exports = async (path, data) => {
   //if (!fs.existsSync('userIndex')) fs.mkdirSync('userIndex');

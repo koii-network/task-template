@@ -14,7 +14,7 @@ async function generateAndSubmitDistributionList() {
     const privateKey = keyPair.secretKey;
     
     const message = {     
-            data: "data",
+            data: 'data',
             publicKey: '7AwybFMYogGa8LJ3n9i8QthUs6ybEcanC8UPejM76U7h',
             signature: 'P6McSGFMniTdaH5546b8b1xuL91UtjxS9RnXMxBcg8ewuvKuFwijqJHH9BSZnEnqs1niE1xx7DreRVCNqK4ZJSE'
     };
@@ -34,11 +34,11 @@ async function generateAndSubmitDistributionList() {
 async function validate(submission_value) {
     const output = submission_value
     const message = output.data;
-    console.log("RESPONSE DATA", message);
+    console.log('RESPONSE DATA', message);
     const publicKey = output.publicKey;
-    console.log("PUBLIC KEY", publicKey);
+    console.log('PUBLIC KEY', publicKey);
     const signature = output.signature;
-    console.log("SIGNATURE", signature);
+    console.log('SIGNATURE', signature);
     const messageUint8Array = new Uint8Array(Buffer.from(JSON.stringify(message)));
     const signatureUint8Array = bs58.decode(signature);
     const publicKeyUint8Array = bs58.decode(publicKey);

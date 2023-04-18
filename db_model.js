@@ -8,10 +8,10 @@ const getLinktree = async (publicKey) => {
   return new Promise((resolve, reject) => {
   namespaceWrapper.levelDB.get(getLinktreeId(publicKey), (err, value) => {
     if (err) {
-      console.error("Error in getLinktree:", err);
+      console.error('Error in getLinktree:', err);
       resolve(null);
     } else {
-      resolve(JSON.parse(value || "[]"));
+      resolve(JSON.parse(value || '[]'));
     }
     });
   });
@@ -19,7 +19,7 @@ const getLinktree = async (publicKey) => {
 
 const setLinktree = async (publicKey, linktree) => {
    namespaceWrapper.levelDB.put(getLinktreeId(publicKey), JSON.stringify(linktree));
-   return console.log("Linktree set");
+   return console.log('Linktree set');
 }
 
 const getAllLinktrees = async (values) => {
@@ -57,10 +57,10 @@ const getProofs = async (pubkey) => {
   return new Promise((resolve, reject) => {
     namespaceWrapper.levelDB.get(getProofsId(pubkey), (err, value) => {
       if (err) {
-        console.error("Error in getProofs:", err);
+        console.error('Error in getProofs:', err);
         resolve(null);
       } else {
-        resolve(JSON.parse(value || "[]"));
+        resolve(JSON.parse(value || '[]'));
       }
       });
     });
@@ -68,7 +68,7 @@ const getProofs = async (pubkey) => {
 
 const setProofs = async (pubkey, proofs) => {
     namespaceWrapper.levelDB.put(getProofsId(pubkey), JSON.stringify(proofs));
-    return console.log("Proofs set");
+    return console.log('Proofs set');
 }
 
 const getAllProofs = async () => {
@@ -103,10 +103,10 @@ const getNodeProofCid = async (round) => {
   return new Promise((resolve, reject) => {
     namespaceWrapper.levelDB.get(getNodeProofCidid(round), (err, value) => {
       if (err) {
-        console.error("Error in getNodeProofCid:", err);
+        console.error('Error in getNodeProofCid:', err);
         resolve(null);
       } else {
-        resolve(value.toString() || "[]");
+        resolve(value.toString() || '[]');
       }
       });
     });
@@ -114,7 +114,7 @@ const getNodeProofCid = async (round) => {
 
 const setNodeProofCid = async (round, cid) => {
     namespaceWrapper.levelDB.put(getNodeProofCidid(round), cid);
-    return console.log("Node CID set");
+    return console.log('Node CID set');
 }
 
 const getAllNodeProofCids = async () => {
@@ -151,10 +151,10 @@ const getAuthList = async (pubkey) => {
   return new Promise((resolve, reject) => {
     namespaceWrapper.levelDB.get(getAuthListId(pubkey), (err, value) => {
       if (err) {
-        console.error("Error in getAuthList:", err);
+        console.error('Error in getAuthList:', err);
         resolve(null);
       } else {
-        resolve(JSON.parse(value || "[]"));
+        resolve(JSON.parse(value || '[]'));
       }
       });
     });
@@ -162,7 +162,7 @@ const getAuthList = async (pubkey) => {
 
 const setAuthList = async (pubkey) => {
     namespaceWrapper.levelDB.put(getAuthListId(pubkey), JSON.stringify(pubkey));
-    return console.log("Auth List set");
+    return console.log('Auth List set');
 }
 
 const getAllAuthLists = async (values) => {

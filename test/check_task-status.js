@@ -4,7 +4,7 @@ async function main() {
   const accountInfo = await connection.getAccountInfo(
     new PublicKey('HjWJmb2gcwwm99VhyNVJZir3ToAJTfUB4j7buWnMMUEP'),
   );
-  console.log(JSON.parse(accountInfo.data+""));
+  console.log(JSON.parse(accountInfo.data+''));
 }
 
 main();

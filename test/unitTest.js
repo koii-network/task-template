@@ -7,7 +7,7 @@ async function test_coreLogic() {
   // const submission = await coreLogic.fetchSubmission();
 
   // TEST hardcode the submission
-  // let submission= "bafybeiaipp6owksgigqx73putgxr7qfiuly32isubrqjc4meqwty6xu5xa"
+  // let submission= 'bafybeiaipp6owksgigqx73putgxr7qfiuly32isubrqjc4meqwty6xu5xa'
   // console.log('SUBMISSION', submission);
   
   // const vote = await coreLogic.validateNode(submission, 1000);

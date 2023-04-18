@@ -1,5 +1,5 @@
-const coreLogic = require("./coreLogic");
-const namespaceWrapper = require("./namespaceWrapper");
+const coreLogic = require('./coreLogic');
+const namespaceWrapper = require('./namespaceWrapper');
 
 // TEST Set round
 // let round = 1000
@@ -18,7 +18,7 @@ const localShim = async () => {
 
   */
 
-  // console.log("*******************TESTING*******************")
+  // console.log('*******************TESTING*******************')
   // Get the task state 
   // console.log(await namespaceWrapper.getTaskState());
 
@@ -27,7 +27,7 @@ const localShim = async () => {
 
   // GET ROUND 
   // const round = await namespaceWrapper.getRound();
-  // console.log("ROUND", round);
+  // console.log('ROUND', round);
 
 
   // Call to do the work for the task
@@ -50,7 +50,7 @@ const localShim = async () => {
   // Payout trigger
 
   // const responsePayout = await namespaceWrapper.payoutTrigger();
-  // console.log("RESPONSE TRIGGER", responsePayout);
+  // console.log('RESPONSE TRIGGER', responsePayout);
 
 }
 

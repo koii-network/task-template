@@ -2,7 +2,7 @@ const {default: axios} = require('axios');
 const {v4: uuidv4} = require('uuid');
 const bs58 = require('bs58');
 const nacl = require('tweetnacl');
-const fs = require("fs")
+const fs = require('fs')
 try {
   axios
     .get('http://localhost:10000/get-alllinktree')

@@ -1,6 +1,6 @@
 const dbmodel = require('../db_model');
 
-const PublicKey = "test-pubkey1"
+const PublicKey = 'test-pubkey1'
 
 async function testdb() {
 const round = 1000;
@@ -15,20 +15,20 @@ const pubkey = PublicKey;
 
     // set linktree
     // let linktree2 = {
-    //     "name": "test1",
-    //     "description": "test1",
-    //     "avatar": "test1",
-    //     "links": [
+    //     'name': 'test1',
+    //     'description': 'test1',
+    //     'avatar': 'test1',
+    //     'links': [
     //         {
-    //             "name": "test1",
-    //             "url": "test1"
+    //             'name': 'test1',
+    //             'url': 'test1'
     //         }
     //     ]
     // }
     // await dbmodel.setLinktree(PublicKey, linktree2);
 
     // set node proofs
-    // let cid = "testcid"
+    // let cid = 'testcid'
     // await dbmodel.setNodeProofCid(round, cid);  
 
     // get node proofs
@@ -37,8 +37,8 @@ const pubkey = PublicKey;
 
     // set proofs
     // let proofs = {
-    //   publicKey: "test-pubkey1",
-    //   signature: "test-signature1",
+    //   publicKey: 'test-pubkey1',
+    //   signature: 'test-signature1',
     // }
     // await dbmodel.setProofs(pubkey, proofs);
 

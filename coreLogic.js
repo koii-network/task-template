@@ -2,7 +2,7 @@ const { namespaceWrapper } = require('./namespaceWrapper');
 const linktree_task = require('./linktree_task');
 const linktree_validate = require('./linktree_validate');
 const crypto = require('crypto');
-const dataFromCid = require("./helpers/dataFromCid");
+const dataFromCid = require('./helpers/dataFromCid');
 const db = require('./db_model');
 
 class CoreLogic {
@@ -42,7 +42,7 @@ class CoreLogic {
     const round = await namespaceWrapper.getRound();
     
     const proof_cid = await db.getNodeProofCid(round - 1); // retrieves the cid
-    console.log('Linktree proofs CID', proof_cid, "in round", round - 1);
+    console.log('Linktree proofs CID', proof_cid, 'in round', round - 1);
 
     return proof_cid;
   }

@@ -2,7 +2,7 @@ const {default: axios} = require('axios');
 const {v4: uuidv4} = require('uuid');
 const bs58 = require('bs58');
 const nacl = require('tweetnacl');
-const fs = require("fs")
+const fs = require('fs')
 const solanaWeb3 = require('@solana/web3.js');
 const crypto = require('crypto');
 
@@ -13,7 +13,7 @@ try {
   const publicKey = keyPair.publicKey;
   const privateKey = keyPair.secretKey;
   // const {publicKey, secretKey} = nacl.sign.keyPair.fromSecretKey(
-  //   new Uint8Array(JSON.parse(fs.readFileSync("./test_wallet.json", 'utf-8')))
+  //   new Uint8Array(JSON.parse(fs.readFileSync('./test_wallet.json', 'utf-8')))
   // );
   console.log('publicKey', bs58.encode(publicKey));
   const data = {

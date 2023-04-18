@@ -3,7 +3,7 @@ const nacl = require('tweetnacl');
 const db = require('../db_model');
 const bs58 = require('bs58');
 
-let submission_value = "bafybeig5322lknop4u6m4p26jd4bcp7rdbwkuqy3ifeytqrmo2ogia5kwe"
+let submission_value = 'bafybeig5322lknop4u6m4p26jd4bcp7rdbwkuqy3ifeytqrmo2ogia5kwe'
 let round = 1000
 async function test_cidValidation(submission_value) {
   console.log('******/  TEST Linktree CID VALIDATION Task FUNCTION /******');

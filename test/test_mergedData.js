@@ -1,4 +1,4 @@
-const dataFromCid = require("../helpers/dataFromCid");
+const dataFromCid = require('../helpers/dataFromCid');
 
 async function mergedData() {
   // Write the logic to fetch the submission values here and return the cid string

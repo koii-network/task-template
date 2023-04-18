@@ -1,4 +1,4 @@
-const { app, MAIN_ACCOUNT_PUBKEY, SERVICE_URL, TASK_ID } = require("./init");
+const { app, MAIN_ACCOUNT_PUBKEY, SERVICE_URL, TASK_ID } = require('./init');
 const {default: axios} = require('axios');
 const db = require('./db_model');
 const nacl = require('tweetnacl');

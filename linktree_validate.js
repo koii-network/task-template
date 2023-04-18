@@ -1,9 +1,9 @@
-const dataFromCid = require("./helpers/dataFromCid");
+const dataFromCid = require('./helpers/dataFromCid');
 const db = require('./db_model');
 const nacl = require('tweetnacl');
 const bs58 = require('bs58');
 const {default: axios} = require('axios');
-const { namespaceWrapper } = require("./namespaceWrapper");
+const { namespaceWrapper } = require('./namespaceWrapper');
 
 module.exports = async (submission_value, round) => {
   console.log('******/ Linktree CID VALIDATION Task FUNCTION /******');
@@ -17,7 +17,7 @@ module.exports = async (submission_value, round) => {
   // TODO - can we safely remove this, from a game theory perspective?
   // Check that the node who submitted the proofs is a valid staked node
   let isNode = await verifyNode(output.proofs, output.node_signature, output.node_publicKey);
-  console.log("Is the node's signature on the CID payload correct?", isNode);
+  console.log('Is the node's signature on the CID payload correct?', isNode);
 
   // check each item in the linktrees list and verify that the node is holding that payload, and the signature matches
   let isLinktree = await verifyLinktrees(output.proofs);
@@ -42,12 +42,12 @@ async function verifyLinktrees(proofs_list_object) {
 
     // TEST hardcode the node list
     // const nodeUrlList = [
-    //   "http://localhost:10000",
+    //   'http://localhost:10000',
     // ]
 
     // verify the signature of the linktree for each nodes
     for (const nodeUrl of nodeUrlList) {
-      console.log("cheking linktree on ", nodeUrl)
+      console.log('cheking linktree on ', nodeUrl)
 
       // get all linktree in this node
       const res = await axios.get(`${url}/task/${TASK_ID}/linktree/get/${publicKey}`);

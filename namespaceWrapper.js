@@ -136,7 +136,7 @@ class NamespaceWrapper {
 
   /**
    * sendAndConfirmTransaction wrapper that injects mainSystemWallet as the first signer for paying the tx fees
-   * @param {connection} method // Receive method ["get", "post", "put", "delete"]
+   * @param {connection} method // Receive method ['get', 'post', 'put', 'delete']
    * @param {transaction} path // Endpoint path appended to namespace
    * @param {Function} callback // Callback function on traffic receive
    */
@@ -302,7 +302,7 @@ class NamespaceWrapper {
                 taskAccountDataJSON.submissions_audit_trigger[round];
               console.log('SUBMIT AUDIT TRIGGER', submissions_audit_trigger);
               // console.log(
-              //   "CANDIDATE PUBKEY CHECK IN AUDIT TRIGGER",
+              //   'CANDIDATE PUBKEY CHECK IN AUDIT TRIGGER',
               //   submissions_audit_trigger[candidatePublicKey]
               // );
               if (
@@ -391,7 +391,7 @@ class NamespaceWrapper {
                 distributions_audit_trigger,
               );
               // console.log(
-              //   "CANDIDATE PUBKEY CHECK IN AUDIT TRIGGER",
+              //   'CANDIDATE PUBKEY CHECK IN AUDIT TRIGGER',
               //   distributions_audit_trigger[candidatePublicKey]
               // );
               if (
@@ -449,7 +449,7 @@ async function genericHandler(...args) {
       return null;
     }
   } catch (err) {
-    console.error(`Error in genericHandler: "${args[0]}"`, err.message);
+    console.error(`Error in genericHandler: '${args[0]}'`, err.message);
     console.error(err?.response?.data);
     return { error: err };
   }
