@@ -9,6 +9,8 @@ const run  = async () => {
         accessSecret: process.env.TWITTER_BEARER_TOKEN_SECRET,
       });
 
+      // TODO - move below into /adapter/twitter.js
+
     // With default prefix
     const result = await client.v2.get('tweets/search/recent', { query: 'nodeJS', max_results: 100 });
     console.log(result.data); // TweetV2[]

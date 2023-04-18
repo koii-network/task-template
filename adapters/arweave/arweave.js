@@ -2,14 +2,16 @@
 // Import required modules
 require('dotenv').config();
 const axios = require('axios');
-const Data = require(__dirname + '/../model/data.js');
-const Adapter = require(__dirname + '/../model/adapter.js');
+const Data = require(__dirname + '/../../model/data.js');
+const Adapter = require(__dirname + '/../../model/adapter.js');
 const {Builder, Browser, By, Key, until} = require('selenium-webdriver');
 
 
 class Arweave extends Adapter {
   constructor(credentials, maxRetry) {
-      this.maxRetry;
+      super(credentials, maxRetry);
+      this.credentials = credentials || {};
+      this.maxRetry = maxRetry || 3;
       this.shims = {
             "parseOne" : async (node) => {
                 // TODO - fetch one arweave node from the pending list, and see if it is online

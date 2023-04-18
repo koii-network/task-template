@@ -16,9 +16,10 @@ const Twitter = require('../adapters/twitter');
 
 class Gatherer {
     constructor(db, adapter, options ) {
+        console.log('creating new adapter', db, adapter, options)
         this.db = db;
-        this.maxRetry = maxRetry;
-        this.options = options.
+        this.maxRetry = options.maxRetry;
+        this.options = options;
         this.adapter = adapter;
         this.pending = [];
     }
