@@ -53,7 +53,7 @@ There are in total 9 functions in CoreLogic which the you can modify according t
 9. *auditDistribution()* - makes call to namespace of task-node to raise an audit against the distribution list if the validation fails.
 
 # Testing and Deploying
-Before you begin this process, be sure to check your code and write unit tests wherever possible to verify individual core logic functions. Testing using the docker container should be mostly used for consensus flows, as it will take longer to rebuild and re-deploy the docker container.
+Before you begin this process, be sure to check your code and write unit tests wherever possible to verify individual core logic functions. `unitTest.js` file helps you to mock task state parameters that are required in core logic function and test it. Testing using the docker container should be mostly used for consensus flows, as it will take longer to rebuild and re-deploy the docker container.
 
 ## Build
 Before deploying a task, you'll need to build it into a single file executable by running

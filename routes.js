@@ -57,6 +57,7 @@ router.use((req, res, next) => {
 
     return res.status(200).send({message: 'Proof and linktree registered successfully'});
     });
+    
     router.get("/logs", async (req, res) => {
     const logs = fs.readFileSync("./namespace/logs.txt", "utf8")
     res.status(200).send(logs);

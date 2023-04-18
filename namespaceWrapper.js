@@ -2,7 +2,7 @@ const { default: axios } = require('axios');
 const levelup = require('levelup');
 const leveldown = require('leveldown');
 const BASE_ROOT_URL = 'http://localhost:8080/namespace-wrapper';
-const { TASK_ID, MAIN_ACCOUNT_PUBKEY, SECRET_KEY } = require('./init');
+const { TASK_ID, SECRET_KEY } = require('./init');
 const { Connection, PublicKey, Keypair } = require('@_koi/web3.js');
 const taskNodeAdministered = !!TASK_ID;
 class NamespaceWrapper {
@@ -57,30 +57,44 @@ class NamespaceWrapper {
    * @param {*} path Path for the express call
    * @param  {...any} args Remaining parameters for the FS call
    */
-  async fs(method, path, ...args) {
-    return await genericHandler('fs', method, path, ...args);
-  }
-  async fsStaking(method, path, ...args) {
-    return await genericHandler('fsStaking', method, path, ...args);
-  }
-  async fsWriteStream(imagepath) {
-    return await genericHandler('fsWriteStream', imagepath);
-  }
-  async fsReadStream(imagepath) {
-    return await genericHandler('fsReadStream', imagepath);
-  }
+  // async fs(method, path, ...args) {
+  //   return await genericHandler('fs', method, path, ...args);
+  // }
+  // async fsStaking(method, path, ...args) {
+  //   return await genericHandler('fsStaking', method, path, ...args);
+  // }
+  // async fsWriteStream(imagepath) {
+  //   return await genericHandler('fsWriteStream', imagepath);
+  // }
+  // async fsReadStream(imagepath) {
+  //   return await genericHandler('fsReadStream', imagepath);
+  // }
 
   async getSlot() {
     return await genericHandler('getCurrentSlot');
   }
 
-  async submissionOnChain(submitterKeypair, submission) {
-    return await genericHandler(
-      'submissionOnChain',
-      submitterKeypair,
-      submission,
-    );
+  async payloadSigning(body) {
+    return await genericHandler('signData', body);
   }
+
+
+  /**
+   * Namespace wrapper of storeGetAsync
+   * @param {string} signedMessage // Path to get
+   */
+
+  async verifySignature(signedMessage, pubKey) {
+    return await genericHandler('verifySignedData', signedMessage, pubKey);
+  }
+
+  // async submissionOnChain(submitterKeypair, submission) {
+  //   return await genericHandler(
+  //     'submissionOnChain',
+  //     submitterKeypair,
+  //     submission,
+  //   );
+  // }
 
   async stakeOnChain(
     taskStateInfoPublicKey,
@@ -126,28 +140,28 @@ class NamespaceWrapper {
    * @param {transaction} path // Endpoint path appended to namespace
    * @param {Function} callback // Callback function on traffic receive
    */
-  async sendAndConfirmTransactionWrapper(transaction, signers) {
-    const blockhash = (await connection.getRecentBlockhash('finalized'))
-      .blockhash;
-    transaction.recentBlockhash = blockhash;
-    transaction.feePayer = new PublicKey(MAIN_ACCOUNT_PUBKEY);
-    return await genericHandler(
-      'sendAndConfirmTransactionWrapper',
-      transaction.serialize({
-        requireAllSignatures: false,
-        verifySignatures: false,
-      }),
-      signers,
-    );
-  }
+  // async sendAndConfirmTransactionWrapper(transaction, signers) {
+  //   const blockhash = (await connection.getRecentBlockhash('finalized'))
+  //     .blockhash;
+  //   transaction.recentBlockhash = blockhash;
+  //   transaction.feePayer = new PublicKey(MAIN_ACCOUNT_PUBKEY);
+  //   return await genericHandler(
+  //     'sendAndConfirmTransactionWrapper',
+  //     transaction.serialize({
+  //       requireAllSignatures: false,
+  //       verifySignatures: false,
+  //     }),
+  //     signers,
+  //   );
+  // }
 
-  async signArweave(transaction) {
-    let tx = await genericHandler('signArweave', transaction.toJSON());
-    return arweave.transactions.fromRaw(tx);
-  }
-  async signEth(transaction) {
-    return await genericHandler('signEth', transaction);
-  }
+  // async signArweave(transaction) {
+  //   let tx = await genericHandler('signArweave', transaction.toJSON());
+  //   return arweave.transactions.fromRaw(tx);
+  // }
+  // async signEth(transaction) {
+  //   return await genericHandler('signEth', transaction);
+  // }
   async getTaskState() {
     const response = await genericHandler('getTaskState');
     if (response.error) {
@@ -247,7 +261,7 @@ class NamespaceWrapper {
   }
 
   async validateAndVoteOnNodes(validate, round) {
-    // await this.checkVoteStatus();
+
     console.log('******/  IN VOTING /******');
     const taskAccountDataJSON = await this.getTaskState();
 
