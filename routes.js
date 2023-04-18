@@ -10,17 +10,15 @@ router.use((req, res, next) => {
   next();
 });
 
+router.get('/taskState', async (req, res) => {
+    const state = await namespaceWrapper.getTaskState();
+    console.log("TASK STATE", state);
 
+    res.status(200).json({ taskState: state })
+})
 
-    router.get('/taskState', async (req, res) => {
-        const state = await namespaceWrapper.getTaskState();
-        console.log("TASK STATE", state);
-
-        res.status(200).json({ taskState: state })
-    })
-
-    // API to register the linktree
-    router.post('/linktree', async (req, res) => {
+// API to register the linktree
+router.post('/linktree', async (req, res) => {
     const linktree = req.body.payload;
     // Check req.body
     if (!linktree) {
@@ -56,78 +54,86 @@ router.use((req, res, next) => {
     await db.setProofs(pubkey, proofs);
 
     return res.status(200).send({message: 'Proof and linktree registered successfully'});
-    });
-    
-    router.get("/logs", async (req, res) => {
+});
+
+router.get("/logs", async (req, res) => {
     const logs = fs.readFileSync("./namespace/logs.txt", "utf8")
     res.status(200).send(logs);
-    })
-    // endpoint for specific linktree data by publicKey
-    router.get('/linktree/get', async (req, res) => {
+})
+
+// endpoint for specific linktree data by publicKey
+router.get('/linktree/get', async (req, res) => {
     const log = "Nothing to see here, check /:publicKey to get the linktree"
     return res.status(200).send(log);
-    });
-    router.get('/linktree/get/:publicKey', async (req, res) => {
+});
+
+router.get('/linktree/get/:publicKey', async (req, res) => {
     const { publicKey } = req.params;
     let linktree = await db.getLinktree(publicKey);
     linktree = linktree || '[]';
     return res.status(200).send(linktree);
-    });
-    router.get('/linktree/all', async (req, res) => {
+});
+
+router.get('/linktree/all', async (req, res) => {
     linktree = await db.getAllLinktrees() || '[]';
         return res.status(200).send(linktree);
-        }
-
-    );
-
-    router.get('/linktree/list', async (req, res) => {
-        linktree = await db.getAllLinktrees(true) || '[]';
-        return res.status(200).send(linktree);
-        }
-    );
-    router.get('/proofs/all', async (req, res) => {
-    linktree = await db.getAllProofs() || '[]';
-    return res.status(200).send(linktree);
     }
-    );
-    router.get('/proofs/get/:publicKey', async (req, res) => {
+);
+
+router.get('/linktree/list', async (req, res) => {
+    linktree = await db.getAllLinktrees(true) || '[]';
+    return res.status(200).send(linktree);
+});
+
+router.get('/proofs/all', async (req, res) => {
+    linktree = await db.getAllProofs() || '[]';
+        return res.status(200).send(linktree);
+    }
+);
+
+router.get('/proofs/get/:publicKey', async (req, res) => {
     const { publicKey } = req.params;
     let proof = await db.getProofs(publicKey);
     proof = proof || '[]';
     return res.status(200).send(proof);
-    }
-    );
-    router.get('/node-proof/all', async (req, res) => {
+});
+
+router.get('/node-proof/all', async (req, res) => {
     linktree = await db.getAllNodeProofCids() || '[]';
     return res.status(200).send(linktree);
-    });
-    router.get('/node-proof/:round', async (req, res) => {
-        const { round } = req.params;
-        let nodeproof = await db.getNodeProofCid(round) || '[]';
-        return res.status(200).send(nodeproof);
-        });
-    router.get('/authlist/get/:publicKey', async (req, res) => {
+});
+
+router.get('/node-proof/:round', async (req, res) => {
+    const { round } = req.params;
+    let nodeproof = await db.getNodeProofCid(round) || '[]';
+    return res.status(200).send(nodeproof);
+});
+
+router.get('/authlist/get/:publicKey', async (req, res) => {
     const { publicKey } = req.params;
     let authlist = await db.getAuthList(publicKey);
     authlist = authlist || '[]';
     return res.status(200).send(authlist);
+});
+
+router.get('/authlist/list', async (req, res) => {
+    authlist = await db.getAllAuthLists(false) || '[]';
+    authlist.forEach((authuser) => {
+        authuser = authuser.toString().split("auth_list:")[0] 
     });
-    router.get('/authlist/list', async (req, res) => {
-        authlist = await db.getAllAuthLists(false) || '[]';
-        authlist.forEach((authuser) => {
-            authuser = authuser.toString().split("auth_list:")[0] 
-        });
-        return res.status(200).send(authlist);
-    });
-    router.get('/nodeurl', async (req, res) => {
-        const nodeUrlList = await namespaceWrapper.getNodes();
-        return res.status(200).send(nodeUrlList);
-    });
-  // router.post('/register-authlist', async (req, res) => {
-  //   const pubkey = req.body.pubkey;
-  //   await db.setAuthList(pubkey);
-  //   return res.status(200).send({message: 'Authlist registered successfully'});
-  // }
-  // )
+    return res.status(200).send(authlist);
+});
+
+router.get('/nodeurl', async (req, res) => {
+    const nodeUrlList = await namespaceWrapper.getNodes();
+    return res.status(200).send(nodeUrlList);
+});
+
+// router.post('/register-authlist', async (req, res) => {
+//   const pubkey = req.body.pubkey;
+//   await db.setAuthList(pubkey);
+//   return res.status(200).send({message: 'Authlist registered successfully'});
+// }
+// )
 
 module.exports = router;
