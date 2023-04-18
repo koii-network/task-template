@@ -8,15 +8,17 @@ const Data = require('../model/data');
 const credentials = {}; // arweave doesn't need credentials
 
 const run = async () => { 
-    const adapter = new Arweave(credentials, 3);
-
     let query = "web3"; // the query our twitter search will use
 
     let dataDb = new Data('arweaveNodes', db);
+
     let options = {
         maxRetry : 3, 
         query : query
     }
+    
+    const adapter = new Arweave(credentials, options.maxRetry, dataDb);
+
     const gatherer = new Gatherer(dataDb, adapter, options);
 
     // run a gatherer to get 100 items

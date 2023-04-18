@@ -8,7 +8,7 @@ const {Builder, Browser, By, Key, until} = require('selenium-webdriver');
 
 
 class Arweave extends Adapter {
-  constructor(credentials, maxRetry) {
+  constructor(credentials, maxRetry, db) {
       super(credentials, maxRetry);
       this.credentials = credentials || {};
       this.maxRetry = maxRetry || 3;
@@ -26,7 +26,12 @@ class Arweave extends Adapter {
                 // TODO check if the session is valid
             }
         }
-      // this.data = new Data('tweets', []);
+      this.db = db;
+  }
+
+  getNextPage = async (query) => {
+    // there is only 1000 results per page in this model, so we don't need to have a second page
+    return null;
   }
 
   negotiateSession = async () => {
@@ -36,6 +41,21 @@ class Arweave extends Adapter {
   checkNode = async () => {
     // TODO - need a clean way  to reintroduce this, for now it's wasting API credits
     this.session.isValid = true
+    return true;
+  }
+
+  getPendingItems() {
+    return this.db.getPendingItems();
+  }
+
+  storeListAsPendingItems(list) {
+    console.log('db', this.db)
+    // TODO - store the list of nodes as pending items using db
+    for (let node of list) {
+      if (!this.db.isPendingItem(node) && !this.db.isDataItem(node)) {
+        this.db.addPendingItem(node)
+      } 
+    }
     return true;
   }
 
@@ -58,6 +78,7 @@ class Arweave extends Adapter {
   
     return newNodes;
   }
-}
 
+
+}
 module.exports = Arweave;

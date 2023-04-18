@@ -29,6 +29,68 @@ class Data {
         });
     }   
 
+    getPending(limit) {
+
+        return new Promise((resolve, reject) => {
+            let dataStore = [];
+            this.db.createReadStream({
+                gt: `~pending:${ this.name }~`,
+                reverse: true,
+                keys: true,
+                values: true
+            })
+            .on('data', function (data) {
+                console.log( data.key.toString(), '=', data.value.toString())
+                dataStore.push(JSON.parse(data.value.toString()));
+
+                // check if the limit has been reached
+                if (limit && dataStore.length >= limit) {
+                    console.log('limit reached')
+                    this.destroy();  // TODO - test this
+                }
+
+            })
+            .on('error', function (err) {
+                console.log('Oh my!', err)
+                reject(err);
+            })
+            .on('close', function () {
+                console.log('Stream closed')
+            })
+            .on('end', function () {
+                console.log('Stream ended')
+                resolve(dataStore);
+            })  
+        });
+    }
+
+
+    isPendingItem (id) {
+        return new Promise((resolve, reject) => {
+            this.get( createPendingId(id), (err, value) => {
+              if (err) {
+                console.error("Error in getData", err);
+                resolve(false);
+              } else {
+                resolve(true);
+              }
+            });
+        });
+    }
+
+    isDataItem (id) {
+        return new Promise((resolve, reject) => {
+            this.get( createId(id), (err, value) => {
+              if (err) {
+                console.error("Error in getData", err);
+                resolve(false);
+              } else {
+                resolve(true);
+              }
+            });
+        });
+    }
+
     getList(options) {
         // if no options supplied, default to a list of stored items by their keys
         if (!options) options = {
@@ -67,3 +129,12 @@ class Data {
 }
 
 module.exports = Data;
+
+function createId (id) {
+    return `${ this.name }:${ id }`;
+}
+
+
+function createPendingId (id) {
+  return `pending:${ createId(id) }`;
+}

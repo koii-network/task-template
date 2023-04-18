@@ -29,7 +29,7 @@ class Gatherer {
         // I. Startup
         // 1. Fetch an initial list of items using the query provided
         let startupList = await this.adapter.newSearch(this.options.query);
-        let startupItems = this.adapter.storeListAsPendingItems(startupList);
+        let startupItems = await this.adapter.storeListAsPendingItems(startupList); 
         
         // 2. Save the items to the database with the 'pending' prefix
         // 3. Fetch the next page of items using the query provided
@@ -62,7 +62,7 @@ class Gatherer {
 
             
             while (true) {
-                this.pending = await Data.getPendingItems(this.db, this.options.limit);
+                this.pending = await this.db.getPending(this.options.limit);
 
                 try {
                     if (this.pending.length > 0) {
@@ -70,12 +70,14 @@ class Gatherer {
                             this.addBatch()
                             .catch((e) => console.error(e))
                         ))
-                        await Promise.allSettled(this.queue)
+
+                        await Promise.allSettled(this.queue)  // TODO fix batching as this will only resolve once all queued items have run, while we want to refill the batch as it is emptied 
                     } else {
-                        this.printStatus()
+                        console.log('queue empty')
                     }
                 } catch (err) {
                     console.error('error processing a node', err)
+                    break;
                 }
             }
         
