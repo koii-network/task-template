@@ -140,20 +140,20 @@ class NamespaceWrapper {
    * @param {transaction} path // Endpoint path appended to namespace
    * @param {Function} callback // Callback function on traffic receive
    */
-  // async sendAndConfirmTransactionWrapper(transaction, signers) {
-  //   const blockhash = (await connection.getRecentBlockhash('finalized'))
-  //     .blockhash;
-  //   transaction.recentBlockhash = blockhash;
-  //   transaction.feePayer = new PublicKey(MAIN_ACCOUNT_PUBKEY);
-  //   return await genericHandler(
-  //     'sendAndConfirmTransactionWrapper',
-  //     transaction.serialize({
-  //       requireAllSignatures: false,
-  //       verifySignatures: false,
-  //     }),
-  //     signers,
-  //   );
-  // }
+  async sendAndConfirmTransactionWrapper(transaction, signers) {
+    const blockhash = (await connection.getRecentBlockhash('finalized'))
+      .blockhash;
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = new PublicKey(MAIN_ACCOUNT_PUBKEY);
+    return await genericHandler(
+      'sendAndConfirmTransactionWrapper',
+      transaction.serialize({
+        requireAllSignatures: false,
+        verifySignatures: false,
+      }),
+      signers,
+    );
+  }
 
   // async signArweave(transaction) {
   //   let tx = await genericHandler('signArweave', transaction.toJSON());
