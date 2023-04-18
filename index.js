@@ -1,15 +1,10 @@
 const coreLogic = require('./coreLogic');
 const dbSharing = require('./dbSharing');
 // const localShim = require('./localTestingShim'); // TEST to enable testing with K2 without round timers, enable this line and line 59
-const { app, MAIN_ACCOUNT_PUBKEY, SERVICE_URL, TASK_ID } = require('./init');
+const { app } = require('./init');
 const express = require('express');
 const { namespaceWrapper, taskNodeAdministered } = require('./namespaceWrapper');
-const {default: axios} = require('axios');
-const bs58 = require('bs58');
-const solanaWeb3 = require('@solana/web3.js');
-const nacl = require('tweetnacl');
 const fs = require('fs');
-const db = require('./db_model');
 const routes = require('./routes');
 
 async function setup() {
@@ -53,25 +48,19 @@ async function setup() {
     }
   });
 
-    // Code for the data replication among the nodes
-    setInterval(() => {
-      dbSharing.share();
-    }, 20000);
+  // Code for the data replication among the nodes
+  setInterval(() => {
+    dbSharing.share();
+  }, 20000);
 
-    // localShim(); // TEST enable this to run the localShim for testing with K2 without timers
-
+  // localShim(); // TEST enable this to run the localShim for testing with K2 without timers
 }
 
 if (taskNodeAdministered){
   setup();
 }
 
-
 if (app) {
   app.use(express.json());
   app.use('/', routes)
-
-
-
 }
-
