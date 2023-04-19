@@ -79,10 +79,10 @@ const share = async () => {
             });
             if (localExistingLinktree) {
               if (localExistingLinktree.data.timestamp < value.data.timestamp) {
-                allLinktrees.push(value);
+                await db.setLinktree(value.publicKey, value.data)
               }
             } else {
-              allLinktrees.push(value);
+              await db.setLinktree(value.publicKey, value.data)
             }
           }
         }
