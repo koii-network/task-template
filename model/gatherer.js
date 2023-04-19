@@ -33,8 +33,12 @@ class Gatherer {
         
         // 2. Save the items to the database with the 'pending' prefix
         // 3. Fetch the next page of items using the query provided
-        let exit = false; 
-        while (true) {
+        
+        // the following flags are for debug use only
+            let exit = false; 
+            let blue = true;
+            
+        while (blue) {
             let nextPage = await this.adapter.getNextPage();
             if (nextPage) {
 
@@ -51,6 +55,7 @@ class Gatherer {
             if (exit) {
                 break;
             }
+            blue = false;
         }
 
 
@@ -60,8 +65,8 @@ class Gatherer {
             // 6. Fetch the next page of items using the query provided
             // 7. Repeat steps 4-6 until the limit is reached or there are no more pages to fetch
 
-            
-            while (true) {
+            let red = true;
+            while (red) {
                 this.pending = await this.db.getPending(this.options.limit);
 
                 try {
@@ -74,11 +79,13 @@ class Gatherer {
                         await Promise.allSettled(this.queue)  // TODO fix batching as this will only resolve once all queued items have run, while we want to refill the batch as it is emptied 
                     } else {
                         console.log('queue empty')
+                        break;
                     }
                 } catch (err) {
                     console.error('error processing a node', err)
                     break;
                 }
+                red = false;
             }
         
         
@@ -92,98 +99,18 @@ class Gatherer {
             // 11. Sign all IPFS payloads and save the signature to the database (i.e. db.put('ipfs:' + item.id + ':signature', ipfsHash)) for use in the rest apis
     }
 
-    // TODO - fix the methods below with proper db prefix mgmt
     addBatch = async function () {
         for (let i = 0; i < this.batchSize; i++ ) {
-             this.processPendingPeer ()
-        }
-     }
-
-     processPendingPeer = async function ( ) {
-        try {
-            if ( this.pending.length > 0 ) {
-                let item = await this.getRandomNode() // grabs a random node from the middle to avoid async collisions
-                // console.log('item', item)
-                // console.log(`starting ${ item.location }, remaining ${ this.pending.length }`);
-                let result = await item.fullScan(this.txId)
-                this.queried.push(item.location)
-                // if (result.isHealthy) console.log('received ', result)
-    
-                if (result.isHealthy) {
-                    this.updateHealthy(item.location)
-
-                    // console.log(`Healthy node found at ${ item.location } `)
-                    this.printStatus()
-
-                    if ( result.peers.length > 0 ) {
-                        // console.log('has peers!')
-                        this.addNodes(result.peers)
-                    }
-                    if (result.containsTx) {
-                        // console.log('is replicator!!!')
-                        this.addReplicator(item.location)
-                    }
-
-
-                }
-                this.removeFromRunning(item.location)
-            }
-            if ( this.pending.length < 1 ) {
-                this.printStatus()
-                return;
-            }
-        } catch (err) {
-
+            await this.processPending ()
         }
     }
 
-    getRandomNode = async function () {
-        try {
-          let index = Math.floor(Math.random() * this.pending.length);
-          let peer = this.pending[index];
-          this.pending[index] = this.pending[this.pending.length-1];
-          this.pending.pop();
-          this.running.push(peer)
-          return peer;
-        } catch (err) {
-          console.log('error selecting random node', err)
-          return;
+    processPending = async function ( ) {
+        // get a random node from the pending list
+        let item = this.adapter.getNextPendingItem();
+        if (item) {
+            this.adapter.parseOne(item) // this function should take care of removing the old pending item and adding new pending items for the list from this item
         }
-      }
-
-    gatherOld = async (limit) => {
-        if ( !limit ) limit = 10;
-        let allItems = []; // this contains the records found
-
-        // set up an adapter
-        // authenticate with the adapter
-        let session = await this.adapter.negotiateSession();
-
-        // generate a new search
-        let search = new Search(this.options.query, this.options, this.adapter);
-        
-        console.log('search', search);
-
-        // parse items and crawl links for more items
-        let items = await search.getList();
-        console.log('gatherer got items', items)
-
-        if (items && items.length && items.length > 0) {
-            // save items to the db
-            for (const item of items) {
-                if ( allItems.length < limit) {
-                    let newId = this.db.create(items);
-                    allItems[newId] = item;
-                } else {
-                    return allItems;
-                }
-
-            }
-        }
-        // TODO - save search to the db
-        // this.db.create(search);
-
-        return allItems; // catch all in case for loops break
 
     }
 
@@ -192,6 +119,7 @@ class Gatherer {
     getData(id) {
         return this.db.get(id);
     }
+
     getList (options) {
         return this.db.getList(options);
     }

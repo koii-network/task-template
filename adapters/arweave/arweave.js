@@ -38,6 +38,10 @@ class Arweave extends Adapter {
     return true; // only leaving this here so it doesn't throw errors in gatherers
   }
 
+  getNextPendingItem = async () => {
+    return this.db.getPending(1);
+  }
+
   checkNode = async () => {
     // TODO - need a clean way  to reintroduce this, for now it's wasting API credits
     this.session.isValid = true
@@ -52,8 +56,9 @@ class Arweave extends Adapter {
     console.log('db', this.db)
     // TODO - store the list of nodes as pending items using db
     for (let node of list) {
+      // the main difference with this adapter is that the node's IP address is the data for each item, so the ID === VALUE 
       if (!this.db.isPendingItem(node) && !this.db.isDataItem(node)) {
-        this.db.addPendingItem(node)
+        this.db.addPendingItem(node, node)
       } 
     }
     return true;

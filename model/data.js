@@ -18,9 +18,9 @@ class Data {
     // returns items by id
     get (id) {
         return new Promise((resolve, reject) => {
-            this.db.get( createId(id), (err, value) => {
+            this.db.get( this.createId(id), (err, value) => {
               if (err) {
-                console.error("Error in getData", err);
+                // console.error("Error in getData get", err, id);
                 resolve(null);
               } else {
                 resolve(JSON.parse(value || "[]"));
@@ -29,16 +29,33 @@ class Data {
         });
     }   
 
+    addPendingItem(id, value) {
+        return new Promise((resolve, reject) => {
+            this.db.put( this.createPendingId(id), JSON.stringify(value), (err) => {
+                if (err) {
+                    console.error("Error in addPendingItem", err);
+                    reject(err);
+                } else {
+                    console.log('added pending item', id)
+                    resolve(true);
+                }
+            });
+        });
+    }
+
     getPending(limit) {
 
         return new Promise((resolve, reject) => {
             let dataStore = [];
-            this.db.createReadStream({
-                gt: `~pending:${ this.name }~`,
-                reverse: true,
-                keys: true,
-                values: true
-            })
+            let options = {
+              gt: `~pending:${ this.name }~`,
+              reverse: true,
+              keys: true,
+              values: true
+          }
+          if (limit) options.limit = limit;
+
+          this.db.createReadStream(options)
             .on('data', function (data) {
                 console.log( data.key.toString(), '=', data.value.toString())
                 dataStore.push(JSON.parse(data.value.toString()));
@@ -64,15 +81,14 @@ class Data {
         });
     }
 
-
     isPendingItem (id) {
         return new Promise((resolve, reject) => {
-            this.get( createPendingId(id), (err, value) => {
+          this.db.get( this.createPendingId(id), (err, value) => {
               if (err) {
-                console.error("Error in getData", err);
-                resolve(false);
+                console.error("Error in getData get", err, id);
+                resolve(null);
               } else {
-                resolve(true);
+                resolve(JSON.parse(value || "[]"));
               }
             });
         });
@@ -80,9 +96,9 @@ class Data {
 
     isDataItem (id) {
         return new Promise((resolve, reject) => {
-            this.get( createId(id), (err, value) => {
+            this.get( this.createId(id), (err, value) => {
               if (err) {
-                console.error("Error in getData", err);
+                console.error("Error in getData - dataItem ", err, id);
                 resolve(false);
               } else {
                 resolve(true);
@@ -124,17 +140,25 @@ class Data {
     // adds a new item 
     create (item) {
         item = new Item(item); // item must be an instance of Item
-        return db.put( createId(itemId), JSON.stringify(item));
+        return db.put( this.createId(itemId), JSON.stringify(item));
     }  
+    createId (id) {
+      console.log('this.name', this.name)
+      let newId = `${ this.name }:${ id }`;
+      console.log('new id is ', newId)
+      return newId;
+    }
+  
+    createPendingId (id) {
+      console.log(id)
+      let normalId = this.createId(id);
+      console.log('normal ID is ' + normalId);
+      let pendingId = `pending:${ normalId }`;
+      console.log('new pending ID: ', pendingId)
+      return pendingId;
+    }
+
 }
 
 module.exports = Data;
 
-function createId (id) {
-    return `${ this.name }:${ id }`;
-}
-
-
-function createPendingId (id) {
-  return `pending:${ createId(id) }`;
-}
