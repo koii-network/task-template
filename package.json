@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test:submit": "node test/test_node_submitLinktree.js",
+    "test:submitlocal": "node test/test_local_submitLinktree.js",
+    "test:db": "node test/test_dbmodel.js",
     "test": "node test/unitTest.js",
-    "test:submit": "node test/test_submitLinktree.js",
-    "test:getdb": "node test/get_local_leveldb.js",
-    "status": "node test/check_task-status.js",
+    "test:status": "node test/check_task-status.js",
+    "test:api": "node test/test_endpoint.js",
     "start": "node index.js",
     "webpack": "webpack",
     "webpack:prod": "webpack --mode production"
