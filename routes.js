@@ -119,6 +119,12 @@ router.use((req, res, next) => {
         });
         return res.status(200).send(authlist);
     });
+    router.post('/authlist', async (req, res) => {
+        const pubkey = req.body.authdata.pubkey;
+        // console.log("AUTHLIST", pubkey);
+        await db.setAuthList(pubkey);
+        return res.status(200).send(pubkey);
+    });
     router.get('/nodeurl', async (req, res) => {
         const nodeUrlList = await namespaceWrapper.getNodes();
         return res.status(200).send(nodeUrlList);

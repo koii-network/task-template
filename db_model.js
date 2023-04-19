@@ -162,7 +162,7 @@ const getAuthList = async (pubkey) => {
 
 const setAuthList = async (pubkey) => {
     namespaceWrapper.levelDB.put(getAuthListId(pubkey), JSON.stringify(pubkey));
-    return console.log("Auth List set");
+    return console.log("Auth List set ", pubkey);
 }
 
 const getAllAuthLists = async (values) => {
