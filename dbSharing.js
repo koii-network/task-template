@@ -75,14 +75,14 @@ const share = async () => {
               continue;
             }
             let localExistingLinktree = allLinktrees.find((e) => {
-              e.uuid == linkTreePayload.data.uuid;
+              e.uuid == value.data.uuid;
             });
             if (localExistingLinktree) {
-              if (localExistingLinktree.data.timestamp < linkTreePayload.data.timestamp) {
-                allLinktrees.push(linkTreePayload);
+              if (localExistingLinktree.data.timestamp < value.data.timestamp) {
+                allLinktrees.push(value);
               }
             } else {
-              allLinktrees.push(linkTreePayload);
+              allLinktrees.push(value);
             }
           }
         }
