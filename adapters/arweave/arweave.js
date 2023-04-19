@@ -8,10 +8,11 @@ const {Builder, Browser, By, Key, until} = require('selenium-webdriver');
 
 
 class Arweave extends Adapter {
-  constructor(credentials, maxRetry, db) {
-      super(credentials, maxRetry);
+  constructor(credentials, maxRetry, db, txId) {
+      super(credentials, maxRetry, txId);
       this.credentials = credentials || {};
       this.maxRetry = maxRetry || 3;
+      this.txId = txId;
       this.shims = {
             "parseOne" : async (node) => {
                 // TODO - fetch one arweave node from the pending list, and see if it is online
@@ -32,6 +33,58 @@ class Arweave extends Adapter {
   getNextPage = async (query) => {
     // there is only 1000 results per page in this model, so we don't need to have a second page
     return null;
+  }
+
+  parseNode = async (node) => {
+    
+    let peers = await this.getPeers (node)
+
+    let txCheck = await this.checkTx (this.txId)
+
+    // TODO - add db updates here
+    // 1. Remove from pending
+    // 2. update db to reflect node status?
+
+    return this
+  }
+
+  getPeers = async (node) => {
+    let peers = [];
+    try {
+      // console.log('sending PEER check for ', this.location)
+      const payload = await superagent.get(`${node}/peers`).timeout({
+          response: superagentdelays.peers.response,  
+          deadline: superagentdelays.peers.deadline, 
+        })
+      // console.log('payload returned from ' + this.location, payload)
+      const body = JSON.parse(payload.text);
+      // console.log("BODY", body)
+      if (body) {
+        peers = body;
+      } 
+      return
+
+    } catch (err) {
+        console.error ("can't fetch peers from " + this.location, err)
+    }
+    return peers;
+  }
+  checkTx = async function ( node, txId ) {
+    let containsTx = false;
+      try {
+          // console.log('sending txid check for ', peerUrl)
+          const payload = await superagent.get(`${node}/${ txId }`).timeout({
+              response: superagentdelays.txfetch.response,  
+              deadline: superagentdelays.txfetch.deadline, 
+            })
+          // console.log('payload returned from ' + peerUrl, payload)
+          const body = JSON.parse(payload.text);
+          containsTx = true;
+
+        } catch (err) {
+          // if (debug) console.error ("can't fetch " + this.location, err)
+        }
+    return containsTx;
   }
 
   negotiateSession = async () => {
