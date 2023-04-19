@@ -45,6 +45,7 @@ try {
     publicKey: bs58.encode(publicKey),
     signature: bs58.encode(signature),
   };
+  console.log(bs58.encode(publicKey))
 
 
   // Check payload
@@ -52,6 +53,39 @@ try {
   
   await axios
     .post('https://k2-tasknet-ports-2.koii.live/task/HjWJmb2gcwwm99VhyNVJZir3ToAJTfUB4j7buWnMMUEP/linktree', {payload})
+    .then((e) => {
+      if (e.status != 200) {
+        console.log(e);
+      }
+      console.log(e.data);
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+    await axios
+    .post('https://k2-tasknet-ports-1.koii.live/task/HjWJmb2gcwwm99VhyNVJZir3ToAJTfUB4j7buWnMMUEP/linktree', {payload})
+    .then((e) => {
+      if (e.status != 200) {
+        console.log(e);
+      }
+      console.log(e.data);
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+    await axios
+    .post('https://k2-tasknet.koii.live/task/HjWJmb2gcwwm99VhyNVJZir3ToAJTfUB4j7buWnMMUEP/linktree', {payload})
+    .then((e) => {
+      if (e.status != 200) {
+        console.log(e);
+      }
+      console.log(e.data);
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+    await axios
+    .post('https://k2-tasknet-ports-3.koii.live/task/HjWJmb2gcwwm99VhyNVJZir3ToAJTfUB4j7buWnMMUEP/linktree', {payload})
     .then((e) => {
       if (e.status != 200) {
         console.log(e);
