@@ -8,7 +8,7 @@ task_description: 'This task is to test out the namespace function'
 task_executable_network: 'DEVELOPMENT'
 
 # Provide your web3.storage key as it is needed for uploading your metadata
-secret_web3_storage_key: ''
+secret_web3_storage_key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDg0NmM5YjRmNTMwYzc3OUQ5NzFkOTQzMGI4OTkyRkU5NWIwNTE0MkIiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjE5ODEwNTg0NjYsIm5hbWUiOiJrb2lpIn0.m0J9abCa_N6M5jJ5quEJkZkbxBP18U-omSQRcXP9a80'
 
 # Path to your executable webpack if the selected network is IPFS otherwise leave blank
 task_audit_program: ''
