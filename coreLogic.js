@@ -7,8 +7,7 @@ const db = require('./db_model');
 
 class CoreLogic {
   async task() {
-    // TODO remove all of the prompts like the following line from the template version
-
+    
     // run linktree task
     console.log('*********task() started*********');
 

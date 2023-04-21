@@ -29,12 +29,10 @@ const share = async () => {
         console.log(nodeUrlList);
         
         // fetch local linktrees
-        let allLinktrees = await db.getAllLinktrees(); // TODO
+        let allLinktrees = await db.getAllLinktrees();
         allLinktrees = allLinktrees || '[]';
 
-        // for each node, get all linktrees? 
-        // TODO - get only one linktree per node, and compare them 
-        // it will be cleaner to focus on one pubkey, and compare with many nodes (maybe 3 nodes)
+        // for each node, get all linktrees
         for (let url of nodeUrlList) {
           console.log(url);
           const res = await axios.get(`${url}/task/${TASK_ID}/linktree/all`);
@@ -44,24 +42,6 @@ const share = async () => {
           }
           const payload = res.data;
 
-
-          // TODO - there are several things to compare
-          /* 
-            1. the list of all linktrees held by each node (the list of public keys)
-            2. the linktree data for each public key
-            3. the timestamp of each linktree item on each node (we should only download newer data)
-          */
-
-          /*
-        1. Verify the signature
-        2. Only update your db if incoming timestamp > your timestamp or you don't have the data
-        */
-       // TODO - fix by adding linktree comparisons for each publickey - the list shared between nodes should be the public keys of all known linktrees
-
-       // TODO2 - whenever a linktree is not found on this node, it should be added to the db
-       
-       // TODO3 - whenever a linktree is found on this node, it should be compared to the one in the db and updated if the timestamp is newer
-       
        if (!payload || payload.length == 0) continue;
        for (let i = 0; i < payload.length; i++) {
          const value = payload[i].value;

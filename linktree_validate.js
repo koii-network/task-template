@@ -14,7 +14,6 @@ module.exports = async (submission_value, round) => {
   console.log('PUBLIC KEY', output.node_publicKey);
   console.log('SIGNATURE', output.node_signature);
 
-  // TODO - can we safely remove this, from a game theory perspective?
   // Check that the node who submitted the proofs is a valid staked node
   let isNode = await verifyNode(output.proofs, output.node_signature, output.node_publicKey);
   console.log("Is the node's signature on the CID payload correct?", isNode);
@@ -67,11 +66,7 @@ async function verifyLinktrees(proofs_list_object) {
       // check if the user's pubkey is on the authlist
       if (AuthUserList.hasOwnProperty(linktree.publicKey) ) {
 
-        // TODO write logic to quersy other node and verify registration events
-      /*
-        1. REST API that returns a user's registration proof and accepts :pubkey
-        2. Add logic here to verify 'proofs' from (1) and then add the user to the AuthUserList
-      */
+        console.log('User is on the auth list');
         
       } else {
 
@@ -91,7 +86,7 @@ async function verifyLinktrees(proofs_list_object) {
         console.log(`IS SIGNATURE ${publicKey} VALID?`, isSignatureValid);
 
         if (isSignatureValid) {
-          await db.setAuthList(publicKey) // TODO refactor for direct database usage and read / writes of individual authorized users by pubkey (otherwise full rewrite could risk overwriting another write if running in parallel)
+          await db.setAuthList(publicKey)
         } else {
           allSignaturesValid = false;
         }
