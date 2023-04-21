@@ -120,7 +120,8 @@ class CoreLogic {
                 distributionCandidates.push(candidatePublicKey);
               }
             }
-
+            } else {
+              distributionCandidates.push(candidatePublicKey);
             }
         }
       }
