@@ -58,6 +58,8 @@ router.use((req, res, next) => {
     return res.status(200).send({message: 'Proof and linktree registered successfully'});
     });
     
+    // TODO Slash the logs file after a certain size(10 MB) or 3(7) days
+    // TODO Check express morgan middleware
     router.get("/logs", async (req, res) => {
     const logs = fs.readFileSync("./namespace/logs.txt", "utf8")
     res.status(200).send(logs);
