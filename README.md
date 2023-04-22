@@ -1,4 +1,5 @@
-# K2-Task-Template
+# Link tree task
+
 Tasks run following a periodic structure of 'rounds':
 
 ![Screenshot_20230307-091958](https://user-images.githubusercontent.com/66934242/223565192-3ecce9c6-0f9a-4a58-8b02-2db19c61141f.png)
