@@ -17,7 +17,7 @@ const run = async () => {
         query : query
     }
     
-    const adapter = new Arweave(credentials, options.maxRetry, dataDb);
+    const adapter = new Arweave(credentials, options.maxRetry, dataDb, "txidhere");
 
     const gatherer = new Gatherer(dataDb, adapter, options);
 
