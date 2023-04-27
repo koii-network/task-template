@@ -1,6 +1,3 @@
-const puppeteer = require('puppeteer');
-const cheerio = require('cheerio');
-const fs = require('fs');
 require('dotenv').config();
 
 const username = process.env.TWITTER_USER_NAME;
