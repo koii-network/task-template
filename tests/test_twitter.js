@@ -9,7 +9,7 @@ const hashtag = '%23Web3';
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   page.on('console', consoleObj => console.log(consoleObj.text()));
-  await page.setViewport({ width: 1280, height: 800 });
+  await page.setViewport({ width: 1920, height: 2000 });
 
   await twitterLogin(page);
 
@@ -29,8 +29,18 @@ const hashtag = '%23Web3';
   const html = await page.content();
   const $ = cheerio.load(html);
 
+  let scrapingData = [];
+
   $('div[data-testid="cellInnerDiv"]').each((i, el) => {
-    const tweet = $(el).find('div[dir="ltr"]').text();
-    console.log(tweet);
+    console.log(i)
+    const tweet_text = $(el).find('div[data-testid="tweetText"]').text();
+    const tweet_user = $(el).find('a[tabindex="-1"]').text();
+    const tweet_record = $(el).find('span[data-testid="app-text-transition-container"]');
+    const commentCount = tweet_record.eq(0).text();
+    const likeCount = tweet_record.eq(1).text();
+    const shareCount = tweet_record.eq(2).text();
+    const viewCount = tweet_record.eq(3).text();
+    console.log(tweet_user, "post ", tweet_text, " has record: comments:", commentCount, " likes: ", likeCount, " shares: ", shareCount, " views: ", viewCount);
   });
+  
 })();
