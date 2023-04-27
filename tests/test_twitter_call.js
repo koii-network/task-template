@@ -24,9 +24,15 @@ const password = '970128ldydq';
   await page.type('input[autocomplete="username"]', username);
   await page.keyboard.press('Enter');
 
-  if (
-    await page.waitForSelector('input[data-testid="ocfEnterTextTextInput"]')
-  ) {
+  const twitter_verify = await page
+    .waitForSelector('input[data-testid="ocfEnterTextTextInput"]', {
+      timeout: 5000,
+      visible: true,
+    })
+    .then(() => true)
+    .catch(() => false);
+
+  if (twitter_verify) {
     await page.type(
       'input[data-testid="ocfEnterTextTextInput"]',
       username_check,
@@ -46,7 +52,7 @@ const password = '970128ldydq';
 
   console.log('Step: Login successful');
 
-  // Wait an additional 5 seconds until fully log in 
+  // Wait an additional 5 seconds until fully log in
   await page.waitForTimeout(5000);
   await page.goto('https://twitter.com/search?q=%23Web3&src=typed_query');
 
