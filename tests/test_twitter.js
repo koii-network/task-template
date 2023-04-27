@@ -29,8 +29,8 @@ const hashtag = '%23Web3';
   const html = await page.content();
   const $ = cheerio.load(html);
 
-  $('div[data-testid="tweet"]').each((i, el) => {
-    const tweet = $(el).find('div[lang]').text();
+  $('div[data-testid="cellInnerDiv"]').each((i, el) => {
+    const tweet = $(el).find('div[dir="ltr"]').text();
     console.log(tweet);
   });
 })();
