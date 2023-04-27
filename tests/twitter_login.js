@@ -1,17 +1,14 @@
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const fs = require('fs');
+require('dotenv').config();
 
-const username = 'soma@koii.network';
-const username_check = 'Soma41717079';
-const password = '970128ldydq';
+const username = process.env.TWITTER_USER_NAME;
+const username_id = process.env.TWITTER_USER_ID;
+const password = process.env.TWITTER_PASSWORD;
 
-(async () => {
-  const browser = await puppeteer.launch({ headless: false });
-  const page = await browser.newPage();
-  page.on('console', consoleObj => console.log(consoleObj.text()));
-  await page.setViewport({ width: 1280, height: 800 });
 
+const twitterLogin = async (page) => {
   console.log('Step: Reach twitter login page');
 
   await page.goto('https://twitter.com/i/flow/login');
@@ -35,7 +32,7 @@ const password = '970128ldydq';
   if (twitter_verify) {
     await page.type(
       'input[data-testid="ocfEnterTextTextInput"]',
-      username_check,
+      username_id,
     );
     await page.keyboard.press('Enter');
   }
@@ -51,18 +48,8 @@ const password = '970128ldydq';
   page.waitForNavigation({ waitUntil: 'load' });
 
   console.log('Step: Login successful');
+};
 
-  // Wait an additional 5 seconds until fully log in
-  await page.waitForTimeout(5000);
-  await page.goto('https://twitter.com/search?q=%23Web3&src=typed_query');
-
-  // Wait an additional 5 seconds until fully loaded before scraping
-  await page.waitForTimeout(5000);
-  const html = await page.content();
-  const $ = cheerio.load(html);
-
-  $('div[data-testid="tweet"]').each((i, el) => {
-    const tweet = $(el).find('div[lang]').text();
-    console.log(tweet);
-  });
-})();
+module.exports = {
+  twitterLogin,
+};
