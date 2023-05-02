@@ -2,32 +2,47 @@ const { twitterLogin } = require('./twitter_login');
 const { twitterScrape } = require('./twitter_scrape');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
-//const level = require('level');
+const Data = require('../model/data');
 const levelup = require('levelup');
 const leveldown = require('leveldown');
 const db = levelup(leveldown(__dirname + '/twitter-db'));
 
+const Item = require('./test_item');
+
+// setup tag to scrape
 const hashtag = '%23Web3';
 
-async function storeKeyValue(key, value) {
-  try {
-    await db.put(key, JSON.stringify(value));
-    console.log(`Stored: ${key} = ${value}`);
-  } catch (err) {
-    console.error('Error storing key-value:', err);
-  }
+async function main() {
+
+  // run scrape
+  // const scrapingData = await runScrape();
+
+  // setup data format
+  let twitterData = [];
+  // for (const [key, value] of Object.entries(scrapingData)) {
+  //   const item = new Item({ id: key, name: JSON.stringify(value), description: hashtag});
+  //   twitterData.push(item);
+  // }
+  // console.log('twitterData: ', twitterData);
+
+  // setup db
+  const data = new Data('twitter', db, twitterData);
+
+  // set tiwtter list to item list
+  // await data.createItems(twitterData);
+
+  // Test getting a list of items
+  data
+    .getList()
+    .then(list => {
+      console.log('Get list ', list);
+    })
+    .catch(err => {
+      console.error('Get list test failed:', err);
+    });
 }
 
-async function getValue(key) {
-  try {
-    const value = await db.get(key);
-    return JSON.parse(value);
-  } catch (err) {
-    console.error('Error retrieving value:', err);
-  }
-}
-
-(async () => {
+async function runScrape() {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
 
@@ -49,25 +64,18 @@ async function getValue(key) {
   // Scrape the tweets
   await twitterScrape(page, hashtag, scrapingData);
 
-  console.log('Twitter scraping Data: ', scrapingData);
 
   // Save data to the file named twitter_scraping_data.json
   fs.writeFile(
     'twitter_scraping_data.json',
     JSON.stringify(scrapingData, null, 2),
-    (err) => err ? console.log('Data not written!', err) : console.log('Data written!'),
+    err =>
+      err
+        ? console.log('Data not written!', err)
+        : console.log('Data written!'),
   );
 
-  console.log("storing in db");
-  for (let key in scrapingData) {
-    await storeKeyValue(key, scrapingData[key]);
-  }
+  return scrapingData;
+}
 
-  console.log("retrieving from db");
-  for (let key in scrapingData) {
-    let value = await getValue(key);
-    console.log('Key: ', key);
-    console.log('value: ', value);
-  }
-})();
-
+main();
