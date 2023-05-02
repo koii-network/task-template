@@ -92,7 +92,7 @@ class Arweave extends Adapter {
   }
 
   getNextPendingItem = async () => {
-    return this.db.getPending(1);
+    return this.db.getPendingList(1);
   }
 
   checkNode = async () => {
@@ -110,9 +110,9 @@ class Arweave extends Adapter {
     // TODO - store the list of nodes as pending items using db
     for (let node of list) {
       // the main difference with this adapter is that the node's IP address is the data for each item, so the ID === VALUE 
-      if (!this.db.isPendingItem(node) && !this.db.isDataItem(node)) {
+      //if (!this.db.isPendingItem(node) && !this.db.isDataItem(node)) {
         this.db.addPendingItem(node, node)
-      } 
+      //} 
     }
     return true;
   }
