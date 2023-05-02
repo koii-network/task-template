@@ -6,39 +6,41 @@ class Data {
   constructor(name, db, data) {
     this.name = name;
     this.db = db;
-    this.data = data
+    this.data = data;
     this.dbprefix = `${name} + ":"`;
     this.fullList = [];
     this.lastUpdate = Date.now();
   }
 
-    // create a new item
+  // create a new item
   async create(item) {
-      return new Promise((resolve, reject) => {
-        this.db.put(this.createId(item.id), JSON.stringify(item), err => {
-          if (err) {
-            console.error('Error in create', err);
-            reject(err);
-          } else {
-            console.log('Created item', item.id);
-            resolve(item);
-          }
-        });
+    return new Promise((resolve, reject) => {
+      this.db.put(this.createId(item.id), JSON.stringify(item), err => {
+        if (err) {
+          console.error('Error in create', err);
+          reject(err);
+        } else {
+          console.log('Created item', item.id);
+          resolve(item);
+        }
       });
-    }
+    });
+  }
 
   // creates new database with received data
   async createItems(data) {
     for (let i = 0; i < data.length; i++) {
-        try {
-            const createdItem = await this.create(data[i]);
-            this.fullList.push(createdItem);
-            console.log(`Created ${this.fullList.length} items from a list of ${data.length}`);
-          } catch (err) {
-            console.error('Error creating item:', err);
-        }
+      try {
+        const createdItem = await this.create(data[i]);
+        this.fullList.push(createdItem);
+        console.log(
+          `Created ${this.fullList.length} items from a list of ${data.length}`,
+        );
+      } catch (err) {
+        console.error('Error creating item:', err);
+      }
     }
-}
+  }
   // returns item by id
   async get(id) {
     return new Promise((resolve, reject) => {
@@ -118,7 +120,6 @@ class Data {
     });
   }
 
-
   // get pending item List
   getPendingList(limit) {
     return new Promise((resolve, reject) => {
@@ -157,7 +158,6 @@ class Data {
     });
   }
 
-
   // ? What is this for?
   isDataItem(id) {
     return new Promise((resolve, reject) => {
@@ -171,8 +171,6 @@ class Data {
       });
     });
   }
-
-  
 
   // Tool to create a new ID
   createId(id) {
