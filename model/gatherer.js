@@ -67,8 +67,10 @@ class Gatherer {
 
             let red = true;
             while (red) {
-                this.pending = await this.db.getPending(this.options.limit);
+                this.pending = await this.db.getPendingList(this.options.limit);
 
+                let queue = [];
+                
                 try {
                     if (this.pending.length > 0) {
                         this.queue.push(this.task_queue.run(() =>
