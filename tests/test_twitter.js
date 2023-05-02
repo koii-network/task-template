@@ -15,31 +15,31 @@ const hashtag = '%23Web3';
 async function main() {
 
   // run scrape
-  // const scrapingData = await runScrape();
+  const scrapingData = await runScrape();
 
   // setup data format
   let twitterData = [];
-  // for (const [key, value] of Object.entries(scrapingData)) {
-  //   const item = new Item({ id: key, name: JSON.stringify(value), description: hashtag});
-  //   twitterData.push(item);
-  // }
-  // console.log('twitterData: ', twitterData);
+  for (const [key, value] of Object.entries(scrapingData)) {
+    const item = new Item({ id: key, name: JSON.stringify(value), description: hashtag});
+    twitterData.push(item);
+  }
+  console.log('twitterData: ', twitterData);
 
   // setup db
   const data = new Data('twitter', db, twitterData);
 
   // set tiwtter list to item list
-  // await data.createItems(twitterData);
+  await data.createItems(twitterData);
 
   // Test getting a list of items
-  data
-    .getList()
-    .then(list => {
-      console.log('Get list ', list);
-    })
-    .catch(err => {
-      console.error('Get list test failed:', err);
-    });
+  // data
+  //   .getList()
+  //   .then(list => {
+  //     console.log('Get list ', list);
+  //   })
+  //   .catch(err => {
+  //     console.error('Get list test failed:', err);
+  //   });
 }
 
 async function runScrape() {
@@ -51,7 +51,9 @@ async function runScrape() {
 
   // Set the viewport to a reasonable size
   // * height influences the amount of tweets loaded
-  await page.setViewport({ width: 1920, height: 3000 });
+  // !! 50 tweets are loaded per viewport
+  // TODO nextPage() or scrollPage() funciton to load more tweets
+  await page.setViewport({ width: 1920, height: 10000 });
 
   // Login to twitter
   await twitterLogin(page);
