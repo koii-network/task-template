@@ -6,10 +6,26 @@ class Data {
   constructor(name, db, data) {
     this.name = name;
     this.db = db;
+    this.data = data
     this.dbprefix = `${name} + ":"`;
     this.fullList = [];
     this.lastUpdate = Date.now();
   }
+
+    // create a new item
+  async create(item) {
+      return new Promise((resolve, reject) => {
+        this.db.put(this.createId(item.id), JSON.stringify(item), err => {
+          if (err) {
+            console.error('Error in create', err);
+            reject(err);
+          } else {
+            console.log('Created item', item.id);
+            resolve(item);
+          }
+        });
+      });
+    }
 
   // creates new database with received data
   async createItems(data) {
@@ -23,7 +39,7 @@ class Data {
         }
     }
 }
-  // returns items by id
+  // returns item by id
   async get(id) {
     return new Promise((resolve, reject) => {
       this.db.get(this.createId(id), (err, value) => {
@@ -37,6 +53,43 @@ class Data {
     });
   }
 
+  // return items by name
+  async getList(options) {
+    // if no options supplied, default to a list of stored items by their keys
+    if (!options)
+      options = {
+        lt: `${this.name}~`,
+        reverse: true,
+        keys: true,
+        values: true,
+      };
+    return new Promise((resolve, reject) => {
+      let dataStore = [];
+      this.db
+        .createReadStream(options)
+        .on('data', function (data) {
+          console.log(data.key.toString(), '=', data.value.toString());
+          dataStore.push({
+            key: data.key.toString(),
+            value: data.value.toString(),
+          });
+        })
+        // TODO - add error handling
+        .on('error', function (err) {
+          console.log('Something went wrong in read Stream!', err);
+          reject(err);
+        })
+        .on('close', function () {
+          console.log('Stream closed');
+        })
+        .on('end', function () {
+          console.log('Stream ended');
+          resolve(dataStore);
+        });
+    });
+  }
+
+  // create pending item
   addPendingItem(id, value) {
     return new Promise((resolve, reject) => {
       this.db.put(this.createPendingId(id), JSON.stringify(value), err => {
@@ -51,11 +104,27 @@ class Data {
     });
   }
 
-  getPending(limit) {
+  // get pending item
+  getPendingItem(id) {
+    return new Promise((resolve, reject) => {
+      this.db.get(this.createPendingId(id), (err, value) => {
+        if (err) {
+          console.error('Error in getData get', err, id);
+          resolve(null);
+        } else {
+          resolve(JSON.parse(value || '[]'));
+        }
+      });
+    });
+  }
+
+
+  // get pending item List
+  getPendingList(limit) {
     return new Promise((resolve, reject) => {
       let dataStore = [];
       let options = {
-        gt: `~pending:${this.name}~`,
+        lt: `pending:${this.name}~`,
         reverse: true,
         keys: true,
         values: true,
@@ -88,19 +157,8 @@ class Data {
     });
   }
 
-  isPendingItem(id) {
-    return new Promise((resolve, reject) => {
-      this.db.get(this.createPendingId(id), (err, value) => {
-        if (err) {
-          console.error('Error in getData get', err, id);
-          resolve(null);
-        } else {
-          resolve(JSON.parse(value || '[]'));
-        }
-      });
-    });
-  }
 
+  // ? What is this for?
   isDataItem(id) {
     return new Promise((resolve, reject) => {
       this.get(this.createId(id), (err, value) => {
@@ -114,55 +172,9 @@ class Data {
     });
   }
 
-  getList(options) {
-    // if no options supplied, default to a list of stored items by their keys
-    if (!options)
-      options = {
-        lt: `${this.name}~`,
-        reverse: true,
-        keys: true,
-        values: false,
-      };
-    return new Promise((resolve, reject) => {
-      let dataStore = [];
-      this.db
-        .createReadStream(options)
-        .on('data', function (data) {
-          console.log(data.key.toString(), '=', data.value.toString());
-          dataStore.push({
-            key: data.key.toString(),
-            value: JSON.parse(data.value.toString()),
-          });
-        })
-        // TODO - add error handling
-        .on('error', function (err) {
-          console.log('Something went wrong in read linktreesStream!', err);
-          reject(err);
-        })
-        .on('close', function () {
-          console.log('Stream closed');
-        })
-        .on('end', function () {
-          console.log('Stream ended');
-          resolve(dataStore);
-        });
-    });
-  }
+  
 
-  // adds a new item
-  create(item) {
-    return new Promise((resolve, reject) => {
-      this.db.put(this.createId(item.id), JSON.stringify(item), err => {
-        if (err) {
-          console.error('Error in create', err);
-          reject(err);
-        } else {
-          console.log('Created item', item.id);
-          resolve(item);
-        }
-      });
-    });
-  }
+  // Tool to create a new ID
   createId(id) {
     console.log('Received DB name is', this.name);
     let newId = `${this.name}:${id}`;
@@ -170,6 +182,7 @@ class Data {
     return newId;
   }
 
+  // Tool to create a pending ID
   createPendingId(id) {
     console.log(id);
     let normalId = this.createId(id);
