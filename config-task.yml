@@ -46,11 +46,11 @@ description: 'task-description'
 repositoryUrl: 'Github/gitlab link'
 imageUrl: 'Enter you image URL'
 requirementsTags:
-  - type: GLOBAL_VARIABLE
-    value: 'WEB3.STORAGE SECRET KEY'
+  - type: TASK_VARIABLE
+    value: SECRET_WEB3_STORAGE_KEY
     description: 'used to connect web3.storage'
   - type: TASK_VARIABLE
-    value: 'SCAPING URL'
+    value: 'SCRAPING_URL'
     description: 'url from which you want to scrape'
   - type: CPU
     value: '4-core'
