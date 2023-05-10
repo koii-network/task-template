@@ -1,43 +1,17 @@
 const { default: axios } = require('axios');
-const levelup = require('levelup');
-const leveldown = require('leveldown');
-const BASE_ROOT_URL = 'http://localhost:8080/namespace-wrapper';
-const { TASK_ID, SECRET_KEY } = require('./init');
+const { TASK_ID, SECRET_KEY, TASK_NODE_PORT } = require('./init');
 const { Connection, PublicKey, Keypair } = require('@_koi/web3.js');
 const taskNodeAdministered = !!TASK_ID;
-class NamespaceWrapper {
-  levelDB;
 
-  constructor() {
-    if (taskNodeAdministered) {
-      this.getTaskLevelDBPath()
-        .then(path => {
-          this.levelDB = levelup(leveldown(path));
-        })
-        .catch(err => {
-          console.error(err);
-          this.levelDB = levelup(
-            leveldown(`../namespace/${TASK_ID}/KOIILevelDB`),
-          );
-        });
-    } else {
-      this.levelDB = levelup(leveldown('./localKOIIDB'));
-    }
-  }
+const BASE_ROOT_URL = `http://localhost:${TASK_NODE_PORT}/namespace-wrapper`;
+
+class NamespaceWrapper {
   /**
    * Namespace wrapper of storeGetAsync
    * @param {string} key // Path to get
    */
   async storeGet(key) {
-    return new Promise((resolve, reject) => {
-      this.levelDB.get(key, { asBuffer: false }, (err, value) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(value);
-        }
-      });
-    });
+    return await genericHandler('storeGet', key);
   }
   /**
    * Namespace wrapper over storeSetAsync
@@ -45,16 +19,9 @@ class NamespaceWrapper {
    * @param {*} value Data to set
    */
   async storeSet(key, value) {
-    return new Promise((resolve, reject) => {
-      this.levelDB.put(key, value, {}, err => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
+    return await genericHandler('storeSet', key, value);
   }
+
   /**
    * Namespace wrapper over fsPromises methods
    * @param {*} method The fsPromise method to call
