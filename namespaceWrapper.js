@@ -2,16 +2,40 @@ const { default: axios } = require('axios');
 const { TASK_ID, SECRET_KEY, TASK_NODE_PORT } = require('./init');
 const { Connection, PublicKey, Keypair } = require('@_koi/web3.js');
 const taskNodeAdministered = !!TASK_ID;
-
 const BASE_ROOT_URL = `http://localhost:${TASK_NODE_PORT}/namespace-wrapper`;
-
+const Datastore = require('nedb-promises');
 class NamespaceWrapper {
+  db;
+  constructor() {
+    if (taskNodeAdministered) {
+      this.getTaskLevelDBPath()
+        .then(path => {
+          this.db = Datastore.create(path);
+        })
+        .catch(err => {
+          console.error(err);
+          this.db = Datastore.create(`../namespace/${TASK_ID}/KOIILevelDB.db`);
+        });
+    } else {
+      this.db = Datastore.create('./localKOIIDB.db');
+    }
+  }
   /**
    * Namespace wrapper of storeGetAsync
    * @param {string} key // Path to get
    */
   async storeGet(key) {
-    return await genericHandler('storeGet', key);
+    try {
+      const resp = await this.db.findOne({ key: key });
+      if (resp) {
+        return resp[key];
+      } else {
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
   }
   /**
    * Namespace wrapper over storeSetAsync
@@ -19,7 +43,13 @@ class NamespaceWrapper {
    * @param {*} value Data to set
    */
   async storeSet(key, value) {
-    return await genericHandler('storeSet', key, value);
+    try {
+      console.log({ [key]: value, key });
+      await this.db.insert({ [key]: value, key });
+    } catch (e) {
+      console.error(e);
+      return undefined;
+    }
   }
 
   /**
