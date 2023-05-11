@@ -1,9 +1,10 @@
 import axios from "axios";
 import { Connection, Keypair, PublicKey } from "@_koi/web3.js";
 import { GenericResponseInterface } from "./interfaces/ResponseInterface";
-import { TASK_ID, MAIN_ACCOUNT_PUBKEY, SECRET_KEY } from "./init";
-
-const BASE_ROOT_URL = "http://localhost:8080/namespace-wrapper";
+import { TASK_ID, MAIN_ACCOUNT_PUBKEY, SECRET_KEY, TASK_NODE_PORT } from "./init";
+import Datastore = require('nedb-promises');
+const BASE_ROOT_URL = `http://localhost:${TASK_NODE_PORT}/namespace-wrapper`;
+const taskNodeAdministered = !!TASK_ID;
 //const TRUSTED_SERVICE_URL = "https://k2-tasknet.koii.live";
 let connection;
 // export interface INode {
@@ -18,13 +19,39 @@ let connection;
 //   submission_value: string;
 // }
 class NamespaceWrapper {
+  db: any;
+  constructor() {
+    if (taskNodeAdministered) {
+      this.getTaskLevelDBPath()
+        .then((path: string) => {
+          this.db = Datastore.create(path);
+        })
+        .catch((err: Error) => {
+          console.error(err);
+          this.db = Datastore.create(`../namespace/${TASK_ID}/KOIILevelDB.db`);
+        });
+    } else {
+      this.db = Datastore.create('./localKOIIDB.db');
+    }
+  }
+
   /**
    * Namespace wrapper of storeGetAsync
    * @param {string} key // Path to get
    * @returns {Promise<*>} Promise containing data
    */
-  async storeGet(key: string): Promise<string> {
-    return (await genericHandler("storeGet", key)) as unknown as string | null;
+  async storeGet(key: string): Promise<string | null> {
+    try {
+      const resp = await this.db.findOne({ key: key });
+      if (resp) {
+        return resp[key];
+      } else {
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
   }
   /**
    * Namespace wrapper over storeSetAsync
@@ -33,7 +60,13 @@ class NamespaceWrapper {
    * @returns {Promise<void>}
    */
   async storeSet(key: string, value: string): Promise<void> {
-    return (await genericHandler("storeSet", key, value)) as unknown as void;
+    try {
+      console.log({ [key]: value, key });
+      await this.db.insert({ [key]: value, key });
+    } catch (e) {
+      console.error(e);
+      return;
+    }
   }
   /**
    * Namespace wrapper over fsPromises methods
@@ -374,6 +407,10 @@ class NamespaceWrapper {
         }
       }
     }
+  }
+
+  async getTaskLevelDBPath(): Promise<string>{
+    return await genericHandler('getTaskLevelDBPath') as unknown as string | null;
   }
 }
 async function genericHandler(...args): Promise<GenericResponseInterface> {

@@ -10,6 +10,7 @@ export const SECRET_KEY = process.argv[7];
 export const K2_NODE_URL = process.argv[8];
 export const SERVICE_URL = process.argv[9];
 export const STAKE = Number(process.argv[10]);
+export const TASK_NODE_PORT = Number(process.argv[11]);
 export const app = express();
 
 console.log("SETTING UP EXPRESS", NODE_MODE);
@@ -30,4 +31,5 @@ module.exports = {
   K2_NODE_URL,
   SERVICE_URL,
   STAKE,
+  TASK_NODE_PORT,
 };
