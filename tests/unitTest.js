@@ -1,4 +1,4 @@
-const coreLogic = require('../coreLogic');
+const {coreLogic} = require('../coreLogic');
 const index = require('../index');
 
 async function test_coreLogic() {
