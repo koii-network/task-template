@@ -8,7 +8,7 @@ class NamespaceWrapper {
   #db;
   constructor() {
     if (taskNodeAdministered) {
-      initializeDB();
+      this.initializeDB();
     } else {
       this.#db = Datastore.create('./localKOIIDB.db');
     }
@@ -26,7 +26,7 @@ class NamespaceWrapper {
 
   async getDb() {
     if (this.#db) return this.#db;
-    await initializeDB();
+    await this.initializeDB();
     return this.#db;
   }
   /**
