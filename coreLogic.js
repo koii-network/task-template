@@ -1,6 +1,53 @@
 const { namespaceWrapper } = require('./namespaceWrapper');
 const crypto = require('crypto');
 
+/*
+
+1. This is the coreLogic module, where all of your programmatic logic should go. 
+
+2. The coreLogic module is imported into the index.js file and is run in rounds.
+
+3. Each round has three phases to it:
+
+  a) Task Phase - This is where the work is done and the result is stored somewhere like on IPFS or local NE DB.
+  b) Submission Phase - This is where the result of the task executable is submitted to K2.
+  c) Audit Phase - This is where the submitted values are fetched and audited and the nodes are rewarded or slashed based on the audit results.
+
+4. The coreLogic module has 9 functions in total
+
+  Let's say we are running the task in round N:
+
+  The task phase:
+
+  a) task() - The logic for what your task should do goes here. There is a window in round N that is dedicated to do work. The code in task is executed in that window.
+              The result of the task is stored to NE DB (local database) as well as a main storage like IPFS. The result is stored in a variable, usually a CID. 
+
+  
+  The submission phase:
+
+  a) fetchSubmission() - After the task logic has been run, we need to fetch the result of the task from the storage using the variable it was stored in (usually a CID).
+                         This function is the place where you can write the logic to fetch that work. It is called in submitTask() function which does the actual submission to K2.
+  
+  b) submitTask() - Makes the call to namespace function of task-node using the wrapper. This function is called in the submission phase of round N.
+
+  The audit phase:
+
+  a) validateNode() - This function is called to verify the submission value, so based on the value received from the task-state we can vote on the submission.
+
+  b) auditTask() - Makes call to namespace of task-node to raise an audit against the submission value if the validation fails.
+
+  c) generateDistributionList() - You have full freedom to prepare your reward distributions as you like and the logic for that goes here.
+
+  d) submitDistributionList() - Makes call to namespace of task-node to raise an audit against the distribution list if the validation fails.
+
+  e) validateDistribution() - The logic to validate the distribution list goes here and the function will receive the distribution list submitted form task-state.
+
+  f) auditDistribution() - Makes call to namespace of task-node to raise an audit against the distribution list if the validation fails.
+
+
+*/
+
+
 class CoreLogic {
   async task() {
     // Write the logic to do the work required for submitting the values and optionally store the result in levelDB
