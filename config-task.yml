@@ -1,10 +1,10 @@
-#Provide the taskId if you are updating the task
+# Provide the taskId if you are updating the task
 task_id: ''
-# Name and desciption of your task
+# Name and description of your task
 task_name: 'Your-task-name'
 task_description: 'This task is to test out the namespace function'
 
-# network value can be DEVELOPMENT , ARWEAVE or IPFS
+# Network value can be DEVELOPMENT, ARWEAVE or IPFS
 task_executable_network: 'DEVELOPMENT'
 
 # Provide your web3.storage key as it is needed for uploading your metadata
@@ -16,7 +16,7 @@ task_audit_program: ''
 # Provide your transaction ID in case of ARWEAVE and in case of DEVELOPMENT give your executable name as main otherwise leave blank
 task_audit_program_id: 'main'
 
-# Total round time of your task : it must be given in slots and each slot is rougly equal to 4ms
+# Total round time of your task: it must be given in slots and each slot is roughly equal to 4ms
 round_time: 600
 
 audit_window: 200
@@ -26,24 +26,24 @@ submission_window: 200
 
 minimum_stake_amount: 5
 
-# total_bounty_amount cannot be grater than bounty_amount_per_round
-# total bounty is not accepted in case of update task
+# Total_bounty_amount cannot be greater than bounty_amount_per_round
+# Total bounty is not accepted in case of updating a task
 total_bounty_amount: 10
 
 bounty_amount_per_round: 1
 
-#Number of times allowed to re-submit the distribution  list in case the distribution list is audited
+# Number of times allowed to re-submit the distribution list in case the distribution list is audited
 allowed_failed_distributions: 3
 
 #Space in MBs
 space: 1
 
 # Note that the value field in RequirementTag is optional, so it is up to you to include it or not based on your use case.
-# To add more global variables and task variables, please refer the type,value,description format shown below
+# To add more global variables and task variables, please refer to the type, value, and description format shown below
 
 author: 'Your name'
 description: 'task-description'
-repositoryUrl: 'Github/gitlab link'
+repositoryUrl: 'Github/Gitlab link'
 imageUrl: 'Enter you image URL'
 requirementsTags:
   - type: TASK_VARIABLE
@@ -51,7 +51,7 @@ requirementsTags:
     description: 'used to connect web3.storage'
   - type: TASK_VARIABLE
     value: 'SCRAPING_URL'
-    description: 'url from which you want to scrape'
+    description: 'URL from which you want to scrape'
   - type: CPU
     value: '4-core'
   - type: RAM
