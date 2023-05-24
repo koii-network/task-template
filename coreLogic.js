@@ -3,8 +3,7 @@ const crypto = require('crypto');
 
 class CoreLogic {
   async task() {
-    // Write the logic to do the work required for submitting the values and optionally store the result in levelDB
-
+    // Write the logic required to complete the task. Work results (submission value) can be optionally stored on NeDB.
     // Below is just a sample of work that a task can do
 
     try {
@@ -12,26 +11,22 @@ class CoreLogic {
       const cid = crypto.createHash('sha1').update(x).digest('hex'); // convert to CID
       console.log('HASH:', cid);
 
-      // fetching round number to store work accordingly
-
       if (cid) {
-        await namespaceWrapper.storeSet('cid', cid); // store CID in levelDB
+        await namespaceWrapper.storeSet('cid', cid); // store CID on NeDB
       }
     } catch (err) {
       console.log('ERROR IN EXECUTING TASK', err);
     }
   }
+
   async fetchSubmission() {
-    // Write the logic to fetch the submission values here and return the cid string
-
-    // fetching round number to store work accordingly
-
+    // Write the logic to fetch the submission value here
     console.log('IN FETCH SUBMISSION');
 
-    // The code below shows how you can fetch your stored value from level DB
-
-    const cid = await namespaceWrapper.storeGet('cid'); // retrieves the cid
+    // The code below shows how you can fetch your stored value from NeDB
+    const cid = await namespaceWrapper.storeGet('cid'); // retrieves the submission value
     console.log('CID', cid);
+
     return cid;
   }
 
@@ -52,7 +47,7 @@ class CoreLogic {
       const submissions_audit_trigger =
         taskAccountDataJSON.submissions_audit_trigger[round];
       if (submissions == null) {
-        console.log('No submisssions found in N-2 round');
+        console.log('No submissions found in N-2 round');
         return distributionList;
       } else {
         const keys = Object.keys(submissions);
@@ -74,7 +69,7 @@ class CoreLogic {
             const votes = submissions_audit_trigger[candidatePublicKey].votes;
             if (votes.length === 0) {
               // slash 70% of the stake as still the audit is triggered but no votes are casted
-              // Note that the votes are on the basis of the submission value
+              // Note that the votes are based on the submission value
               // to do so we need to fetch the stakes of the candidate from the task state
               const stake_list = taskAccountDataJSON.stake_list;
               const candidateStake = stake_list[candidatePublicKey];
@@ -89,8 +84,8 @@ class CoreLogic {
               }
 
               if (numOfVotes < 0) {
-                // slash 70% of the stake as the number of false votes are more than the number of true votes
-                // Note that the votes are on the basis of the submission value
+                // slash 70% of the stake as the number of false votes is more than the number of true votes
+                // Note that the votes are based on the submission value
                 // to do so we need to fetch the stakes of the candidate from the task state
                 const stake_list = taskAccountDataJSON.stake_list;
                 const candidateStake = stake_list[candidatePublicKey];
@@ -127,7 +122,7 @@ class CoreLogic {
   }
 
   async submitDistributionList(round) {
-    // This function just upload your generated dustribution List and do the transaction for that
+    // This function uploads the generated distribution list to K2
 
     console.log('SubmitDistributionList called');
 
@@ -151,7 +146,7 @@ class CoreLogic {
   }
 
   async validateNode(submission_value, round) {
-    // Write your logic for the validation of submission value here and return a boolean value in response
+    // Write your logic for the validation of the submission value here and return a boolean value in response
 
     // The sample logic can be something like mentioned below to validate the submission
 
@@ -170,7 +165,7 @@ class CoreLogic {
     //   return false;
     // }
 
-    // For succesfull flow we return true for now
+    // For successful flow we return true for now
     return true;
   }
 
@@ -194,8 +189,8 @@ class CoreLogic {
     _dummyDistributionList,
     _dummyTaskState,
   ) => {
-    // Write your logic for the validation of submission value here and return a boolean value in response
-    // this logic can be same as generation of distribution list function and based on the comparision will final object , decision can be made
+    // Write your logic for the validation of the distribution list here and return a boolean value in response
+    // This logic can be the same as the generation of distribution list function and based on the comparison of both lists, a decision can be made
 
     try {
       console.log('Distribution list Submitter', distributionListSubmitter);
@@ -215,7 +210,7 @@ class CoreLogic {
         _dummyTaskState,
       );
 
-      // compare distribution list
+      // Compare distribution lists
 
       const parsed = fetchedDistributionList;
       console.log(
@@ -231,8 +226,9 @@ class CoreLogic {
       return false;
     }
   };
-  // Submit Address with distributioon list to K2
+
   async submitTask(roundNumber) {
+    // This function uploads the submission value to K2
     console.log('submitTask called with round', roundNumber);
     try {
       console.log('inside try');
