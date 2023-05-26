@@ -48,8 +48,8 @@ async function setup() {
 
   // Call to do the work for the task
 
-  //await coreLogic.task();
-
+  await coreLogic.task();
+  await coreLogic.fetchSubmission();
   // Submission to K2 (Preferablly you should submit the cid received from IPFS)
 
   //await coreLogic.submitTask(round - 1);

@@ -1,8 +1,13 @@
 import axios from "axios";
 import { Connection, Keypair, PublicKey } from "@_koi/web3.js";
 import { GenericResponseInterface } from "./interfaces/ResponseInterface";
-import { TASK_ID, MAIN_ACCOUNT_PUBKEY, SECRET_KEY, TASK_NODE_PORT } from "./init";
-import Datastore = require('nedb-promises');
+import {
+  TASK_ID,
+  MAIN_ACCOUNT_PUBKEY,
+  SECRET_KEY,
+  TASK_NODE_PORT,
+} from "./init";
+import Datastore = require("nedb-promises");
 const BASE_ROOT_URL = `http://localhost:${TASK_NODE_PORT}/namespace-wrapper`;
 const taskNodeAdministered = !!TASK_ID;
 //const TRUSTED_SERVICE_URL = "https://k2-tasknet.koii.live";
@@ -19,20 +24,29 @@ let connection;
 //   submission_value: string;
 // }
 class NamespaceWrapper {
-  db: any;
+  #db: any;
   constructor() {
     if (taskNodeAdministered) {
-      this.getTaskLevelDBPath()
-        .then((path: string) => {
-          this.db = Datastore.create(path);
-        })
-        .catch((err: Error) => {
-          console.error(err);
-          this.db = Datastore.create(`../namespace/${TASK_ID}/KOIILevelDB.db`);
-        });
+      this.initializeDB();
     } else {
-      this.db = Datastore.create('./localKOIIDB.db');
+      this.#db = Datastore.create("./localKOIIDB.db");
     }
+  }
+
+  async initializeDB() {
+    if (this.#db) return;
+    try {
+      const path = await this.getTaskLevelDBPath();
+      this.#db = Datastore.create(path);
+    } catch (e) {
+      this.#db = Datastore.create(`../namespace/${TASK_ID}/KOIILevelDB.db`);
+    }
+  }
+
+  async getDb() {
+    if (this.#db) return this.#db;
+    await this.initializeDB();
+    return this.#db;
   }
 
   /**
@@ -42,7 +56,8 @@ class NamespaceWrapper {
    */
   async storeGet(key: string): Promise<string | null> {
     try {
-      const resp = await this.db.findOne({ key: key });
+      await this.initializeDB();
+      const resp = await this.#db.findOne({ key: key });
       if (resp) {
         return resp[key];
       } else {
@@ -61,11 +76,15 @@ class NamespaceWrapper {
    */
   async storeSet(key: string, value: string): Promise<void> {
     try {
-      console.log({ [key]: value, key });
-      await this.db.insert({ [key]: value, key });
+      await this.initializeDB();
+      await this.#db.update(
+        { key: key },
+        { [key]: value, key },
+        { upsert: true }
+      );
     } catch (e) {
       console.error(e);
-      return;
+      return undefined;
     }
   }
   /**
@@ -409,8 +428,10 @@ class NamespaceWrapper {
     }
   }
 
-  async getTaskLevelDBPath(): Promise<string>{
-    return await genericHandler('getTaskLevelDBPath') as unknown as string | null;
+  async getTaskLevelDBPath(): Promise<string> {
+    return (await genericHandler("getTaskLevelDBPath")) as unknown as
+      | string
+      | null;
   }
 }
 async function genericHandler(...args): Promise<GenericResponseInterface> {
