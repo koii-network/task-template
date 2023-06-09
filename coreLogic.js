@@ -17,8 +17,10 @@ class CoreLogic {
       if (cid) {
         await namespaceWrapper.storeSet('cid', cid); // store CID in levelDB
       }
+      return cid
     } catch (err) {
       console.log('ERROR IN EXECUTING TASK', err);
+      return 'ERROR IN EXECUTING TASK' + err
     }
   }
   async fetchSubmission() {
