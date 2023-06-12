@@ -13,15 +13,14 @@ class NamespaceWrapper {
   #testingMainSystemAccount;
   #testingStakingSystemAccount;
   #testingTaskState;
+  #testingDistributionList;
 
   constructor() {
     if (taskNodeAdministered) {
       this.initializeDB();
     } else {
       this.#db = Datastore.create('./localKOIIDB.db');
-      this.#testingMainSystemAccount = new Keypair();
-      this.#testingStakingSystemAccount = new Keypair();
-      initTestingTaskState();
+      this.#testingDistributionList = {};
     }
   }
 
@@ -327,24 +326,47 @@ class NamespaceWrapper {
     if (taskNodeAdministered) {
       return await genericHandler('nodeSelectionDistributionList');
     } else {
-      return this.#testingStakingSystemAccount.publicKey.toBase58()
+      return this.#testingStakingSystemAccount.publicKey.toBase58();
     }
   }
 
   async payoutTrigger() {
+    // TODO: Remaining
     return await genericHandler('payloadTrigger');
   }
 
   async uploadDistributionList(distributionList, round) {
-    return await genericHandler(
-      'uploadDistributionList',
-      distributionList,
-      round,
-    );
+    if (taskNodeAdministered) {
+      return await genericHandler(
+        'uploadDistributionList',
+        distributionList,
+        round,
+      );
+    } else {
+      if (!this.#testingDistributionList[round])
+        this.#testingDistributionList[round] = {};
+
+      this.#testingDistributionList[round][
+        this.#testingStakingSystemAccount.toBase58()
+      ] = Buffer.from(distributionList.toString());
+    }
   }
 
   async distributionListSubmissionOnChain(round) {
-    return await genericHandler('distributionListSubmissionOnChain', round);
+    if (taskNodeAdministered) {
+      return await genericHandler('distributionListSubmissionOnChain', round);
+    } else {
+      if (!this.#testingTaskState.distribution_rewards_submission[round])
+        this.#testingTaskState.distribution_rewards_submission[round] = {};
+
+      this.#testingDistributionList[round][
+        this.#testingStakingSystemAccount.toBase58()
+      ] = {
+        submissionValue: this.#testingStakingSystemAccount.toBase58(),
+        slot: 200,
+        round: 1,
+      };
+    }
   }
 
   async checkSubmissionAndUpdateRound(submissionValue = 'default', round) {
@@ -355,16 +377,34 @@ class NamespaceWrapper {
     );
   }
   async getProgramAccounts() {
-    return await genericHandler('getProgramAccounts');
+    if (taskNodeAdministered) {
+      return await genericHandler('getProgramAccounts');
+    } else {
+      console.log('Cannot call getProgramAccounts in testing mode');
+    }
   }
   async defaultTaskSetup() {
-    return await genericHandler('defaultTaskSetup');
+    if (taskNodeAdministered) {
+      return await genericHandler('defaultTaskSetup');
+    } else {
+      this.#testingMainSystemAccount = new Keypair();
+      this.#testingStakingSystemAccount = new Keypair();
+      initTestingTaskState();
+    }
   }
   async getRpcUrl() {
-    return await genericHandler('getRpcUrl');
+    if (taskNodeAdministered) {
+      return await genericHandler('getRpcUrl');
+    } else {
+      console.log('Cannot call getNodes in testing mode');
+    }
   }
   async getNodes(url) {
-    return await genericHandler('getNodes', url);
+    if (taskNodeAdministered) {
+      return await genericHandler('getNodes', url);
+    } else {
+      console.log('Cannot call getNodes in testing mode');
+    }
   }
 
   // Wrapper for selection of node to prepare a distribution list
