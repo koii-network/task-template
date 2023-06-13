@@ -420,7 +420,6 @@ class NamespaceWrapper {
         round,
       );
     } else {
-      console.log("AA",this.#testingTaskState)
       if (!this.#testingTaskState.submissions[round])
         this.#testingTaskState.submissions[round] = {};
       this.#testingTaskState.submissions[round][
