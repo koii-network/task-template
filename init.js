@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.listen(EXPRESS_PORT, () => {
+const _server = app.listen(EXPRESS_PORT, () => {
   console.log(`${TASK_NAME} listening on port ${EXPRESS_PORT}`);
 });
 
@@ -30,5 +30,6 @@ module.exports = {
   K2_NODE_URL,
   SERVICE_URL,
   STAKE,
-  TASK_NODE_PORT
+  TASK_NODE_PORT,
+  _server
 };

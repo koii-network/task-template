@@ -20,7 +20,6 @@ class NamespaceWrapper {
       this.initializeDB();
     } else {
       this.#db = Datastore.create('./localKOIIDB.db');
-      this.#testingDistributionList = {};
     }
   }
 
@@ -197,8 +196,10 @@ class NamespaceWrapper {
     }
   }
   async claimReward(stakePotAccount, beneficiaryAccount, claimerKeypair) {
-    if (!taskNodeAdministered)
-      throw new Error('Cannot call sendTransaction in testing mode');
+    if (!taskNodeAdministered) {
+      console.log('Cannot call sendTransaction in testing mode');
+      return;
+    }
     return await genericHandler(
       'claimReward',
       stakePotAccount,
@@ -207,8 +208,10 @@ class NamespaceWrapper {
     );
   }
   async sendTransaction(serviceNodeAccount, beneficiaryAccount, amount) {
-    if (!taskNodeAdministered)
-      throw new Error('Cannot call sendTransaction in testing mode');
+    if (!taskNodeAdministered) {
+      console.log('Cannot call sendTransaction in testing mode');
+      return;
+    }
     return await genericHandler(
       'sendTransaction',
       serviceNodeAccount,
@@ -235,8 +238,10 @@ class NamespaceWrapper {
    * @param {Function} callback // Callback function on traffic receive
    */
   async sendAndConfirmTransactionWrapper(transaction, signers) {
-    if (!taskNodeAdministered)
-      throw new Error('Cannot call sendTransaction in testing mode');
+    if (!taskNodeAdministered) {
+      console.log('Cannot call sendTransaction in testing mode');
+      return;
+    }
     const blockhash = (await connection.getRecentBlockhash('finalized'))
       .blockhash;
     transaction.recentBlockhash = blockhash;
@@ -280,13 +285,26 @@ class NamespaceWrapper {
         round,
       );
     } else {
-      this.#testingTaskState.submissions_audit_trigger[round] = {
-        [candidatePubkey]: {
-          trigger_by: this.#testingStakingSystemAccount.publicKey.toBase58(),
+      if (
+        this.#testingTaskState.submissions_audit_trigger[round] &&
+        this.#testingTaskState.submissions_audit_trigger[round][candidatePubkey]
+      ) {
+        this.#testingTaskState.submissions_audit_trigger[round][
+          candidatePubkey
+        ].votes.push({
+          is_valid: isValid,
+          voter: voterKeypair.pubKey.toBase58(),
           slot: 100,
-          votes: [],
-        },
-      };
+        });
+      } else {
+        this.#testingTaskState.submissions_audit_trigger[round] = {
+          [candidatePubkey]: {
+            trigger_by: this.#testingStakingSystemAccount.publicKey.toBase58(),
+            slot: 100,
+            votes: [],
+          },
+        };
+      }
     }
   }
 
@@ -304,13 +322,26 @@ class NamespaceWrapper {
         round,
       );
     } else {
-      this.#testingTaskState.distributions_audit_trigger[round] = {
-        [candidatePubkey]: {
-          trigger_by: this.#testingStakingSystemAccount.publicKey.toBase58(),
+      if (
+        this.#testingTaskState.distributions_audit_trigger[round] &&
+        this.#testingTaskState.distributions_audit_trigger[round][candidatePubkey]
+      ) {
+        this.#testingTaskState.distributions_audit_trigger[round][
+          candidatePubkey
+        ].votes.push({
+          is_valid: isValid,
+          voter: voterKeypair.pubKey.toBase58(),
           slot: 100,
-          votes: [],
-        },
-      };
+        });
+      } else {
+        this.#testingTaskState.distributions_audit_trigger[round] = {
+          [candidatePubkey]: {
+            trigger_by: this.#testingStakingSystemAccount.publicKey.toBase58(),
+            slot: 100,
+            votes: [],
+          },
+        };
+      }
     }
   }
 
@@ -331,8 +362,20 @@ class NamespaceWrapper {
   }
 
   async payoutTrigger() {
-    // TODO: Remaining
-    return await genericHandler('payloadTrigger');
+    if (taskNodeAdministered) {
+      return await genericHandler('payloadTrigger');
+    } else {
+      console.log(
+        'Payout Trigger only handles possitive flows (Without audits)',
+      );
+      let round = 1;
+      const submissionValAcc =
+        this.#testingDistributionList[round][
+          this.#testingStakingSystemAccount.toBase58()
+        ].submissionValue;
+      this.#testingTaskState.available_balances =
+        this.#testingDistributionList[round][submissionValAcc];
+    }
   }
 
   async uploadDistributionList(distributionList, round) {
@@ -347,7 +390,7 @@ class NamespaceWrapper {
         this.#testingDistributionList[round] = {};
 
       this.#testingDistributionList[round][
-        this.#testingStakingSystemAccount.toBase58()
+        this.#testingStakingSystemAccount.publicKey.toBase58()
       ] = Buffer.from(distributionList.toString());
     }
   }
@@ -360,9 +403,9 @@ class NamespaceWrapper {
         this.#testingTaskState.distribution_rewards_submission[round] = {};
 
       this.#testingDistributionList[round][
-        this.#testingStakingSystemAccount.toBase58()
+        this.#testingStakingSystemAccount.publicKey.toBase58()
       ] = {
-        submissionValue: this.#testingStakingSystemAccount.toBase58(),
+        submissionValue: this.#testingStakingSystemAccount.publicKey.toBase58(),
         slot: 200,
         round: 1,
       };
@@ -370,11 +413,24 @@ class NamespaceWrapper {
   }
 
   async checkSubmissionAndUpdateRound(submissionValue = 'default', round) {
-    return await genericHandler(
-      'checkSubmissionAndUpdateRound',
-      submissionValue,
-      round,
-    );
+    if (taskNodeAdministered) {
+      return await genericHandler(
+        'checkSubmissionAndUpdateRound',
+        submissionValue,
+        round,
+      );
+    } else {
+      console.log("AA",this.#testingTaskState)
+      if (!this.#testingTaskState.submissions[round])
+        this.#testingTaskState.submissions[round] = {};
+      this.#testingTaskState.submissions[round][
+        this.#testingStakingSystemAccount.publicKey.toBase58()
+      ] = {
+        submission_value: submissionValue,
+        slot: 100,
+        round: 1,
+      };
+    }
   }
   async getProgramAccounts() {
     if (taskNodeAdministered) {
@@ -389,7 +445,25 @@ class NamespaceWrapper {
     } else {
       this.#testingMainSystemAccount = new Keypair();
       this.#testingStakingSystemAccount = new Keypair();
-      initTestingTaskState();
+      this.#testingDistributionList = {};
+      this.#testingTaskState = {
+        task_name: 'DummyTestState',
+        task_description: 'Dummy Task state for testing flow',
+        submissions: {},
+        submissions_audit_trigger: {},
+        total_bounty_amount: 10000000000,
+        bounty_amount_per_round: 1000000000,
+        total_stake_amount: 50000000000,
+        minimum_stake_amount: 5000000000,
+        available_balances: {},
+        stake_list: {},
+        round_time: 600,
+        starting_slot: 0,
+        audit_window: 200,
+        submission_window: 200,
+        distribution_rewards_submission: {},
+        distributions_audit_trigger: {},
+      };
     }
   }
   async getRpcUrl() {
@@ -414,15 +488,23 @@ class NamespaceWrapper {
   }
 
   async getDistributionList(publicKey, round) {
-    const response = await genericHandler(
-      'getDistributionList',
-      publicKey,
-      round,
-    );
-    if (response.error) {
-      return null;
+    if (taskNodeAdministered) {
+      const response = await genericHandler(
+        'getDistributionList',
+        publicKey,
+        round,
+      );
+      if (response.error) {
+        return null;
+      }
+      return response;
+    } else {
+      const submissionValAcc =
+        this.#testingDistributionList[round][
+          this.#testingStakingSystemAccount.publicKey.toBase58()
+        ].submissionValue;
+      return this.#testingDistributionList[round][submissionValAcc];
     }
-    return response;
   }
 
   async validateAndVoteOnNodes(validate, round) {
@@ -597,26 +679,6 @@ class NamespaceWrapper {
   }
   async getTaskLevelDBPath() {
     return await genericHandler('getTaskLevelDBPath');
-  }
-  initTestingTaskState() {
-    this.#testingTaskState = {
-      task_name: 'DummyTestState',
-      task_description: 'Dummy Task state for testing flow',
-      submissions: {},
-      submissions_audit_trigger: {},
-      total_bounty_amount: 10000000000,
-      bounty_amount_per_round: 1000000000,
-      total_stake_amount: 50000000000,
-      minimum_stake_amount: 5000000000,
-      available_balances: {},
-      stake_list: {},
-      round_time: 600,
-      starting_slot: 0,
-      audit_window: 200,
-      submission_window: 200,
-      distribution_rewards_submission: {},
-      distributions_audit_trigger: {},
-    };
   }
 }
 
