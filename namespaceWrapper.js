@@ -89,14 +89,14 @@ class NamespaceWrapper {
     if (taskNodeAdministered) {
       return await genericHandler('fs', method, path, ...args);
     } else {
-      return fsPromises[method](`${basePath}/${path}`, ...args);
+      return fsPromises[method](`${path}`, ...args);
     }
   }
   async fsStaking(method, path, ...args) {
     if (taskNodeAdministered) {
       return await genericHandler('fsStaking', method, path, ...args);
     } else {
-      return fsPromises[method](`${basePath}/${path}`, ...args);
+      return fsPromises[method](`${path}`, ...args);
     }
   }
 
