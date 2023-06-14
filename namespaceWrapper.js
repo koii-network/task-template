@@ -372,7 +372,7 @@ class NamespaceWrapper {
       const submissionValAcc =
         this.#testingDistributionList[round][
           this.#testingStakingSystemAccount.toBase58()
-        ].submissionValue;
+        ].submission_value;
       this.#testingTaskState.available_balances =
         this.#testingDistributionList[round][submissionValAcc];
     }
@@ -391,7 +391,8 @@ class NamespaceWrapper {
 
       this.#testingDistributionList[round][
         this.#testingStakingSystemAccount.publicKey.toBase58()
-      ] = Buffer.from(distributionList.toString());
+      ] = Buffer.from(JSON.stringify(distributionList));
+      return true
     }
   }
 
@@ -402,10 +403,10 @@ class NamespaceWrapper {
       if (!this.#testingTaskState.distribution_rewards_submission[round])
         this.#testingTaskState.distribution_rewards_submission[round] = {};
 
-      this.#testingDistributionList[round][
+      this.#testingTaskState.distribution_rewards_submission[round][
         this.#testingStakingSystemAccount.publicKey.toBase58()
       ] = {
-        submissionValue: this.#testingStakingSystemAccount.publicKey.toBase58(),
+        submission_value: this.#testingStakingSystemAccount.publicKey.toBase58(),
         slot: 200,
         round: 1,
       };
@@ -499,9 +500,9 @@ class NamespaceWrapper {
       return response;
     } else {
       const submissionValAcc =
-        this.#testingDistributionList[round][
+        this.#testingTaskState.distribution_rewards_submission[round][
           this.#testingStakingSystemAccount.publicKey.toBase58()
-        ].submissionValue;
+        ].submission_value;
       return this.#testingDistributionList[round][submissionValAcc];
     }
   }
