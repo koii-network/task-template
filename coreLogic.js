@@ -11,7 +11,6 @@ class CoreLogic {
       const x = Math.random().toString(); // generate random number and convert to string
       const cid = crypto.createHash('sha1').update(x).digest('hex'); // convert to CID
       console.log('HASH:', cid);
-      const z=await namespaceWrapper.storeSet('cid', cid);
       // fetching round number to store work accordingly
 
       if (cid) {

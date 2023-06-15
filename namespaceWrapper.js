@@ -324,7 +324,9 @@ class NamespaceWrapper {
     } else {
       if (
         this.#testingTaskState.distributions_audit_trigger[round] &&
-        this.#testingTaskState.distributions_audit_trigger[round][candidatePubkey]
+        this.#testingTaskState.distributions_audit_trigger[round][
+          candidatePubkey
+        ]
       ) {
         this.#testingTaskState.distributions_audit_trigger[round][
           candidatePubkey
@@ -392,7 +394,7 @@ class NamespaceWrapper {
       this.#testingDistributionList[round][
         this.#testingStakingSystemAccount.publicKey.toBase58()
       ] = Buffer.from(JSON.stringify(distributionList));
-      return true
+      return true;
     }
   }
 
@@ -406,7 +408,8 @@ class NamespaceWrapper {
       this.#testingTaskState.distribution_rewards_submission[round][
         this.#testingStakingSystemAccount.publicKey.toBase58()
       ] = {
-        submission_value: this.#testingStakingSystemAccount.publicKey.toBase58(),
+        submission_value:
+          this.#testingStakingSystemAccount.publicKey.toBase58(),
         slot: 200,
         round: 1,
       };
@@ -678,7 +681,22 @@ class NamespaceWrapper {
     }
   }
   async getTaskLevelDBPath() {
-    return await genericHandler('getTaskLevelDBPath');
+    if (taskNodeAdministered) {
+      return await genericHandler('getTaskLevelDBPath');
+    } else {
+      return './KOIIDB';
+    }
+  }
+  async getBasePath() {
+    if (taskNodeAdministered) {
+      const basePath = (await namespaceWrapper.getTaskLevelDBPath()).replace(
+        '/KOIIDB',
+        '',
+      );
+      return basePath;
+    } else {
+      return './';
+    }
   }
 }
 
