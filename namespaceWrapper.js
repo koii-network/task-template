@@ -25,6 +25,7 @@ class NamespaceWrapper {
       this.initializeDB();
     } else {
       this.#db = Datastore.create('./localKOIIDB.db');
+      this.defaultTaskSetup()
     }
   }
 
@@ -462,6 +463,7 @@ class NamespaceWrapper {
     if (taskNodeAdministered) {
       return await genericHandler('defaultTaskSetup');
     } else {
+      if(this.#testingTaskState)return
       this.#testingMainSystemAccount = new Keypair();
       this.#testingStakingSystemAccount = new Keypair();
       this.#testingDistributionList = {};
