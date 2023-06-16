@@ -133,7 +133,7 @@ class NamespaceWrapper {
       return await genericHandler('signData', body);
     } else {
       const msg = new TextEncoder().encode(JSON.stringify(data));
-      const signedMessage = nacl.sign(msg, this.mainSystemAccount.secretKey);
+      const signedMessage = nacl.sign(msg, this.#testingMainSystemAccount.secretKey);
       return await this.bs58Encode(signedMessage);
     }
   }
