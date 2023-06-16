@@ -1,5 +1,10 @@
 const { default: axios } = require('axios');
-const { TASK_ID, SECRET_KEY, TASK_NODE_PORT } = require('./init');
+const {
+  TASK_ID,
+  SECRET_KEY,
+  TASK_NODE_PORT,
+  MAIN_ACCOUNT_PUBKEY,
+} = require('./init');
 const { Connection, PublicKey, Keypair } = require('@_koi/web3.js');
 const taskNodeAdministered = !!TASK_ID;
 const BASE_ROOT_URL = `http://localhost:${TASK_NODE_PORT}/namespace-wrapper`;
@@ -133,7 +138,10 @@ class NamespaceWrapper {
       return await genericHandler('signData', body);
     } else {
       const msg = new TextEncoder().encode(JSON.stringify(data));
-      const signedMessage = nacl.sign(msg, this.#testingMainSystemAccount.secretKey);
+      const signedMessage = nacl.sign(
+        msg,
+        this.#testingMainSystemAccount.secretKey,
+      );
       return await this.bs58Encode(signedMessage);
     }
   }
@@ -704,6 +712,13 @@ class NamespaceWrapper {
       return basePath;
     } else {
       return './';
+    }
+  }
+  getMainAccountPubkey() {
+    if (taskNodeAdministered) {
+      return MAIN_ACCOUNT_PUBKEY;
+    } else {
+      return this.#testingMainSystemAccount.publicKey.toBase58();
     }
   }
 }
