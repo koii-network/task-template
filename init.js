@@ -1,6 +1,7 @@
 const express = require('express');
 // Only used for testing purposes, in production the env will be injected by tasknode
-require('dotenv').config()
+require('dotenv').config();
+const bodyParser = require('body-parser');
 
 const TASK_NAME = process.argv[2] || 'Local';
 const TASK_ID = process.argv[3];
@@ -16,6 +17,25 @@ const TASK_NODE_PORT = Number(process.argv[11]);
 const app = express();
 
 console.log('SETTING UP EXPRESS');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PUT, PATCH, DELETE',
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', false);
+  if (req.method === 'OPTIONS')
+    // if is preflight(OPTIONS) then response status 204(NO CONTENT)
+    return res.send(204);
+  next();
+});
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
@@ -34,5 +54,5 @@ module.exports = {
   SERVICE_URL,
   STAKE,
   TASK_NODE_PORT,
-  _server
+  _server,
 };
