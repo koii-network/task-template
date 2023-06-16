@@ -1,4 +1,7 @@
 const express = require('express');
+// Only used for testing purposes, in production the env will be injected by tasknode
+require('dotenv').config()
+
 const TASK_NAME = process.argv[2] || 'Local';
 const TASK_ID = process.argv[3];
 const EXPRESS_PORT = process.argv[4] || 10000;
