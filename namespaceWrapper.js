@@ -144,6 +144,14 @@ class NamespaceWrapper {
     );
   }
 
+  async bs58Decode(data) {
+    return new Uint8Array(bs58.decode(data));
+  }
+
+  decodePayload(payload) {
+    return new TextDecoder().decode(payload);
+  }
+
   /**
    * Namespace wrapper of storeGetAsync
    * @param {string} signedMessage r // Path to get
@@ -155,8 +163,8 @@ class NamespaceWrapper {
     } else {
       try {
         const payload = nacl.sign.open(
-          await this.bs58Decode(signedData),
-          await this.bs58Decode(publicKey),
+          await this.bs58Decode(signedMessage),
+          await this.bs58Decode(pubKey),
         );
         if (!payload) return { error: 'Invalid signature' };
         return { data: this.decodePayload(payload) };
