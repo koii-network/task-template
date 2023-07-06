@@ -57,7 +57,13 @@ There are in total 9 functions in CoreLogic which the you can modify according t
 
 # Testing and Deploying
 
-Before you begin this process, be sure to check your code and write unit tests wherever possible to verify individual core logic functions. `unitTest.js` file helps you to mock task state parameters that are required in core logic function and test it. Testing using the docker container should be mostly used for consensus flows, as it will take longer to rebuild and re-deploy the docker container.
+Before you begin this process, be sure to check your code and write unit tests wherever possible to verify individual core logic functions. `unitTest.js` file helps you to mock task state parameters that are required in core logic function and test it.
+
+To test the API's , you can start your local server using `yarn start` , it will expose the APIs on port `10000`.
+
+To setup test case for entire task execution / individual functions, you can refer the `main.test.js` You can run the tests using : `yarn test`
+
+Testing using the docker container should be mostly used for consensus flows, as it will take longer to rebuild and re-deploy the docker container.
 
 ## Build
 
