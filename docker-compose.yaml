@@ -14,7 +14,7 @@ services:
 
     network_mode: host
     volumes:
-      - ./config/koii:/app/config
+      - ~/.config/koii:/app/config
       - ./data:/app/data
       - ./namespace:/app/namespace
       - ./dist:/app/executables
