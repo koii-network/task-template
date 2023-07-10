@@ -6,7 +6,7 @@ repositoryUrl: "https://github.com/koii-network/task-examples"
 imageUrl: "imageUrl"
 
 # network value can be DEVELOPMENT , ARWEAVE or IPFS, Recommended IPFS as the cli automatically takes care of uploading the executable with the help of web3.js key
-task_executable_network: "IPFS"
+task_executable_network: "DEVELOPMENT"
 
 # Path to your executable webpack if the selected network is IPFS otherwise leave blank
 task_audit_program: ""
@@ -56,5 +56,5 @@ requirementsTags:
 task_id: ""
 
 # OPTIONAL only Provide your transaction ID in case of ARWEAVE and in case of DEVELOPMENT give your executable name as main otherwise leave blank
-task_audit_program_id: ""
+task_audit_program_id: "main"
 
