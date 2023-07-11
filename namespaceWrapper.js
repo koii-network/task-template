@@ -138,7 +138,7 @@ class NamespaceWrapper {
     if (taskNodeAdministered) {
       return await genericHandler('signData', body);
     } else {
-      const msg = new TextEncoder().encode(JSON.stringify(data));
+      const msg = new TextEncoder().encode(JSON.stringify(body));
       const signedMessage = nacl.sign(
         msg,
         this.#testingMainSystemAccount.secretKey,
