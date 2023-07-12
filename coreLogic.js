@@ -53,7 +53,7 @@ class CoreLogic {
       const submissions_audit_trigger =
         taskAccountDataJSON.submissions_audit_trigger[round];
       if (submissions == null) {
-        console.log('No submisssions found in N-2 round');
+        console.log(`No submisssions found in round ${round}`);
         return distributionList;
       } else {
         const keys = Object.keys(submissions);

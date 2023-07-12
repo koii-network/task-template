@@ -57,11 +57,27 @@ There are in total 9 functions in CoreLogic which the you can modify according t
 
 # Testing and Deploying
 
-Before you begin this process, be sure to check your code and write unit tests wherever possible to verify individual core logic functions. `unitTest.js` file helps you to mock task state parameters that are required in core logic function and test it.
+## Using unitTest.js
 
+In tests folder, `unitTest.js` file helps you to mock task state parameters that are required in core logic function and test it. Customise the parameters according to your needs and run `node tests/unitTest.js` to test the functions. For example, you can comment out the `coreLogic.task()` function and directly test your fetch submission function.
+
+## Using Jest
+
+To setup test case for entire task execution / individual functions, you can refer the `main.test.js` You can run the tests using : `yarn test`. It will run the test cases and generate a coverage report in `coverage` folder. You might need to customise the `main.test.js` according to your needs. For example, if your main task need more time to execute, you can add the timeout amount:
+
+In line:11 to line:14
+
+```javascript
+  it('should performs the core logic task', async () => {
+    const result = await coreLogic.task();
+    expect(result).not.toContain('ERROR IN EXECUTING TASK');
+  }, 100000); // 100000 is the timeout amount in milliseconds
+```
+
+## Testing API
 To test the API's , you can start your local server using `yarn start` , it will expose the APIs on port `10000`.
 
-To setup test case for entire task execution / individual functions, you can refer the `main.test.js` You can run the tests using : `yarn test`
+## USing Docker
 
 Testing using the docker container should be mostly used for consensus flows, as it will take longer to rebuild and re-deploy the docker container.
 
@@ -70,13 +86,9 @@ Testing using the docker container should be mostly used for consensus flows, as
 Before deploying a task, you'll need to build it into a single file executable by running
 `yarn webpack`
 
-## Deploy your bundle
-
-Complete the following to deploy your task on the k2 testnet and test it locally with docker compose.
-
 ### To get a web3.storage key
 
-If you have already created an account on [web3.storage](https://web3.storage/docs/#quickstart) you'll just need to enter the API key after the prompts in the deploy process.
+If you have already created an account on [web3.storage](https://web3.storage/docs/#quickstart) you'll just need to enter the API key after the prompts in the deploy process. If this is your first time using web3.storage, you'll need to create an account and then create an API key. You can do this by following the instructions [here](https://blog.koii.network/Introduce-web3-storage/).
 
 ### Find or create a k2 wallet key
 

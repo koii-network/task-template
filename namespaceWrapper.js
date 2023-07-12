@@ -533,13 +533,13 @@ class NamespaceWrapper {
     const taskAccountDataJSON = await this.getTaskState();
 
     console.log(
-      'Fetching the submissions of N - 1 round',
+      `Fetching the submissions of round ${round}`,
       taskAccountDataJSON.submissions[round],
     );
     const submissions = taskAccountDataJSON.submissions[round];
     if (submissions == null) {
-      console.log('No submisssions found in N-1 round');
-      return 'No submisssions found in N-1 round';
+      console.log(`No submisssions found in round ${round}`);
+      return `No submisssions found in round ${round}`;
     } else {
       const keys = Object.keys(submissions);
       const values = Object.values(submissions);
@@ -609,14 +609,14 @@ class NamespaceWrapper {
     console.log('******/  IN VOTING OF DISTRIBUTION LIST /******');
     const taskAccountDataJSON = await this.getTaskState();
     console.log(
-      'Fetching the Distribution submissions of N - 2 round',
+      `Fetching the Distribution submissions of round ${round}`,
       taskAccountDataJSON.distribution_rewards_submission[round],
     );
     const submissions =
       taskAccountDataJSON.distribution_rewards_submission[round];
     if (submissions == null) {
-      console.log('No submisssions found in N-2 round');
-      return 'No submisssions found in N-2 round';
+      console.log(`No submisssions found in round ${round}`);
+      return `No submisssions found in round ${round}`;
     } else {
       const keys = Object.keys(submissions);
       const values = Object.values(submissions);
