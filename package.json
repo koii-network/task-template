@@ -26,14 +26,14 @@
     "webpack-cli": "^4.10.0"
   },
   "scripts": {
-    "start": "node build/src/main.js",
+    "start": "tsc -p tsconfig.json && node build/src/index.js",
     "clean": "rimraf coverage build tmp",
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.json",
     "webpack": "webpack",
     "webpack:prod": "webpack --mode production",
     "lint": "eslint . --ext .ts --ext .mts",
-    "test": "jest --coverage",
+    "test": "jest --detectOpenHandles",
     "prettier": "prettier --config .prettierrc --write .",
     "test:watch": "jest --watch"
   },
@@ -41,11 +41,16 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@_koi/web3.js": "^0.0.6",
+    "@types/axios": "^0.14.0",
     "axios": "^0.27.2",
-    "crypto": "^1.0.1",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.3.0",
     "express": "^4.18.1",
+    "joi": "^17.9.2",
     "nedb-promises": "^6.2.1",
     "node-cron": "^3.0.2",
-    "tslib": "~2.4"
+    "request": "^2.88.2",
+    "tslib": "~2.4",
+    "web3.storage": "^4.4.0"
   }
 }

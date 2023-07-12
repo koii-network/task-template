@@ -8,8 +8,15 @@ import {
   TASK_NODE_PORT,
 } from "./init";
 import Datastore = require("nedb-promises");
+import * as fsPromises from "fs/promises";
+import { createWriteStream, readFileSync } from "fs";
+import { TextDecoder, TextEncoder } from "util";
 const BASE_ROOT_URL = `http://localhost:${TASK_NODE_PORT}/namespace-wrapper`;
-const taskNodeAdministered = !!TASK_ID;
+export const taskNodeAdministered = !!TASK_ID;
+
+import bs58 from "bs58";
+import nacl from "tweetnacl";
+
 //const TRUSTED_SERVICE_URL = "https://k2-tasknet.koii.live";
 let connection;
 // export interface INode {
@@ -25,19 +32,28 @@ let connection;
 // }
 class NamespaceWrapper {
   #db: any;
+  #testingMainSystemAccount;
+  #testingStakingSystemAccount;
+  #testingTaskState;
+  #testingDistributionList;
   constructor() {
     if (taskNodeAdministered) {
       this.initializeDB();
     } else {
       this.#db = Datastore.create("./localKOIIDB.db");
+      this.defaultTaskSetup();
     }
   }
 
   async initializeDB() {
     if (this.#db) return;
     try {
-      const path = await this.getTaskLevelDBPath();
-      this.#db = Datastore.create(path);
+      if (taskNodeAdministered) {
+        const path = await this.getTaskLevelDBPath();
+        this.#db = Datastore.create(path);
+      } else {
+        this.#db = Datastore.create("./localKOIIDB.db");
+      }
     } catch (e) {
       this.#db = Datastore.create(`../namespace/${TASK_ID}/KOIILevelDB.db`);
     }
@@ -95,48 +111,158 @@ class NamespaceWrapper {
    * @returns {Promise<any>}
    */
   async fs(method, path, ...args) {
-    return await genericHandler("fs", method, path, ...args);
+    if (taskNodeAdministered) {
+      return await genericHandler("fs", method, path, ...args);
+    } else {
+      return fsPromises[method](`${path}`, ...args);
+    }
   }
   async fsStaking(method, path, ...args) {
-    return await genericHandler("fsStaking", method, path, ...args);
+    if (taskNodeAdministered) {
+      return await genericHandler("fsStaking", method, path, ...args);
+    } else {
+      return fsPromises[method](`${path}`, ...args);
+    }
   }
   async fsWriteStream(imagepath: string) {
-    return await genericHandler("fsWriteStream", imagepath);
+    if (taskNodeAdministered) {
+      return await genericHandler("fsWriteStream", imagepath);
+    } else {
+      const writer = createWriteStream(imagepath);
+      return writer;
+    }
   }
   async fsReadStream(imagepath: string) {
-    return await genericHandler("fsReadStream", imagepath);
+    if (taskNodeAdministered) {
+      return await genericHandler("fsReadStream", imagepath);
+    } else {
+      const file = readFileSync(imagepath);
+      return file;
+    }
   }
   async getSlot() {
-    return await genericHandler("getCurrentSlot");
+    if (taskNodeAdministered) {
+      return await genericHandler("getCurrentSlot");
+    } else {
+      return 100;
+    }
   }
 
   async getRound() {
-    return await genericHandler("getRound");
+    if (taskNodeAdministered) {
+      return await genericHandler("getRound");
+    } else {
+      return 1;
+    }
   }
 
-  async submissionOnChain(
-    submitterKeypair: Keypair,
-    submission: string
-  ): Promise<GenericResponseInterface> {
-    return await genericHandler(
-      "submissionOnChain",
-      submitterKeypair,
-      submission
+  async nodeSelectionDistributionList() {
+    if (taskNodeAdministered) {
+      return await genericHandler("nodeSelectionDistributionList");
+    } else {
+      return this.#testingStakingSystemAccount.publicKey.toBase58();
+    }
+  }
+
+  async payloadSigning(body) {
+    if (taskNodeAdministered) {
+      return await genericHandler("signData", body);
+    } else {
+      const msg = new TextEncoder().encode(JSON.stringify(body));
+      const signedMessage = nacl.sign(
+        msg,
+        this.#testingMainSystemAccount.secretKey
+      );
+      return await this.bs58Encode(signedMessage);
+    }
+  }
+
+  async bs58Encode(data) {
+    return bs58.encode(
+      Buffer.from(data.buffer, data.byteOffset, data.byteLength)
     );
   }
+
+  async bs58Decode(data) {
+    return new Uint8Array(bs58.decode(data));
+  }
+
+  decodePayload(payload) {
+    return new TextDecoder().decode(payload);
+  }
+
+  /**
+   * Namespace wrapper of storeGetAsync
+   * @param {string} signedMessage r // Path to get
+   */
+
+  async verifySignature(signedMessage, pubKey) {
+    if (taskNodeAdministered) {
+      return await genericHandler("verifySignedData", signedMessage, pubKey);
+    } else {
+      try {
+        const payload = nacl.sign.open(
+          await this.bs58Decode(signedMessage),
+          await this.bs58Decode(pubKey)
+        );
+        if (!payload) return { error: "Invalid signature" };
+        return { data: this.decodePayload(payload) };
+      } catch (e) {
+        console.error(e);
+        return { error: `Verification failed: ${e}` };
+      }
+    }
+  }
+
+  // async submissionOnChain(
+  //   submitterKeypair: Keypair,
+  //   submission: string
+  // ): Promise<GenericResponseInterface> {
+  //   return await genericHandler(
+  //     "submissionOnChain",
+  //     submitterKeypair,
+  //     submission
+  //   );
+  // }
   async auditSubmission(
     candidatePubkey: PublicKey,
     isValid: boolean,
     voterKeypair: Keypair,
     round: number
   ): Promise<GenericResponseInterface> {
-    return await genericHandler(
-      "voteOnChain",
-      candidatePubkey,
-      isValid,
-      voterKeypair,
-      round
-    );
+    if (taskNodeAdministered) {
+      return await genericHandler(
+        "auditSubmission",
+        candidatePubkey,
+        isValid,
+        voterKeypair,
+        round
+      );
+    } else {
+      if (
+        this.#testingTaskState.submissions_audit_trigger[round] &&
+        this.#testingTaskState.submissions_audit_trigger[round][
+          candidatePubkey.toString()
+        ]
+      ) {
+        this.#testingTaskState.submissions_audit_trigger[round][
+          candidatePubkey.toString()
+        ].votes.push({
+          is_valid: isValid,
+          voter: voterKeypair.publicKey.toBase58(),
+          slot: 100,
+        });
+      } else {
+        this.#testingTaskState.submissions_audit_trigger[round] = {
+          [candidatePubkey.toString()]: {
+            trigger_by: this.#testingStakingSystemAccount.publicKey.toBase58(),
+            slot: 100,
+            votes: [],
+          },
+        };
+      }
+      return Promise.resolve({});
+    }
   }
 
   async distributionListAuditSubmission(
@@ -145,29 +271,93 @@ class NamespaceWrapper {
     voterKeypair: Keypair,
     round: number
   ): Promise<GenericResponseInterface> {
-    return await genericHandler(
-      "distributionListAuditSubmission",
-      candidatePubkey,
-      isValid,
-      voterKeypair,
-      round
-    );
+    if (taskNodeAdministered) {
+      return await genericHandler(
+        "distributionListAuditSubmission",
+        candidatePubkey,
+        isValid,
+        round
+      );
+    } else {
+      if (
+        this.#testingTaskState.distributions_audit_trigger[round] &&
+        this.#testingTaskState.distributions_audit_trigger[round][
+          candidatePubkey.toString()
+        ]
+      ) {
+        this.#testingTaskState.distributions_audit_trigger[round][
+          candidatePubkey.toString()
+        ].votes.push({
+          is_valid: isValid,
+          voter: voterKeypair.publicKey.toBase58(),
+          slot: 100,
+        });
+      } else {
+        this.#testingTaskState.distributions_audit_trigger[round] = {
+          [candidatePubkey.toString()]: {
+            trigger_by: this.#testingStakingSystemAccount.publicKey.toBase58(),
+            slot: 100,
+            votes: [],
+          },
+        };
+      }
+      return Promise.resolve({});
+    }
   }
 
   async uploadDistributionList(distributionList, round: number) {
-    return await genericHandler(
-      "uploadDistributionList",
-      distributionList,
-      round
-    );
+    if (taskNodeAdministered) {
+      return await genericHandler(
+        "uploadDistributionList",
+        distributionList,
+        round
+      );
+    } else {
+      if (!this.#testingDistributionList[round])
+        this.#testingDistributionList[round] = {};
+
+      this.#testingDistributionList[round][
+        this.#testingStakingSystemAccount.publicKey.toBase58()
+      ] = Buffer.from(JSON.stringify(distributionList));
+      return true;
+    }
   }
 
   async distributionListSubmissionOnChain(round: number) {
-    return await genericHandler("distributionListSubmissionOnChain", round);
+    if (taskNodeAdministered) {
+      return await genericHandler("distributionListSubmissionOnChain", round);
+    } else {
+      if (!this.#testingTaskState.distribution_rewards_submission[round])
+        this.#testingTaskState.distribution_rewards_submission[round] = {};
+
+      this.#testingTaskState.distribution_rewards_submission[round][
+        this.#testingStakingSystemAccount.publicKey.toBase58()
+      ] = {
+        submission_value:
+          this.#testingStakingSystemAccount.publicKey.toBase58(),
+        slot: 200,
+        round: 1,
+      };
+      return Promise.resolve({});
+    }
   }
 
-  async payoutTrigger(round: number) {
-    return await genericHandler("payloadTrigger", round);
+  async payoutTrigger() {
+    if (taskNodeAdministered) {
+      return await genericHandler("payloadTrigger");
+    } else {
+      console.log(
+        "Payout Trigger only handles possitive flows (Without audits)"
+      );
+      const round = 1;
+      const submissionValAcc =
+        this.#testingDistributionList[round][
+          this.#testingStakingSystemAccount.toBase58()
+        ].submission_value;
+      this.#testingTaskState.available_balances =
+        this.#testingDistributionList[round][submissionValAcc];
+      return Promise.resolve({});
+    }
   }
 
   async stakeOnChain(
@@ -176,19 +366,36 @@ class NamespaceWrapper {
     stakePotAccount: PublicKey,
     stakeAmount: number
   ): Promise<GenericResponseInterface> {
-    return await genericHandler(
-      "stakeOnChain",
-      taskStateInfoPublicKey,
-      stakingAccKeypair,
-      stakePotAccount,
-      stakeAmount
-    );
+    if (taskNodeAdministered) {
+      return await genericHandler(
+        "stakeOnChain",
+        taskStateInfoPublicKey,
+        stakingAccKeypair,
+        stakePotAccount,
+        stakeAmount
+      );
+    } else {
+      this.#testingTaskState.stake_list[
+        this.#testingStakingSystemAccount.publicKey.toBase58()
+      ] = stakeAmount;
+      return Promise.resolve({
+        success: true,
+        message: "Stake on chain successful",
+      });
+    }
   }
   async claimReward(
     stakePotAccount: PublicKey,
     beneficiaryAccount: PublicKey,
     claimerKeypair: Keypair
   ): Promise<GenericResponseInterface> {
+    if (!taskNodeAdministered) {
+      console.log("Cannot call sendTransaction in testing mode");
+      return Promise.resolve({
+        success: false,
+        message: "Cannot call sendTransaction in testing mode",
+      });
+    }
     return await genericHandler(
       "claimReward",
       stakePotAccount,
@@ -201,6 +408,13 @@ class NamespaceWrapper {
     beneficiaryAccount: PublicKey,
     amount: number
   ): Promise<GenericResponseInterface> {
+    if (!taskNodeAdministered) {
+      console.log("Cannot call sendTransaction in testing mode");
+      return Promise.resolve({
+        success: false,
+        message: "Cannot call sendTransaction in testing mode",
+      });
+    }
     return await genericHandler(
       "sendTransaction",
       serviceNodeAccount,
@@ -209,10 +423,14 @@ class NamespaceWrapper {
     );
   }
   async getSubmitterAccount(): Promise<Keypair> {
-    const submitterAccountResp = await genericHandler("getSubmitterAccount");
-    return Keypair.fromSecretKey(
-      Uint8Array.from(Object.values(submitterAccountResp._keypair.secretKey))
-    );
+    if (taskNodeAdministered) {
+      const submitterAccountResp = await genericHandler("getSubmitterAccount");
+      return Keypair.fromSecretKey(
+        Uint8Array.from(Object.values(submitterAccountResp._keypair.secretKey))
+      );
+    } else {
+      return this.#testingStakingSystemAccount;
+    }
   }
   /**
    * sendAndConfirmTransaction wrapper that injects mainSystemWallet as the first signer for paying the tx fees
@@ -224,6 +442,13 @@ class NamespaceWrapper {
     transaction: any,
     signers: any
   ): Promise<GenericResponseInterface> {
+    if (!taskNodeAdministered) {
+      console.log("Cannot call sendTransaction in testing mode");
+      return Promise.resolve({
+        success: false,
+        message: "Cannot call sendTransaction in testing mode",
+      });
+    }
     const blockhash = (await connection.getRecentBlockhash("finalized"))
       .blockhash;
     transaction.recentBlockhash = blockhash;
@@ -238,34 +463,124 @@ class NamespaceWrapper {
     );
   }
   async getTaskState(): Promise<GenericResponseInterface> {
-    return await genericHandler("getTaskState");
+    if (taskNodeAdministered) {
+      const response = await genericHandler("getTaskState");
+      if (response.error) {
+        return null;
+      }
+      return response;
+    } else {
+      return this.#testingTaskState;
+    }
   }
   // async checkVoteStatus(): Promise<GenericResponseInterface> {
   //   return await genericHandler('checkVoteStatus');
   // }
 
-  async checkSubmissionAndUpdateRound(submissionValue, round: number) {
-    return await genericHandler(
-      "checkSubmissionAndUpdateRound",
-      submissionValue,
-      round
-    );
+  async checkSubmissionAndUpdateRound(
+    submissionValue = "default",
+    round: number
+  ) {
+    if (taskNodeAdministered) {
+      return await genericHandler(
+        "checkSubmissionAndUpdateRound",
+        submissionValue,
+        round
+      );
+    } else {
+      if (!this.#testingTaskState.submissions[round])
+        this.#testingTaskState.submissions[round] = {};
+      this.#testingTaskState.submissions[round][
+        this.#testingStakingSystemAccount.publicKey.toBase58()
+      ] = {
+        submission_value: submissionValue,
+        slot: 100,
+        round: 1,
+      };
+
+      return Promise.resolve({});
+    }
   }
   async getProgramAccounts(): Promise<GenericResponseInterface> {
-    return await genericHandler("getProgramAccounts");
+    if (taskNodeAdministered) {
+      return await genericHandler("getProgramAccounts");
+    } else {
+      console.log("Cannot call getProgramAccounts in testing mode");
+      return Promise.resolve({
+        success: false,
+        message: "Cannot call sendTransaction in testing mode",
+      });
+    }
   }
-  async defaultTaskSetup(): Promise<GenericResponseInterface> {
-    return await genericHandler("defaultTaskSetup");
+  async defaultTaskSetup() {
+    if (taskNodeAdministered) {
+      return await genericHandler("defaultTaskSetup");
+    } else {
+      if (this.#testingTaskState) return Promise.resolve();
+      this.#testingMainSystemAccount = new Keypair();
+      this.#testingStakingSystemAccount = new Keypair();
+      this.#testingDistributionList = {};
+      this.#testingTaskState = {
+        task_name: "DummyTestState",
+        task_description: "Dummy Task state for testing flow",
+        submissions: {},
+        submissions_audit_trigger: {},
+        total_bounty_amount: 10000000000,
+        bounty_amount_per_round: 1000000000,
+        total_stake_amount: 50000000000,
+        minimum_stake_amount: 5000000000,
+        available_balances: {},
+        stake_list: {},
+        round_time: 600,
+        starting_slot: 0,
+        audit_window: 200,
+        submission_window: 200,
+        distribution_rewards_submission: {},
+        distributions_audit_trigger: {},
+      };
+    }
   }
   async getRpcUrl(): Promise<GenericResponseInterface> {
-    return await genericHandler("getRpcUrl");
+    if (taskNodeAdministered) {
+      return await genericHandler("getRpcUrl");
+    } else {
+      console.log("Cannot call getNodes in testing mode");
+      return Promise.resolve({
+        success: false,
+        message: "Cannot call getNodes in testing mode",
+      });
+    }
   }
   async getNodes(url: string): Promise<GenericResponseInterface> {
-    return await genericHandler("getNodes", url);
+    if (taskNodeAdministered) {
+      return await genericHandler("getNodes", url);
+    } else {
+      console.log("Cannot call getNodes in testing mode");
+      return Promise.resolve({
+        success: false,
+        message: "Cannot call getNodes in testing mode",
+      });
+    }
   }
 
   async getDistributionList(publicKey: any, round: number) {
-    return await genericHandler("getDistributionList", publicKey, round);
+    if (taskNodeAdministered) {
+      const response = await genericHandler(
+        "getDistributionList",
+        publicKey,
+        round
+      );
+      if (response.error) {
+        return null;
+      }
+      return response;
+    } else {
+      const submissionValAcc =
+        this.#testingTaskState.distribution_rewards_submission[round][
+          this.#testingStakingSystemAccount.publicKey.toBase58()
+        ].submission_value;
+      return this.#testingDistributionList[round][submissionValAcc];
+    }
   }
 
   async validateAndVoteOnNodes(validateNode: any, round: number): Promise<any> {
@@ -428,13 +743,35 @@ class NamespaceWrapper {
     }
   }
 
-  async getTaskLevelDBPath(): Promise<string> {
-    return (await genericHandler("getTaskLevelDBPath")) as unknown as
-      | string
-      | null;
+  async getTaskLevelDBPath() {
+    if (taskNodeAdministered) {
+      return await genericHandler("getTaskLevelDBPath");
+    } else {
+      return "./KOIIDB";
+    }
+  }
+  async getBasePath() {
+    if (taskNodeAdministered) {
+      const basePath = (await namespaceWrapper.getTaskLevelDBPath()).replace(
+        "/KOIIDB",
+        ""
+      );
+      return basePath;
+    } else {
+      return "./";
+    }
+  }
+
+  getMainAccountPubkey() {
+    if (taskNodeAdministered) {
+      return MAIN_ACCOUNT_PUBKEY;
+    } else {
+      return this.#testingMainSystemAccount.publicKey.toBase58();
+    }
   }
 }
-async function genericHandler(...args): Promise<GenericResponseInterface> {
+
+async function genericHandler(...args) {
   try {
     const response = await axios.post(BASE_ROOT_URL, {
       args,
@@ -447,13 +784,15 @@ async function genericHandler(...args): Promise<GenericResponseInterface> {
       return null;
     }
   } catch (err) {
-    console.log("Error in genericHandler", err);
-    console.error(err.message);
+    console.error(`Error in genericHandler: "${args[0]}"`, err.message);
     console.error(err?.response?.data);
-    return null;
+    return { error: err };
   }
 }
 export const namespaceWrapper = new NamespaceWrapper();
-namespaceWrapper.getRpcUrl().then((rpcUrl) => {
-  connection = new Connection(rpcUrl as unknown as string, "confirmed");
-});
+
+if (taskNodeAdministered) {
+  namespaceWrapper.getRpcUrl().then((rpcUrl) => {
+    connection = new Connection(rpcUrl as unknown as string, "confirmed");
+  });
+}
