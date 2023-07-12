@@ -1,4 +1,4 @@
-const { namespaceWrapper } = require('./namespaceWrapper');
+const { namespaceWrapper } = require('./_node/Node');
 const crypto = require('crypto');
 
 class CoreLogic {

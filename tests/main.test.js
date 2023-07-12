@@ -1,6 +1,5 @@
 const { coreLogic } = require('../coreLogic');
-const { _server } = require('../init');
-const { namespaceWrapper } = require('../namespaceWrapper');
+const { namespaceWrapper, _server } = require('../_node/Node');
 const Joi = require('joi');
 const axios = require('axios');
 beforeAll(async () => {
@@ -154,7 +153,7 @@ describe('Performing the task', () => {
   it('should test the endpoint', async () => {
     const response = await axios.get('http://localhost:10000');
     expect(response.status).toBe(200);
-    expect(response.data).toEqual("Hello World!");
+    expect(response.data).toEqual('Hello World!');
   });
 });
 
