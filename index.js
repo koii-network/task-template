@@ -3,7 +3,7 @@ const {
   namespaceWrapper,
   taskNodeAdministered,
   app
-} = require('./_node/Node');
+} = require('./_koiiNode/koiiNode');
 
 async function setup() {
   console.log('setup function called');

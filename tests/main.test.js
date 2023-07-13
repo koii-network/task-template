@@ -1,5 +1,5 @@
 const { coreLogic } = require('../coreLogic');
-const { namespaceWrapper, _server } = require('../_node/Node');
+const { namespaceWrapper, _server } = require('../_koiiNode/koiiNode');
 const Joi = require('joi');
 const axios = require('axios');
 beforeAll(async () => {
