@@ -1,6 +1,23 @@
 const { namespaceWrapper } = require('../_koiiNode/koiiNode');
 const crypto = require('crypto');
 
+async function validateNode(submission_value, round) {
+  let vote;
+  console.log('SUBMISSION VALUE', submission_value, round);
+
+  try {
+    if (submission_value == 'Hello, World!') {
+      vote = true;
+    } else {
+      vote = false;
+    }
+  } catch (e) {
+    console.error(e);
+    vote = false;
+  }
+
+  return vote;
+}
 async function auditTask(roundNumber) {
   console.log('auditTask called with round', roundNumber);
   console.log(
@@ -56,24 +73,6 @@ async function validateDistribution(
     console.log('ERROR IN VALIDATING DISTRIBUTION', err);
     return false;
   }
-}
-
-async function validateNode(submission_value, round) {
-  let vote;
-  console.log('SUBMISSION VALUE', submission_value, round);
-
-  try {
-    if (submission_value == 'Hello, World!') {
-      vote = true;
-    } else {
-      vote = false;
-    }
-  } catch (e) {
-    console.error(e);
-    vote = false;
-  }
-
-  return vote;
 }
 
 module.exports = {

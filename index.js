@@ -2,7 +2,7 @@ const { coreLogic } = require('./coreLogic');
 const {
   namespaceWrapper,
   taskNodeAdministered,
-  app
+  app,
 } = require('./_koiiNode/koiiNode');
 
 async function setup() {
@@ -90,5 +90,12 @@ if (app) {
     console.log('TASK STATE', state);
 
     res.status(200).json({ taskState: state });
+  });
+
+  app.get('/value', async (req, res) => {
+    const value = await namespaceWrapper.storeGet('value');
+    console.log('value', value);
+
+    res.status(200).json({ value: value });
   });
 }
