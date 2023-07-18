@@ -24,13 +24,13 @@ async function auditTask(roundNumber) {
     await namespaceWrapper.getSlot(),
     'current slot while calling auditTask',
   );
-  await namespaceWrapper.validateAndVoteOnNodes(this.validateNode, roundNumber);
+  await namespaceWrapper.validateAndVoteOnNodes(validateNode, roundNumber);
 }
 
 async function auditDistribution(roundNumber) {
   console.log('auditDistribution called with round', roundNumber);
   await namespaceWrapper.validateAndVoteOnDistributionList(
-    this.validateDistribution,
+    validateDistribution,
     roundNumber,
   );
 }
@@ -57,7 +57,7 @@ async function validateDistribution(
       fetchedDistributionList = JSON.parse(rawDistributionList);
     }
     console.log('FETCHED DISTRIBUTION LIST', fetchedDistributionList);
-    const generateDistributionList = await this.generateDistributionList(
+    const generateDistributionList = await generateDistributionList(
       round,
       _dummyTaskState,
     );
@@ -66,7 +66,7 @@ async function validateDistribution(
 
     const parsed = fetchedDistributionList;
     console.log('compare distribution list', parsed, generateDistributionList);
-    const result = await this.shallowEqual(parsed, generateDistributionList);
+    const result = await shallowEqual(parsed, generateDistributionList);
     console.log('RESULT', result);
     return result;
   } catch (err) {

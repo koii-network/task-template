@@ -22,7 +22,7 @@ async function fetchSubmission() {
 // Submit Address with distribution list to K2
 async function submitTask(roundNumber) {
   try {
-    const submission = await this.fetchSubmission();
+    const submission = await fetchSubmission();
     console.log('SUBMISSION', submission);
     await namespaceWrapper.checkSubmissionAndUpdateRound(
       submission,

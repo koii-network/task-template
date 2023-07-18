@@ -98,7 +98,7 @@ async function submitDistributionList(round) {
   console.log('SubmitDistributionList called');
 
   try {
-    const distributionList = await this.generateDistributionList(round);
+    const distributionList = await generateDistributionList(round);
 
     const decider = await namespaceWrapper.uploadDistributionList(
       distributionList,
