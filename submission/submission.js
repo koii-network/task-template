@@ -1,5 +1,4 @@
 const { namespaceWrapper } = require('../_koiiNode/koiiNode');
-const crypto = require('crypto');
 
 async function task() {
   try {

@@ -1,34 +1,34 @@
 #Provide the taskId if you are updating the task
-task_id: ''
+task_id: 'Fd8wkfKeNZxyG6S8m2wqbuVQP81M9ywwHNPtj19QRyQA'
 # Name and description of your task
 task_name: 'hello-world'
 task_description: 'This is a simple task that returns "Hello, World!"'
 
 # Network value can be DEVELOPMENT, ARWEAVE or IPFS
-task_executable_network: 'DEVELOPMENT'
+task_executable_network: 'IPFS'
 
 # Provide your web3.storage key as it is needed for uploading your metadata
-secret_web3_storage_key: ''
+secret_web3_storage_key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGFFQjkyOEFhY2UwNDYwZTg0QzRlYzRDY0Q3ZTcxMjNCMzMyNDNmRDUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2ODk3MTIyMDA5NjUsIm5hbWUiOiJjb29sVG9rZW4ifQ.HJ3Sac0CeKewlGM26wxRctAcjFPk8RMYpvsjLgHtDrw'
 
 # Path to your executable webpack if the selected network is IPFS otherwise leave blank
-task_audit_program: ''
+task_audit_program: 'dist/main.js'
 
 # Provide your transaction ID in case of ARWEAVE and in case of DEVELOPMENT give your executable name as main otherwise leave blank
 task_audit_program_id: 'main'
 
 # Total round time of your task: it must be given in slots and each slot is roughly equal to 4ms
-round_time: 600
+round_time: 1500
 
-audit_window: 200
-submission_window: 200
+audit_window: 300
+submission_window: 300
 
 # Amounts in KOII
 
-minimum_stake_amount: 5
+minimum_stake_amount: 2
 
 # total_bounty_amount cannot be greater than bounty_amount_per_round
 # total bounty is not accepted in case of update task
-total_bounty_amount: 10
+total_bounty_amount: 50
 
 bounty_amount_per_round: 1
 
@@ -46,12 +46,6 @@ description: 'This is a simple task that returns "Hello, World!"'
 repositoryUrl: 'https://github.com/koii-network/hello-world'
 imageUrl: 'Enter you image URL'
 requirementsTags:
-  - type: TASK_VARIABLE
-    value: SECRET_WEB3_STORAGE_KEY
-    description: 'used to connect web3.storage'
-  - type: TASK_VARIABLE
-    value: 'SCRAPING_URL'
-    description: 'URL from which you want to scrape'
   - type: CPU
     value: '4-core'
   - type: RAM
