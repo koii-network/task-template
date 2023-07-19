@@ -1,4 +1,6 @@
 const { namespaceWrapper } = require('../_koiiNode/koiiNode');
+const auditGenerateDistributionList =
+  require('../distribution/distribution.js').generateDistributionList;
 
 async function shallowEqual(object1, object2) {
   const keys1 = Object.keys(object1);
@@ -71,7 +73,7 @@ async function validateDistribution(
       fetchedDistributionList = JSON.parse(rawDistributionList);
     }
     console.log('FETCHED DISTRIBUTION LIST', fetchedDistributionList);
-    const generateDistributionList = await generateDistributionList(
+    const generateDistributionList = await auditGenerateDistributionList(
       round,
       _dummyTaskState,
     );

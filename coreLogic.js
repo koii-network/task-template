@@ -1,4 +1,6 @@
 const { namespaceWrapper } = require('./_koiiNode/koiiNode');
+const auditGenerateDistributionList =
+  require('../distribution/distribution.js').generateDistributionList;
 
 const {
   task,

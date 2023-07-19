@@ -1,7 +1,7 @@
 #Provide the taskId if you are updating the task
-task_id: 'Fd8wkfKeNZxyG6S8m2wqbuVQP81M9ywwHNPtj19QRyQA'
+task_id: ''
 # Name and description of your task
-task_name: 'hello-world'
+task_name: 'halifax-slashing-bugfix'
 task_description: 'This is a simple task that returns "Hello, World!"'
 
 # Network value can be DEVELOPMENT, ARWEAVE or IPFS
@@ -28,7 +28,7 @@ minimum_stake_amount: 2
 
 # total_bounty_amount cannot be greater than bounty_amount_per_round
 # total bounty is not accepted in case of update task
-total_bounty_amount: 50
+total_bounty_amount: 15
 
 bounty_amount_per_round: 1
 
