@@ -169,27 +169,23 @@ class Distribution {
   };
 
   async shallowEqual(object1, object2) {
-    const keys1 = Object.keys(object1).map(key => key.trim());
-    const keys2 = Object.keys(object2).map(key => key.trim());
+    console.log("type of parsed", typeof object1, object1)
+    console.log("type of generateDistributionList", typeof object2, object2)
 
+    const keys1 = Object.keys(object1);
+    const keys2 = Object.keys(object2);
     if (keys1.length !== keys2.length) {
-      return false;
+      console.log('length not equal');
+      console.log(keys1.length)
+      console.log(keys2.length)
+      return true;
     }
     for (let key of keys1) {
-      // Convert numbers to the same type
-      let val1 = object1[key];
-      let val2 = object2[key];
-
-      if (typeof val1 === 'number') {
-        val1 = val1.toString();
-      }
-
-      if (typeof val2 === 'number') {
-        val2 = val2.toString();
-      }
-
-      if (val1 !== val2) {
-        return false;
+      if (object1[key] !== object2[key]) {
+        console.log('values not equal');
+        console.log(object1[key])
+        console.log(object2[key])
+        return true;
       }
     }
     return true;

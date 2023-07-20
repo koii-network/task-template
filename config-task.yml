@@ -1,5 +1,5 @@
 # Name and metadata of your task
-task_name: "Soma-hello-world 0.2"
+task_name: "Soma-hello-world 0.4"
 author: "koii"
 description: "This will be description of your task"
 repositoryUrl: "https://github.com/koii-network/task-examples"
@@ -53,7 +53,7 @@ requirementsTags:
 # OPTIONAL variables below 
 
 # OPTIONAL Only provide the taskId if you are updating the task otherwise leave blank
-task_id: "8KW2m9NV3iof4DuHmZFFVrhrupDyHJnZRWPX7iUxB2fP"
+task_id: ""
 
 # OPTIONAL only Provide your transaction ID in case of ARWEAVE and in case of DEVELOPMENT give your executable name as main otherwise leave blank
 task_audit_program_id: "main"
