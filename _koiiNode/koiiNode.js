@@ -685,6 +685,7 @@ class NamespaceWrapper {
     // await this.checkVoteStatus();
     console.log('******/  IN VOTING OF DISTRIBUTION LIST /******');
     const taskAccountDataJSON = await this.getTaskState();
+    console.log(taskAccountDataJSON)
     console.log(
       `Fetching the Distribution submissions of round ${round}`,
       taskAccountDataJSON.distribution_rewards_submission[round],

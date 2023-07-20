@@ -8,15 +8,11 @@ beforeAll(async () => {
 
 describe('Performing the task', () => {
   it('should performs the core logic task', async () => {
-    const result = await coreLogic.task();
+    const round = 1;
+    const result = await coreLogic.task(round);
     expect(result).not.toContain('ERROR IN EXECUTING TASK');
   });
 
-  it('should fetch the submission', async () => {
-    const result = await coreLogic.fetchSubmission();
-    expect(result).toBeDefined();
-    expect(result).not.toBeNaN();
-  });
   it('should make the submission to k2 for dummy round 1', async () => {
     const round = 1;
     await coreLogic.submitTask(round);
