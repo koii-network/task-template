@@ -1,6 +1,4 @@
 const { namespaceWrapper } = require('../_koiiNode/koiiNode');
-const crypto = require('crypto');
-
 class Submission {
   async task(round) {
     // Write the logic to do the work required for submitting the values and optionally store the result in levelDB
@@ -8,8 +6,8 @@ class Submission {
     // Below is just a sample of work that a task can do
 
     try {
-      const x = Math.random().toString(); // generate random number and convert to string
-      const cid = crypto.createHash('sha1').update(x).digest('hex'); // convert to CID
+      const x = "Hello World! " + Math.random().toString(); // generate random number and convert to string
+      const cid = x 
       console.log('HASH:', cid);
       // fetching round number to store work accordingly
 

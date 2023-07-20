@@ -1,25 +1,25 @@
 # Name and metadata of your task
-task_name: "Your-task-name"
+task_name: "Soma-hello-world 0.2"
 author: "koii"
 description: "This will be description of your task"
 repositoryUrl: "https://github.com/koii-network/task-examples"
 imageUrl: "imageUrl"
 
 # network value can be DEVELOPMENT , ARWEAVE or IPFS, Recommended IPFS as the cli automatically takes care of uploading the executable with the help of web3.js key
-task_executable_network: "DEVELOPMENT"
+task_executable_network: "IPFS"
 
 # Path to your executable webpack if the selected network is IPFS otherwise leave blank
-task_audit_program: ""
+task_audit_program: "dist/main.js"
 
 # Total round time of your task : it must be given in slots and each slot is rougly equal to 4ms
-round_time: 500
+round_time: 600
 
 audit_window: 200
 submission_window: 200
 
 # Amounts in KOII
 
-minimum_stake_amount: 2
+minimum_stake_amount: 0.01
 
 # total_bounty_amount cannot be grater than bounty_amount_per_round
 # total bounty is not accepted in case of update task
@@ -53,7 +53,7 @@ requirementsTags:
 # OPTIONAL variables below 
 
 # OPTIONAL Only provide the taskId if you are updating the task otherwise leave blank
-task_id: ""
+task_id: "8KW2m9NV3iof4DuHmZFFVrhrupDyHJnZRWPX7iUxB2fP"
 
 # OPTIONAL only Provide your transaction ID in case of ARWEAVE and in case of DEVELOPMENT give your executable name as main otherwise leave blank
 task_audit_program_id: "main"

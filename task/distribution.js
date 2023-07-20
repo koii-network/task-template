@@ -124,12 +124,12 @@ class Distribution {
     }
   }
 
-  async validateDistribution(
+  validateDistribution = async (
     distributionListSubmitter,
     round,
     _dummyDistributionList,
     _dummyTaskState,
-  ) {
+  ) => {
     // Write your logic for the validation of submission value here and return a boolean value in response
     // this logic can be same as generation of distribution list function and based on the comparision will final object , decision can be made
 
@@ -166,16 +166,29 @@ class Distribution {
       console.log('ERROR IN VALIDATING DISTRIBUTION', err);
       return false;
     }
-  }
-  
+  };
+
   async shallowEqual(object1, object2) {
-    const keys1 = Object.keys(object1);
-    const keys2 = Object.keys(object2);
+    const keys1 = Object.keys(object1).map(key => key.trim());
+    const keys2 = Object.keys(object2).map(key => key.trim());
+
     if (keys1.length !== keys2.length) {
       return false;
     }
     for (let key of keys1) {
-      if (object1[key] !== object2[key]) {
+      // Convert numbers to the same type
+      let val1 = object1[key];
+      let val2 = object2[key];
+
+      if (typeof val1 === 'number') {
+        val1 = val1.toString();
+      }
+
+      if (typeof val2 === 'number') {
+        val2 = val2.toString();
+      }
+
+      if (val1 !== val2) {
         return false;
       }
     }
