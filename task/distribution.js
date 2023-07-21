@@ -168,24 +168,30 @@ class Distribution {
     }
   };
 
-  async shallowEqual(object1, object2) {
-    console.log("type of parsed", typeof object1, object1)
-    console.log("type of generateDistributionList", typeof object2, object2)
+  async shallowEqual(parsed, generateDistributionList) {
 
-    const keys1 = Object.keys(object1);
-    const keys2 = Object.keys(object2);
+    if (typeof parsed === 'string') {
+      parsed = JSON.parse(parsed);
+    }
+  
+    // Normalize key quote usage for generateDistributionList
+    generateDistributionList = JSON.parse(JSON.stringify(generateDistributionList));
+  
+    const keys1 = Object.keys(parsed);
+    const keys2 = Object.keys(generateDistributionList);
     if (keys1.length !== keys2.length) {
       console.log('length not equal');
-      console.log(keys1.length)
-      console.log(keys2.length)
-      return true;
+      console.log(keys1.length);
+      console.log(keys2.length);
+      return false;
     }
+  
     for (let key of keys1) {
-      if (object1[key] !== object2[key]) {
+      if (parsed[key] !== generateDistributionList[key]) {
         console.log('values not equal');
-        console.log(object1[key])
-        console.log(object2[key])
-        return true;
+        console.log(parsed[key]);
+        console.log(generateDistributionList[key]);
+        return false;
       }
     }
     return true;
