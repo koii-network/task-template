@@ -17,12 +17,12 @@ const bodyParser = require('body-parser');
  * This will be the name of the current task as coming from the task node running this task.
  */
 const TASK_NAME = process.argv[2] || 'Local';
-/** 
+/**
  * This will be the id of the current task as coming from the task node running this task.
  */
 const TASK_ID = process.argv[3];
 /**
- * This will be the PORT on which the this task is expected to run the express server coming from the task node running this task. 
+ * This will be the PORT on which the this task is expected to run the express server coming from the task node running this task.
  * As all communication via the task node and this task will be done on this port.
  */
 const EXPRESS_PORT = process.argv[4] || 10000;
@@ -35,7 +35,7 @@ const EXPRESS_PORT = process.argv[4] || 10000;
  */
 const MAIN_ACCOUNT_PUBKEY = process.argv[6];
 /**
-  * This will be the secret used by the task to authenticate with task node running this task.
+ * This will be the secret used by the task to authenticate with task node running this task.
  */
 const SECRET_KEY = process.argv[7];
 /**
@@ -830,7 +830,7 @@ if (taskNodeAdministered) {
 }
 module.exports = {
   namespaceWrapper,
-  taskNodeAdministered, // Boolean flag indicating that the task is being ran in active mode (Task node supervised), or development (testing) mode 
+  taskNodeAdministered, // Boolean flag indicating that the task is being ran in active mode (Task node supervised), or development (testing) mode
   app, // The initialized express app to be used to register endpoints
   TASK_ID, // This will be the PORT on which the this task is expected to run the express server coming from the task node running this task. As all communication via the task node and this task will be done on this port.
   MAIN_ACCOUNT_PUBKEY, // This will be the secret used to authenticate with task node running this task.
