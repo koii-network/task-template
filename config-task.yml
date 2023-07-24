@@ -25,7 +25,7 @@ minimum_stake_amount: 2
 # total bounty is not accepted in case of update task
 total_bounty_amount: 10
 
-bounty_amount_per_round: 1
+bounty_amount_per_round: 0.1
 
 #Number of times allowed to re-submit the distribution  list in case the distribution list is audited
 allowed_failed_distributions: 3
@@ -37,18 +37,15 @@ space: 1
 # To add more global variables and task variables, please refer the type,value,description format shown below
 
 requirementsTags:
+  - type: TASK_VARIABLE
+    value: "WEB3.STORAGE"
+    description: "used to store the data"
   - type: CPU
     value: "4-core"
   - type: RAM
     value: "5 GB"
   - type: STORAGE
     value: "5 GB"
-  - type: NETWORK
-    value: "testnet"
-  - type: ARCHITECTURE
-    value: "M1"
-  - type: OS
-    value: "OSX"
 
 # OPTIONAL variables below 
 
