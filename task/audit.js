@@ -9,10 +9,10 @@ class Audit {
     console.log('SUBMISSION VALUE', submission_value, round);
     try {
       if (submission_value == 'Hello, World!') {
-        // For succesfull flow we return true for now
+        // For successful flow we return true (Means the audited node submission is correct)
         vote = true;
       } else {
-        // For unsuccesfull flow we return true for now
+        // For unsuccessful flow we return false (Means the audited node submission is incorrect)
         vote = false;
       }
     } catch (e) {
