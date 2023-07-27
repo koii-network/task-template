@@ -40,6 +40,9 @@ space: 5
 # To add more global variables and task variables, please refer the type,value,description format shown below
 
 requirementsTags:
+  - type: GLOBAL_VARIABLE
+    value: 'WEB3_STORAGE_KEY'
+    description: 'this varibale is used to store the web3.storage key'
   - type: CPU
     value: '4-core'
   - type: RAM
