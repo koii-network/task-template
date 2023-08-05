@@ -3,19 +3,16 @@ services:
   task_node:
     image: public.ecr.aws/koii-network/task_node:latest
     command: yarn initialize-start
-
-    ports:
-      - '8080:8080'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
     env_file: .env-local
 
     container_name: task_node
-    restart: always
 
-    network_mode: host
+    # network_mode: host
     volumes:
       - ~/.config/koii:/app/config
       - ./data:/app/data
       - ./namespace:/app/namespace
       - ./dist:/app/executables
-   
