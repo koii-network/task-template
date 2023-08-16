@@ -53,7 +53,7 @@ async function setup() {
   /*######################################################
   ################ DO NOT EDIT ABOVE ###################
   ######################################################*/
-  
+
   /* GUIDE TO CALLS K2 FUNCTIONS MANUALLY
 
   If you wish to do the development by avoiding the timers then you can do the intended calls to K2 
@@ -98,6 +98,12 @@ async function setup() {
 
   // const responsePayout = await namespaceWrapper.payoutTrigger();
   // console.log("RESPONSE TRIGGER", responsePayout);
+
+  // logs to be displayed on desktop-node
+
+  // await namespaceWrapper.logger('error', 'Internet connection lost');
+  // await namespaceWrapper.logger('warn', 'Stakes are running low');
+  // await namespaceWrapper.logger('log', 'Task is running');
 }
 
 if (taskNodeAdministered) {

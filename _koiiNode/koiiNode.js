@@ -369,6 +369,41 @@ class NamespaceWrapper {
     }
   }
 
+  async logMessage(level, message) {
+    switch (level) {
+      case LogLevel.Log:
+        console.log(message);
+        break;
+      case LogLevel.Warn:
+        console.warn(message);
+        break;
+      case LogLevel.Error:
+        console.error(message);
+        break;
+      default:
+        throw new Error(`Invalid log level: ${level}`);
+    }
+  }
+
+  /**
+   * This logger function is used to log the task erros , warnings and logs on desktop-node
+   * @param {level} enum // Receive method ["Log", "Warn", "Error"]
+   enum LogLevel {
+   Log = 'log',
+   Warn = 'warn',
+   Error = 'error',
+   }
+   * @param {message} string // log, error or warning message
+   */
+
+  async logger(level, message) {
+    if (taskNodeAdministered) {
+      await genericHandler('logMessage', level, message);
+    } else {
+      await this.logMessage(level, message);
+    }
+  }
+
   async auditSubmission(candidatePubkey, isValid, voterKeypair, round) {
     if (taskNodeAdministered) {
       return await genericHandler(
