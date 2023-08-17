@@ -27,6 +27,12 @@ const TASK_ID = process.argv[3];
  */
 const EXPRESS_PORT = process.argv[4] || 10000;
 
+const LogLevel = {
+  Log: 'log',
+  Warn: 'warn',
+  Error: 'error',
+};
+
 // Not used anymore
 // const NODE_MODE = process.argv[5];
 
@@ -381,8 +387,12 @@ class NamespaceWrapper {
         console.error(message);
         break;
       default:
-        throw new Error(`Invalid log level: ${level}`);
+        console.log(
+          `Invalid log level: ${level}. The log levels can be log, warn or error`,
+        );
+        return false;
     }
+    return true;
   }
 
   /**
@@ -394,13 +404,14 @@ class NamespaceWrapper {
    Error = 'error',
    }
    * @param {message} string // log, error or warning message
+   * @returns {boolean} // true if the message is logged successfully otherwise false
    */
 
   async logger(level, message) {
     if (taskNodeAdministered) {
-      await genericHandler('logMessage', level, message);
+      return await genericHandler('logMessage', level, message);
     } else {
-      await this.logMessage(level, message);
+      return await this.logMessage(level, message);
     }
   }
 
