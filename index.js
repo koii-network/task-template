@@ -41,7 +41,7 @@ async function setup() {
       coreLogic.auditTask(m.roundNumber);
     } else if (m.functionCall == 'executeTask') {
       console.log('executeTask called');
-      coreLogic.task();
+      coreLogic.task(m.roundNumber);
     } else if (m.functionCall == 'generateAndSubmitDistributionList') {
       console.log('generateAndSubmitDistributionList called');
       coreLogic.submitDistributionList(m.roundNumber);
@@ -101,9 +101,9 @@ async function setup() {
 
   // logs to be displayed on desktop-node
 
-  // await namespaceWrapper.logger('error', 'Internet connection lost');
+  //namespaceWrapper.logger('error', 'Internet connection lost');
   // await namespaceWrapper.logger('warn', 'Stakes are running low');
-  // await namespaceWrapper.logger('log', 'Task is running');
+  //await namespaceWrapper.logger('log', 'Task is running');
 }
 
 if (taskNodeAdministered) {

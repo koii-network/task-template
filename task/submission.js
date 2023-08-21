@@ -7,6 +7,7 @@ class Submission {
 
     try {
       const value = 'Hello, World!';
+      console.log('ROUND', round);
 
       if (value) {
         // store value on NeDB

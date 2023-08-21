@@ -409,7 +409,7 @@ class NamespaceWrapper {
 
   async logger(level, message) {
     if (taskNodeAdministered) {
-      return await genericHandler('logMessage', level, message);
+      return await genericHandler('logger', level, message);
     } else {
       return await this.logMessage(level, message);
     }
@@ -421,7 +421,6 @@ class NamespaceWrapper {
         'auditSubmission',
         candidatePubkey,
         isValid,
-        voterKeypair,
         round,
       );
     } else {
