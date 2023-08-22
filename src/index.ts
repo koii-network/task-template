@@ -1,8 +1,35 @@
 import { coreLogic } from "./coreLogic";
-import { app } from "./init";
-import { namespaceWrapper } from "./namespaceWrapper";
+import {
+  namespaceWrapper,
+  taskNodeAdministered,
+  app,
+} from "../src/_koiiNode/_koiiNode";
+
+if (app) {
+  //  Write your Express Endpoints here.
+  //  For Example
+  //  app.post('/accept-cid', async (req, res) => {})
+
+  // Sample API that return your task state
+
+  app.get("/taskState", async (_req, res) => {
+    const state = await namespaceWrapper.getTaskState();
+    console.log("TASK STATE", state);
+
+    res.status(200).json({ taskState: state });
+  });
+  app.get("/value", async (_req, res) => {
+    const value = await namespaceWrapper.storeGet("value");
+    console.log("value", value);
+
+    res.status(200).json({ value: value });
+  });
+}
 
 async function setup() {
+  /*######################################################
+  ################## DO NOT EDIT BELOW #################
+  ######################################################*/
   console.log("setup function called");
   // Run default setup
   await namespaceWrapper.defaultTaskSetup();
@@ -16,7 +43,7 @@ async function setup() {
       coreLogic.auditTask(m.roundNumber);
     } else if (m.functionCall == "executeTask") {
       console.log("executeTask called");
-      coreLogic.task();
+      coreLogic.task(m.roundNumber);
     } else if (m.functionCall == "generateAndSubmitDistributionList") {
       console.log("generateAndSubmitDistributionList called");
       coreLogic.submitDistributionList(m.roundNumber);
@@ -25,6 +52,10 @@ async function setup() {
       coreLogic.auditDistribution(m.roundNumber);
     }
   });
+
+  /*######################################################
+  ################ DO NOT EDIT ABOVE ###################
+  ######################################################*/
 
   /* GUIDE TO CALLS K2 FUNCTIONS MANUALLY
 
@@ -39,7 +70,7 @@ async function setup() {
   */
 
   // Get the task state
-  console.log(await namespaceWrapper.getTaskState());
+  //console.log(await namespaceWrapper.getTaskState());
 
   //GET ROUND
 
@@ -70,12 +101,13 @@ async function setup() {
 
   // const responsePayout = await namespaceWrapper.payoutTrigger(round - 2);
   // console.log("RESPONSE TRIGGER", responsePayout);
+  // logs to be displayed on desktop-node
+
+  // await namespaceWrapper.logger('error', 'Internet connection lost');
+  // await namespaceWrapper.logger('warn', 'Stakes are running low');
+  // await namespaceWrapper.logger('log', 'Task is running');
 }
 
-setup();
-
-if (app) {
-  //  Write your Express Endpoints here.
-  //  For Example
-  //  namespace.express('post', '/accept-cid', async (req, res) => {})
+if (taskNodeAdministered) {
+  setup();
 }

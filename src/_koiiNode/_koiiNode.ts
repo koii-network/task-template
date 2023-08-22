@@ -1,35 +1,70 @@
 import axios from "axios";
 import { Connection, Keypair, PublicKey } from "@_koi/web3.js";
-import { GenericResponseInterface } from "./interfaces/ResponseInterface";
-import {
-  TASK_ID,
-  MAIN_ACCOUNT_PUBKEY,
-  SECRET_KEY,
-  TASK_NODE_PORT,
-} from "./init";
+import { GenericResponseInterface } from "../interfaces/ResponseInterface";
 import Datastore = require("nedb-promises");
 import * as fsPromises from "fs/promises";
 import { createWriteStream, readFileSync } from "fs";
 import { TextDecoder, TextEncoder } from "util";
-const BASE_ROOT_URL = `http://localhost:${TASK_NODE_PORT}/namespace-wrapper`;
-export const taskNodeAdministered = !!TASK_ID;
-
 import bs58 from "bs58";
 import nacl from "tweetnacl";
 
-//const TRUSTED_SERVICE_URL = "https://k2-tasknet.koii.live";
+/****************************************** init.js ***********************************/
+
+import * as express from "express";
+import * as bodyParser from "body-parser";
+
+import * as dotenv from "dotenv";
+dotenv.config();
+
+export const EXPRESS_PORT = process.argv[4] || 10000;
+export const TASK_NAME = process.argv[2] || "Local";
+
+export const TASK_ID = process.argv[3];
+export const NODE_MODE = process.argv[5];
+export const MAIN_ACCOUNT_PUBKEY = process.argv[6];
+export const SECRET_KEY = process.argv[7];
+export const K2_NODE_URL = process.argv[8];
+export const SERVICE_URL = process.argv[9];
+export const STAKE = Number(process.argv[10]);
+export const TASK_NODE_PORT = Number(process.argv[11]);
+export const app = express();
+
+console.log("SETTING UP EXPRESS", NODE_MODE);
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(bodyParser.json());
+
+app.use(
+  (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, PATCH, DELETE"
+    );
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", "false");
+    if (req.method === "OPTIONS")
+      // if is preflight(OPTIONS) then response status 204(NO CONTENT)
+      return res.sendStatus(204);
+    return next();
+  }
+);
+
+app.get("/", (_req: express.Request, res: express.Response) => {
+  res.send("Hello World!");
+});
+
+export const _server = app.listen(EXPRESS_PORT, () => {
+  console.log(`${TASK_NAME} listening on port ${EXPRESS_PORT}`);
+});
+
+/****************************************** NamespaceWrapper.js ***********************************/
+
+export const taskNodeAdministered = !!TASK_ID;
+const BASE_ROOT_URL = `http://localhost:${TASK_NODE_PORT}/namespace-wrapper`;
 let connection;
-// export interface INode {
-//   data: {
-//     url: string | undefined;
-//     timestamp: number;
-//   };
-//   signature: string;
-//   owner: string;
-//   submitterPubkey: string;
-//   tasks: [string];
-//   submission_value: string;
-// }
+
 class NamespaceWrapper {
   #db: any;
   #testingMainSystemAccount;
@@ -789,6 +824,7 @@ async function genericHandler(...args) {
     return { error: err };
   }
 }
+
 export const namespaceWrapper = new NamespaceWrapper();
 
 if (taskNodeAdministered) {
@@ -796,3 +832,4 @@ if (taskNodeAdministered) {
     connection = new Connection(rpcUrl as unknown as string, "confirmed");
   });
 }
+

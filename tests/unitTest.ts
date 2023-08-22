@@ -1,11 +1,21 @@
 import { coreLogic } from "../src/coreLogic";
+import { submission, audit, distribution } from "../src/task";
+const task = {
+  submission,
+  audit,
+  distribution,
+};
 
 async function test_coreLogic() {
-  await coreLogic.task();
-  const submission = await coreLogic.fetchSubmission();
-  console.log(submission);
+  const round = 1;
+  const submission = await coreLogic.task(round);
+  console.log("Receive test submission", submission);
+
   // const vote = await coreLogic.validateNode(submission, 1);
-  const vote = true;
+  //const vote = true;
+
+  const audit = await task.audit.validateNode(submission, round);
+  // let vote = true;
   const _dummyTaskState = {
     stake_list: {
       "2NstaKU4kif7uytmS2PQi9P5M5bDLYSF2dhUNFhJbxHL": 20000000000,
@@ -57,19 +67,11 @@ async function test_coreLogic() {
       },
     },
   };
-  if (vote == true) {
+  if (audit == true) {
     console.log("Submission is valid, generating distribution list");
-    const distributionList = await coreLogic.generateDistributionList(
-      1,
-      _dummyTaskState
-    );
+    await coreLogic.submitDistributionList(round);
 
-    await coreLogic.validateDistribution(
-      null,
-      1,
-      distributionList,
-      _dummyTaskState
-    );
+    await task.distribution.auditDistribution(round);
   } else {
     console.log("Submission is invalid, not generating distribution list");
   }
