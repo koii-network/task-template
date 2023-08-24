@@ -1,15 +1,15 @@
 # Name and metadata of your task
-task_name: "Your-task-name"
-author: "koii"
-description: "This will be description of your task"
-repositoryUrl: "https://github.com/koii-network/task-examples"
-imageUrl: "imageUrl"
+task_name: 'Your-task-name'
+author: 'koii'
+description: 'This will be description of your task'
+repositoryUrl: 'https://github.com/koii-network/task-examples'
+imageUrl: 'imageUrl'
 
 # network value can be DEVELOPMENT , ARWEAVE or IPFS, Recommended IPFS as the cli automatically takes care of uploading the executable with the help of web3.js key
-task_executable_network: "DEVELOPMENT"
+task_executable_network: 'DEVELOPMENT'
 
-# Path to your executable webpack if the selected network is IPFS otherwise leave blank
-task_audit_program: ""
+# Path to your executable webpack if the selected network is IPFS and in case of DEVELOPMENT  name it as main
+task_audit_program: 'main'
 
 # Total round time of your task : it must be given in slots and each slot is roughly equal to 408ms
 round_time: 650
@@ -38,19 +38,19 @@ space: 1
 
 requirementsTags:
   - type: TASK_VARIABLE
-    value: "WEB3.STORAGE"
-    description: "used to store the data"
+    value: 'WEB3.STORAGE'
+    description: 'used to store the data'
   - type: CPU
-    value: "4-core"
+    value: '4-core'
   - type: RAM
-    value: "5 GB"
+    value: '5 GB'
   - type: STORAGE
-    value: "5 GB"
+    value: '5 GB'
 
-# OPTIONAL variables below 
+# OPTIONAL variables variables for creating task / REQUIRED varibales for update task
 
 # OPTIONAL Only provide the taskId if you are updating the task otherwise leave blank
-task_id: ""
+task_id: ''
 
-# OPTIONAL only Provide your transaction ID in case of ARWEAVE and in case of DEVELOPMENT give your executable name as main otherwise leave blank
-task_audit_program_id: "main"
+# Provide the description for changes made in new version of task
+migrationDescription: ''

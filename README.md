@@ -111,7 +111,7 @@ To publish tasks to the K2 network use `npx @_koii/create-task-cli@latest` if yo
 If you want to get a closer look at the console and test environment variables, you'll want to use the included docker-compose stack to run a task node locally.
 
 1. Link or copy your wallet into the `config` folder as `id.json`
-2. Open `.env-local` and add your TaskID you obtained after deploying to K2 into the `TASKS` environment variable.\
+2. Open `.env-local` and add your TaskID you obtained after deploying to K2 into the `TASKS` environment variable.
 3. Run `docker compose up` and watch the output of the `task_node`. You can exit this process when your task has finished, or any other time if you have a long running persistent task.
 
 ### Redeploying
