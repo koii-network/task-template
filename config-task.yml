@@ -5,7 +5,7 @@ description: 'This will be description of your task'
 repositoryUrl: 'https://github.com/koii-network/task-examples'
 imageUrl: 'imageUrl'
 
-# network value can be DEVELOPMENT , ARWEAVE or IPFS, Recommended IPFS as the cli automatically takes care of uploading the executable with the help of web3.js key
+# network value can be DEVELOPMENT , ARWEAVE or IPFS, Recommended IPFS when deploying to testnet as the cli automatically takes care of uploading the executable with the help of web3.js key
 task_executable_network: 'DEVELOPMENT'
 
 # Path to your executable webpack if the selected network is IPFS and in case of DEVELOPMENT  name it as main
@@ -34,7 +34,7 @@ allowed_failed_distributions: 3
 space: 1
 
 # Note that the value field in RequirementTag is optional, so it is up to you to include it or not based on your use case.
-# To add more global variables and task variables, please refer the type,value,description format shown below
+# To add more task variables, please refer the type,value,description format shown below
 
 requirementsTags:
   - type: TASK_VARIABLE
@@ -47,7 +47,7 @@ requirementsTags:
   - type: STORAGE
     value: '5 GB'
 
-# OPTIONAL variables variables for creating task / REQUIRED varibales for update task
+# OPTIONAL variables variables for creating task / REQUIRED variables for update task
 
 # OPTIONAL Only provide the taskId if you are updating the task otherwise leave blank
 task_id: ''
