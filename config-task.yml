@@ -38,7 +38,7 @@ space: 1
 
 requirementsTags:
   - type: TASK_VARIABLE
-    value: 'WEB3.STORAGE'
+    value: 'SPHERON_KEY'
     description: 'used to store the data'
   - type: CPU
     value: '4-core'
