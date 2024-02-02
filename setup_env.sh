@@ -1,1 +1,1 @@
-cp -n .env-local.example .env-local
+cp -n .env.local.example .env.local

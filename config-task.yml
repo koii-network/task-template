@@ -2,7 +2,7 @@
 task_name: 'task name'
 author: 'Koii'
 description: 'description'
-repositoryUrl: ''
+repositoryUrl: 'https://github.com/koii-network/task-template' #replace with your own repo url
 imageUrl: 'imageUrl'
 
 # network value can be DEVELOPMENT , ARWEAVE or IPFS, Recommended IPFS when deploying to testnet as the cli automatically takes care of uploading the executable with the help of web3.js key

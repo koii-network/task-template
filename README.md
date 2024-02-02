@@ -19,7 +19,7 @@ If this is your first time writing a Koii Task, you might want to use the [task 
 
 `index.js` is the hub of your app, and ties together the other pieces. This will be the entrypoint when your task runs on Task Nodes
 
-`NamespaceWrappers.js` contains the interfaces to make API calls to the core of the task-node. It contains all the necessary functions required to submit and audit the work, as well as the distribution lists
+`koiiNode.js` contains the interfaces to make API calls to the core of the task-node. It contains all the necessary functions required to submit and audit the work, as well as the distribution lists
 
 `coreLogic.js` is where you'll define your task, audit, and distribution logic, and controls the majority of task functionality. You can of course break out separate features into sub-files and import them into the core logic before web-packing.
 
@@ -27,8 +27,8 @@ If this is your first time writing a Koii Task, you might want to use the [task 
 ## WARNING: DO NOT PUT YOUR KEYS ON GITHUB!!!
 
 **To set up your environment variables:**
-Copy `.env-local.example` to a new file named `.env-local`.
-Fill in the necessary values in `.env-local`.
+Copy `.env.local.example` to a new file named `.env.local`.
+Fill in the necessary values in `.env.local`.
 
 **To do this automatically:**
 Run the setup_env.sh script
@@ -43,9 +43,9 @@ Run the setup_env.sh script
 
 There are two ways to run your task when doing development:
 
-1. With GLOBAL_TIMERS="true" (see .env-local)- When the timer is true, IPC calls are made by calculating the average time slots of all the task running your node.
+1. With GLOBAL_TIMERS="true" (see .env.local.example)- When the timer is true, IPC calls are made by calculating the average time slots of all the task running your node.
 
-2. With GLOBAL_TIMERS="false" - This allows you to do manual calls to K2 and disables the triggers for round managemnt on K2. Transactions are only accepted during the correct period. Guide for manual calls is in index.js
+2. With GLOBAL_TIMERS="false" - This allows you to do manual calls to K2 and disables the triggers for round management on K2. Transactions are only accepted during the correct period. Guide for manual calls is in index.js
 
 # Modifying CoreLogic.js
 
@@ -61,7 +61,7 @@ There are in total 9 functions in CoreLogic which the you can modify according t
 
 4. _generateDistributionList()_ - You have full freedom to prepare your reward distributions as you like and the logic for that goes here. We have provided a sample logic that rewards 1 KOII to all the needs who did the correct submission for that round. This function is called in submitDistributionList()
 
-5. _submitDistributionList()_ - makes call to the namesapce function of task-node to upload the list and on succesful upload does the transaction to update the state.
+5. _submitDistributionList()_ - makes call to the namespace function of task-node to upload the list and on successful upload does the transaction to update the state.
 
 6. _validateNode()_ - this function is called to verify the submission value, so based on the value received from the task-state we can vote on the submission.
 
@@ -75,11 +75,11 @@ There are in total 9 functions in CoreLogic which the you can modify according t
 
 ## Using unitTest.js
 
-In tests folder, `unitTest.js` file helps you to mock task state parameters that are required in core logic function and test it. Customise the parameters according to your needs and run `node tests/unitTest.js` to test the functions. For example, you can comment out the `coreLogic.task()` function and directly test your fetch submission function.
+In tests folder, `unitTest.js` file helps you to mock task state parameters that are required in core logic function and test it. Customize the parameters according to your needs and run `node tests/unitTest.js` to test the functions. For example, you can comment out the `coreLogic.task()` function and directly test your fetch submission function.
 
 ## Using Jest
 
-To setup test case for entire task execution / individual functions, you can refer the `main.test.js` You can run the tests using : `yarn test`. It will run the test cases and generate a coverage report in `coverage` folder. You might need to customise the `main.test.js` according to your needs. For example, if your main task need more time to execute, you can add the timeout amount:
+To setup test case for entire task execution / individual functions, you can refer the `main.test.js` You can run the tests using : `yarn test`. It will run the test cases and generate a coverage report in `coverage` folder. You might need to customize the `main.test.js` according to your needs. For example, if your main task need more time to execute, you can add the timeout amount:
 
 In line:11 to line:14
 
@@ -100,7 +100,7 @@ Testing using the docker container should be mostly used for consensus flows, as
 ## Build
 
 Before deploying a task, you'll need to build it into a single file executable by running
-`yarn webpack`
+`yarn run webpack`
 
 ### To get a Spheron key
 To get a Spheron Key, either set it up in your Koii Node App, see [tutorial](https://docs.koii.network/koii/faq#tutorial-step-by-step-guide-to-getting-a-spheron-storage-key), or if you prefer set it up from CLI using [Spheron API](https://docs.spheron.network/rest-api/#creating-an-access-token). If you already have the key setup in the Koii App you can find it in settings. 
@@ -119,7 +119,7 @@ If you need to create a Koii wallet you can follow the instructions [here](https
 
 To test the task with the [K2 Settlement Layer](https://docs.koii.network/develop/settlement-layer/k2-tick-tock-fast-blocks#docusaurus_skipToContent_fallback) you'll need to deploy it.
 
-To publish tasks to the K2 network use `npx @_koii/create-task-cli@latest` if you already installed the package earlier or else use `npm i @_koii/create-task-cli` to get it first . You have two options to create your task using `config-task.yml` and using the `cli`. Check out the sample `config-task.yml` attached in this repo, by default it will look for both `config-task.yml` and `id.json` in your current directory and if not deteched you will have an option to enter your path. Tips on this flow and detailed meaning of each task parameter can be found [in the docs](https://docs.koii.network/develop/koii-software-toolkit-sdk/create-task-cli). One important thing to note is when you're presented with the choice of ARWEAVE, IPFS, or DEVELOPMENT you can select DEVELOPMENT and enter `main` in the following prompt. This will tell the task node to look for a `main.js` file in the `dist` folder. You can create this locally by running `yarn webpack`.
+To publish tasks to the K2 network use `npx @_koii/create-task-cli@latest` if you already installed the package earlier or else use `npm i @_koii/create-task-cli` to get it first . You have two options to create your task using `config-task.yml` and using the `cli`. Check out the sample `config-task.yml` attached in this repo, by default it will look for both `config-task.yml` and `id.json` in your current directory and if not detected you will have an option to enter your path. Tips on this flow and detailed meaning of each task parameter can be found [in the docs](https://docs.koii.network/develop/koii-software-toolkit-sdk/create-task-cli). One important thing to note is when you're presented with the choice of ARWEAVE, IPFS, or DEVELOPMENT you can select DEVELOPMENT and enter `main` in the following prompt. This will tell the task node to look for a `main.js` file in the `dist` folder. You can create this locally by running `yarn webpack`.
 
 ## Run a node locally
 
@@ -131,7 +131,7 @@ If you want to get a closer look at the console and test environment variables, 
 
 ### Redeploying
 
-You do not need to publish your task every time you make modifications. You do however need to restart the `task_node` in order for the latest code to be used. To prepare your code you can run `yarn webpack` to create the bundle. If you have a `task_node` ruinning already, you can exit it and then run `docker compose up` to restart (or start) the node.
+You do not need to publish your task every time you make modifications. You do however need to restart the `task_node` in order for the latest code to be used. To prepare your code you can run `yarn webpack` to create the bundle. If you have a `task_node` running already, you can exit it and then run `docker compose up` to restart (or start) the node.
 
 ### Environment variables
 
