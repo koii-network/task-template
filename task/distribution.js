@@ -110,9 +110,10 @@ class Distribution {
       // now distribute the rewards based on the valid submissions
       // Here it is assumed that all the nodes doing valid submission gets the same reward
 
-      const reward =
+      const reward = Math.floor(
         taskAccountDataJSON.bounty_amount_per_round /
-        distributionCandidates.length;
+          distributionCandidates.length,
+      );
       console.log('REWARD RECEIVED BY EACH NODE', reward);
       for (let i = 0; i < distributionCandidates.length; i++) {
         distributionList[distributionCandidates[i]] = reward;
