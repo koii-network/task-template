@@ -51,7 +51,7 @@ async function setup() {
     } else if (m.functionCall == 'nodeSelectionDistributionList') {
       console.log('nodeSelectionDistributionList called');
       const selectedNode = coreLogic.nodeSelectionDistributionList(m.roundNumber, m.isPreviousRoundFailed);
-      process.send({ selectedNode: selectedNode });
+      process.send({ selectedNode: selectedNode , roundNumber: m.roundNumber});
     }
   });
   /*######################################################
