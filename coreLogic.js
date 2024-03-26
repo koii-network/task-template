@@ -22,6 +22,10 @@ class CoreLogic {
   async auditDistribution(round) {
     await task.distribution.auditDistribution(round);
   }
+
+  async nodeSelectionDistributionList(round, isPreviousRoundFailed) {
+    return await task.distribution.nodeSelectionDistributionList(round, isPreviousRoundFailed);
+  }
 }
 const coreLogic = new CoreLogic();
 
