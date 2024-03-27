@@ -7,21 +7,19 @@ const {
 
 if (app) {
   //  Write your Express Endpoints here.
-  //  For Example
-  //  app.post('/accept-cid', async (req, res) => {})
-
+  //  Ex. app.post('/accept-cid', async (req, res) => {})
+  
   // Sample API that return your task state
-
   app.get('/taskState', async (req, res) => {
     const state = await namespaceWrapper.getTaskState();
     console.log('TASK STATE', state);
-
     res.status(200).json({ taskState: state });
   });
+
+  // Sample API that return the value stored in NeDB
   app.get('/value', async (req, res) => {
     const value = await namespaceWrapper.storeGet('value');
     console.log('value', value);
-
     res.status(200).json({ value: value });
   });
 }
@@ -56,54 +54,46 @@ async function setup() {
 
   /* GUIDE TO CALLS K2 FUNCTIONS MANUALLY
 
-  If you wish to do the development by avoiding the timers then you can do the intended calls to K2 
-  directly using these function calls. 
+      If you wish to do the development by avoiding the timers then you can do the intended calls to K2 
+      directly using these function calls. 
 
-  To disable timers please set the TIMERS flag in task-node ENV to disable
+      To disable timers please set the TIMERS flag in task-node ENV to disable
 
-  NOTE : K2 will still have the windows to accept the submission value, audit, so you are expected
-  to make calls in the intended slots of your round time. 
+      NOTE : K2 will still have the windows to accept the submission value, audit, so you are expected
+      to make calls in the intended slots of your round time. 
 
   */
 
   // Get the task state
-  //console.log(await namespaceWrapper.getTaskState());
+  // console.log(await namespaceWrapper.getTaskState());
 
-  //GET ROUND
-
+  // Get round
   // const round = await namespaceWrapper.getRound();
   // console.log("ROUND", round);
 
   // Call to do the work for the task
-
-  //await coreLogic.task();
+  // await coreLogic.task();
 
   // Submission to K2 (Preferablly you should submit the cid received from IPFS)
-
-  //await coreLogic.submitTask(round - 1);
+  // await coreLogic.submitTask(round - 1);
 
   // Audit submissions
+  // await coreLogic.auditTask(round - 1);
 
-  //await coreLogic.auditTask(round - 1);
-
-  // upload distribution list to K2
-
-  //await coreLogic.submitDistributionList(round - 2)
+  // Upload distribution list to K2
+  // await coreLogic.submitDistributionList(round - 2)
 
   // Audit distribution list
-
-  //await coreLogic.auditDistribution(round - 2);
+  // await coreLogic.auditDistribution(round - 2);
 
   // Payout trigger
-
   // const responsePayout = await namespaceWrapper.payoutTrigger();
   // console.log("RESPONSE TRIGGER", responsePayout);
 
-  // logs to be displayed on desktop-node
-
-  //namespaceWrapper.logger('error', 'Internet connection lost');
+  // Logs to be displayed on desktop-node
+  // namespaceWrapper.logger('error', 'Internet connection lost');
   // await namespaceWrapper.logger('warn', 'Stakes are running low');
-  //await namespaceWrapper.logger('log', 'Task is running');
+  // await namespaceWrapper.logger('log', 'Task is running');
 }
 
 if (taskNodeAdministered) {

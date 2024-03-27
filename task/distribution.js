@@ -1,47 +1,48 @@
 const { namespaceWrapper } = require('../_koiiNode/koiiNode');
 
 class Distribution {
+  /**
+   * Generates and submits the distribution list for a given round
+   * @param {number} round - The current round number
+   * @returns {void}
+   *  
+  */
   async submitDistributionList(round) {
-    // This function just upload your generated dustribution List and do the transaction for that
-
-    console.log('SubmitDistributionList called');
-
+    console.log('SUBMIT DISTRIBUTION LIST CALLED WITH ROUND', round);
     try {
       const distributionList = await this.generateDistributionList(round);
-
       const decider = await namespaceWrapper.uploadDistributionList(
         distributionList,
         round,
       );
       console.log('DECIDER', decider);
-
       if (decider) {
-        const response =
-          await namespaceWrapper.distributionListSubmissionOnChain(round);
+        const response = await namespaceWrapper.distributionListSubmissionOnChain(round);
         console.log('RESPONSE FROM DISTRIBUTION LIST', response);
       }
     } catch (err) {
       console.log('ERROR IN SUBMIT DISTRIBUTION', err);
     }
   }
-
+  /**
+    * Audits the distribution list for a given round
+    * @param {number} roundNumber - The current round number
+    * @returns {void}
+    *  
+  */
   async auditDistribution(roundNumber) {
-    console.log('auditDistribution called with round', roundNumber);
-    await namespaceWrapper.validateAndVoteOnDistributionList(
-      this.validateDistribution,
-      roundNumber,
-    );
+    console.log('AUDIT DISTRIBUTION CALLED WITHIN ROUND: ', roundNumber);
+    await namespaceWrapper.validateAndVoteOnDistributionList(this.validateDistribution, roundNumber);
   }
-
+  /** 
+   * Generates the distribution list for a given round in your logic
+   * @param {number} round - The current round number
+   * @returns {Promise<object>} The distribution list for the given round
+   */
   async generateDistributionList(round, _dummyTaskState) {
     try {
-      console.log('GenerateDistributionList called');
-      console.log('I am selected node');
-
-      // Write the logic to generate the distribution list here by introducing the rules of your choice
-
-      /*  **** SAMPLE LOGIC FOR GENERATING DISTRIBUTION LIST ******/
-
+      console.log('GENERATE DISTRIBUTION LIST CALLED WITH ROUND', round);
+      /****** SAMPLE LOGIC FOR GENERATING DISTRIBUTION LIST ******/
       let distributionList = {};
       let distributionCandidates = [];
       let taskAccountDataJSON = await namespaceWrapper.getTaskState();
@@ -50,35 +51,31 @@ class Distribution {
       const submissions_audit_trigger =
         taskAccountDataJSON.submissions_audit_trigger[round];
       if (submissions == null) {
-        console.log(`No submisssions found in round ${round}`);
+        console.log(`NO SUBMISSIONS FOUND IN ROUND ${round}`);
         return distributionList;
       } else {
         const keys = Object.keys(submissions);
         const values = Object.values(submissions);
         const size = values.length;
-        console.log('Submissions from last round: ', keys, values, size);
-
-        // Logic for slashing the stake of the candidate who has been audited and found to be false
+        console.log('SUBMISSIONS FROM LAST ROUND: ', keys, values, size);
+        // Slashing the stake of the candidate who has been audited and found to be false
         for (let i = 0; i < size; i++) {
           const candidatePublicKey = keys[i];
           if (
             submissions_audit_trigger &&
             submissions_audit_trigger[candidatePublicKey]
           ) {
-            console.log(
-              'distributions_audit_trigger votes ',
-              submissions_audit_trigger[candidatePublicKey].votes,
-            );
+            console.log('DISTRIBUTION AUDIT TRIGGER VOTES', submissions_audit_trigger[candidatePublicKey].votes);
             const votes = submissions_audit_trigger[candidatePublicKey].votes;
             if (votes.length === 0) {
-              // slash 70% of the stake as still the audit is triggered but no votes are casted
+              // Slash 70% of the stake as still the audit is triggered but no votes are casted
               // Note that the votes are on the basis of the submission value
-              // to do so we need to fetch the stakes of the candidate from the task state
+              // To do so we need to fetch the stakes of the candidate from the task state
               const stake_list = taskAccountDataJSON.stake_list;
               const candidateStake = stake_list[candidatePublicKey];
               const slashedStake = candidateStake * 0.7;
               distributionList[candidatePublicKey] = -slashedStake;
-              console.log('Candidate Stake', candidateStake);
+              console.log('CANDIDATE STAKE', candidateStake);
             } else {
               let numOfVotes = 0;
               for (let index = 0; index < votes.length; index++) {
@@ -94,7 +91,7 @@ class Distribution {
                 const candidateStake = stake_list[candidatePublicKey];
                 const slashedStake = candidateStake * 0.7;
                 distributionList[candidatePublicKey] = -slashedStake;
-                console.log('Candidate Stake', candidateStake);
+                console.log('CANDIDATE STAKE', candidateStake);
               }
 
               if (numOfVotes > 0) {
@@ -107,35 +104,39 @@ class Distribution {
         }
       }
 
-      // now distribute the rewards based on the valid submissions
+      // Distribute the rewards based on the valid submissions
       // Here it is assumed that all the nodes doing valid submission gets the same reward
-
       const reward = Math.floor(
         taskAccountDataJSON.bounty_amount_per_round /
-          distributionCandidates.length,
+        distributionCandidates.length,
       );
       console.log('REWARD RECEIVED BY EACH NODE', reward);
       for (let i = 0; i < distributionCandidates.length; i++) {
         distributionList[distributionCandidates[i]] = reward;
       }
-      console.log('Distribution List', distributionList);
+      console.log('DISTRIBUTION LIST', distributionList);
       return distributionList;
     } catch (err) {
       console.log('ERROR IN GENERATING DISTRIBUTION LIST', err);
     }
   }
-
+  /**
+   * Validates the distribution list for a given round in your logic
+   * The logic can be same as generation of distribution list function and based on the comparision will final object , decision can be made
+   * @param {string} distributionListSubmitter - The public key of the distribution list submitter
+   * @param {number} round - The current round number
+   * @param {object} _dummyDistributionList 
+   * @param {object} _dummyTaskState
+   * @returns {Promise<boolean>} The validation result, return true if the distribution list is correct, false otherwise
+   */
   validateDistribution = async (
     distributionListSubmitter,
     round,
     _dummyDistributionList,
     _dummyTaskState,
   ) => {
-    // Write your logic for the validation of submission value here and return a boolean value in response
-    // this logic can be same as generation of distribution list function and based on the comparision will final object , decision can be made
-
     try {
-      console.log('Distribution list Submitter', distributionListSubmitter);
+      console.log('DISTRIBUTION LIST SUBMITTER', distributionListSubmitter);
       const rawDistributionList = await namespaceWrapper.getDistributionList(
         distributionListSubmitter,
         round,
@@ -151,15 +152,9 @@ class Distribution {
         round,
         _dummyTaskState,
       );
-
-      // compare distribution list
-
+      // Compare distribution list
       const parsed = fetchedDistributionList;
-      console.log(
-        'compare distribution list',
-        parsed,
-        generateDistributionList,
-      );
+      console.log('COMPARE DISTRIBUTION LIST', parsed, generateDistributionList);
       const result = await this.shallowEqual(parsed, generateDistributionList);
       console.log('RESULT', result);
       return result;
@@ -168,7 +163,12 @@ class Distribution {
       return false;
     }
   };
-
+  /**
+   * Compares two objects for equality
+   * @param {object} parsed - The first object
+   * @param {object} generateDistributionList - The second object
+   * @returns {boolean} The result of the comparison
+   */
   async shallowEqual(parsed, generateDistributionList) {
     if (typeof parsed === 'string') {
       parsed = JSON.parse(parsed);

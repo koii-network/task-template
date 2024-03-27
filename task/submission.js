@@ -1,57 +1,61 @@
 const { namespaceWrapper } = require('../_koiiNode/koiiNode');
 class Submission {
+  /**
+   * Executes your task, optionally storing the result.
+   *
+   * @param {number} round - The current round number
+   * @returns {void}
+   */
   async task(round) {
-    // Write the logic to do the work required for submitting the values and optionally store the result in levelDB
-
-    // Below is just a sample of work that a task can do
-
     try {
-      const value = 'Hello, World!';
       console.log('ROUND', round);
-
+      const value = 'Hello, World!';
+      // Store the result in NeDB (optional)
       if (value) {
-        // store value on NeDB
         await namespaceWrapper.storeSet('value', value);
       }
-      return value;
+      // Optional, return your task
+      return value; 
     } catch (err) {
       console.log('ERROR IN EXECUTING TASK', err);
       return 'ERROR IN EXECUTING TASK' + err;
     }
   }
-
-  async submitTask(roundNumber) {
-    console.log('submitTask called with round', roundNumber);
+    
+  /**
+   * Submits a task for a given round
+   *
+   * @param {number} round - The current round number
+   * @returns {Promise<any>} The submission value that you will use in audit. Ex. cid of the IPFS file
+   */
+  async submitTask(round) {
+    console.log('SUBMIT TASK CALLED ROUND NUMBER', round);
     try {
-      console.log('inside try');
-      console.log(
-        await namespaceWrapper.getSlot(),
-        'current slot while calling submit',
-      );
-      const submission = await this.fetchSubmission(roundNumber);
+      console.log('SUBMIT TASK SLOT',await namespaceWrapper.getSlot());
+      const submission = await this.fetchSubmission(round);
       console.log('SUBMISSION', submission);
       await namespaceWrapper.checkSubmissionAndUpdateRound(
         submission,
-        roundNumber,
+        round,
       );
-      console.log('after the submission call');
+      console.log('SUBMISSION CHECKED AND ROUND UPDATED');
       return submission;
     } catch (error) {
-      console.log('error in submission', error);
+      console.log('ERROR IN SUBMISSION', error);
     }
   }
-
+  /**
+   * Fetches the submission value 
+   *
+   * @param {number} round - The current round number
+   * @returns {Promise<string>} The submission value that you will use in audit. It can be the real value, cid, etc. 
+   *                            
+   */
   async fetchSubmission(round) {
-    // Write the logic to fetch the submission values here and return the cid string
-
-    // fetching round number to store work accordingly
-
-    console.log('IN FETCH SUBMISSION');
-
-    // The code below shows how you can fetch your stored value from level DB
-
+    console.log('FETCH SUBMISSION');
+    // Fetch the value from NeDB
     const value = await namespaceWrapper.storeGet('value'); // retrieves the value
-    console.log('VALUE', value);
+    // Return cid/value, etc.
     return value;
   }
 }
