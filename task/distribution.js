@@ -2,7 +2,7 @@ const { namespaceWrapper } = require('../_koiiNode/koiiNode');
 const { createHash } = require('crypto');
 
 class Distribution {
-  async submitDistributionList(round) {
+  submitDistributionList = async round => {
     // This function just upload your generated distribution List and do the transaction for that
 
     console.log('SubmitDistributionList called');
@@ -24,7 +24,7 @@ class Distribution {
     } catch (err) {
       console.log('ERROR IN SUBMIT DISTRIBUTION', err);
     }
-  }
+  };
 
   async auditDistribution(roundNumber) {
     console.log('auditDistribution called with round', roundNumber);
@@ -169,137 +169,6 @@ class Distribution {
       return false;
     }
   };
-
-  async nodeSelectionDistributionList(round, isPreviousFailed = false) {
-    const taskAccountDataJSON = await namespaceWrapper.getTaskState();
-    console.log('EXPECTED ROUND', round);
-
-    const submissions = taskAccountDataJSON.submissions[round];
-    if (submissions == null) {
-      console.log('No submisssions found in N-1 round');
-      return 'No submisssions found in N-1 round';
-    } else {
-      const values = Object.values(submissions);
-      console.log('VALUES', values);
-      const keys = Object.keys(submissions);
-      console.log('KEYS', keys);
-      let size = values.length;
-      console.log('Submissions from N-2  round: ', keys, values, size);
-
-      // Check the keys i.e if the submitter shall be excluded or not
-
-      const audit_record = taskAccountDataJSON.distributions_audit_record;
-      console.log('AUDIT RECORD');
-      console.log('ROUND DATA', audit_record[round]);
-
-      if (audit_record[round] == 'PayoutFailed') {
-        console.log(
-          'SUBMITTER LIST',
-          taskAccountDataJSON.distribution_rewards_submission[round],
-        );
-        const submitterList =
-          taskAccountDataJSON.distribution_rewards_submission[round];
-        const submitterSize = Object.keys(submitterList).length;
-        console.log('SUBMITTER SIZE', submitterSize);
-        const submitterKeys = Object.keys(submitterList);
-        console.log('SUBMITTER KEYS', submitterKeys);
-
-        for (let j = 0; j < submitterSize; j++) {
-          console.log('SUBMITTER KEY CANDIDATE', submitterKeys[j]);
-          const id = keys.indexOf(submitterKeys[j]);
-          console.log('ID', id);
-          keys.splice(id, 1);
-          values.splice(id, 1);
-          size--;
-        }
-
-        console.log('KEYS', keys);
-      }
-
-      // calculating the digest
-
-      const ValuesString = JSON.stringify(values);
-
-      const hashDigest = createHash('sha256')
-        .update(ValuesString)
-        .digest('hex');
-
-      console.log('HASH DIGEST', hashDigest);
-
-      // function to calculate the score
-      const calculateScore = (str = '') => {
-        return str.split('').reduce((acc, val) => {
-          return acc + val.charCodeAt(0);
-        }, 0);
-      };
-
-      // function to compare the ASCII values
-
-      const compareASCII = (str1, str2) => {
-        const firstScore = calculateScore(str1);
-        const secondScore = calculateScore(str2);
-        return Math.abs(firstScore - secondScore);
-      };
-
-      // loop through the keys and select the one with higest score
-
-      const selectedNode = {
-        score: 0,
-        pubkey: '',
-      };
-      let score = 0;
-      if (isPreviousFailed) {
-        let leastScore = -Infinity;
-        let secondLeastScore = -Infinity;
-        for (let i = 0; i < size; i++) {
-          const candidateSubmissionJson = {};
-          candidateSubmissionJson[keys[i]] = values[i];
-          const candidateSubmissionString = JSON.stringify(
-            candidateSubmissionJson,
-          );
-          const candidateSubmissionHash = createHash('sha256')
-            .update(candidateSubmissionString)
-            .digest('hex');
-          const candidateScore = compareASCII(
-            hashDigest,
-            candidateSubmissionHash,
-          );
-          if (candidateScore > leastScore) {
-            secondLeastScore = leastScore;
-            leastScore = candidateScore;
-          } else if (candidateScore > secondLeastScore) {
-            secondLeastScore = candidateScore;
-            selectedNode.score = candidateScore;
-            selectedNode.pubkey = keys[i];
-          }
-        }
-      } else {
-        for (let i = 0; i < size; i++) {
-          const candidateSubmissionJson = {};
-          candidateSubmissionJson[keys[i]] = values[i];
-          const candidateSubmissionString = JSON.stringify(
-            candidateSubmissionJson,
-          );
-          const candidateSubmissionHash = createHash('sha256')
-            .update(candidateSubmissionString)
-            .digest('hex');
-          const candidateScore = compareASCII(
-            hashDigest,
-            candidateSubmissionHash,
-          );
-          console.log('CANDIDATE SCORE', candidateScore);
-          if (candidateScore > score) {
-            score = candidateScore;
-            selectedNode.score = candidateScore;
-            selectedNode.pubkey = keys[i];
-          }
-        }
-      }
-
-      console.log('SELECTED NODE OBJECT', selectedNode);
-      return selectedNode.pubkey;
-    }
-  }
 
   async shallowEqual(parsed, generateDistributionList) {
     if (typeof parsed === 'string') {

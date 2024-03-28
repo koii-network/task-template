@@ -1,4 +1,5 @@
 const { default: axios } = require('axios');
+const {createHash} = require('crypto');
 
 const { Connection, PublicKey, Keypair } = require('@_koi/web3.js');
 
@@ -95,6 +96,7 @@ const _server = app.listen(EXPRESS_PORT, () => {
 
 const taskNodeAdministered = !!TASK_ID;
 const BASE_ROOT_URL = `http://localhost:${TASK_NODE_PORT}/namespace-wrapper`;
+let connection;
 
 class NamespaceWrapper {
   #db;
@@ -502,9 +504,9 @@ class NamespaceWrapper {
     }
   }
 
-  async payoutTrigger() {
+  async payoutTrigger(round) {
     if (taskNodeAdministered) {
-      return await genericHandler('payloadTrigger');
+      return await genericHandler('payloadTrigger', round);
     } else {
       console.log(
         'Payout Trigger only handles possitive flows (Without audits)',
@@ -838,6 +840,190 @@ class NamespaceWrapper {
       return './';
     }
   }
+
+  async getAverageSlotTime() {
+    if (taskNodeAdministered) {
+      try {
+        const current_rpc = await namespaceWrapper.getRpcUrl();
+         const current_connection = new Connection(current_rpc);
+        const slotSamples = await current_connection.getRecentPerformanceSamples(60);
+        let samplesLength = slotSamples.length;
+
+        const averageSlotTime =
+          slotSamples.reduce((avgSlotTime, slotSample) => {
+            return (
+              avgSlotTime +
+              1000 * (slotSample.samplePeriodSecs / slotSample.numSlots)
+            );
+          }, 0) / samplesLength;
+        return averageSlotTime;
+      } catch (error) {
+        console.error('Error getting average slot time', error);
+        return null;
+      }
+    } else {
+      return 400;
+    }
+  }
+
+  async nodeSelectionDistributionList(round, isPreviousFailed) {
+    const taskAccountDataJSON = await namespaceWrapper.getTaskState();
+    console.log('EXPECTED ROUND', round);
+
+    const submissions = taskAccountDataJSON.submissions[round];
+    if (submissions == null) {
+      console.log('No submisssions found in N-1 round');
+      return 'No submisssions found in N-1 round';
+    } else {
+      const values = Object.values(submissions);
+      console.log('VALUES', values);
+      const keys = Object.keys(submissions);
+      console.log('KEYS', keys);
+      let size = values.length;
+      console.log('Submissions from N-2  round: ', keys, values, size);
+
+      // Check the keys i.e if the submitter shall be excluded or not
+
+      const audit_record = taskAccountDataJSON.distributions_audit_record;
+      console.log('AUDIT RECORD');
+      console.log('ROUND DATA', audit_record[round]);
+
+      if (audit_record[round] == 'PayoutFailed') {
+        console.log(
+          'SUBMITTER LIST',
+          taskAccountDataJSON.distribution_rewards_submission[round],
+        );
+        const submitterList =
+          taskAccountDataJSON.distribution_rewards_submission[round];
+        const submitterSize = Object.keys(submitterList).length;
+        console.log('SUBMITTER SIZE', submitterSize);
+        const submitterKeys = Object.keys(submitterList);
+        console.log('SUBMITTER KEYS', submitterKeys);
+
+        for (let j = 0; j < submitterSize; j++) {
+          console.log('SUBMITTER KEY CANDIDATE', submitterKeys[j]);
+          const id = keys.indexOf(submitterKeys[j]);
+          console.log('ID', id);
+          keys.splice(id, 1);
+          values.splice(id, 1);
+          size--;
+        }
+
+        console.log('KEYS', keys);
+      }
+
+      // calculating the digest
+
+      const ValuesString = JSON.stringify(values);
+
+      const hashDigest = createHash('sha256')
+        .update(ValuesString)
+        .digest('hex');
+
+      console.log('HASH DIGEST', hashDigest);
+
+      // function to calculate the score
+      const calculateScore = (str = '') => {
+        return str.split('').reduce((acc, val) => {
+          return acc + val.charCodeAt(0);
+        }, 0);
+      };
+
+      // function to compare the ASCII values
+
+      const compareASCII = (str1, str2) => {
+        const firstScore = calculateScore(str1);
+        const secondScore = calculateScore(str2);
+        return Math.abs(firstScore - secondScore);
+      };
+
+      // loop through the keys and select the one with higest score
+
+      const selectedNode = {
+        score: 0,
+        pubkey: '',
+      };
+      let score = 0;
+      if (isPreviousFailed) {
+        let leastScore = -Infinity;
+        let secondLeastScore = -Infinity;
+        for (let i = 0; i < size; i++) {
+          const candidateSubmissionJson = {};
+          candidateSubmissionJson[keys[i]] = values[i];
+          const candidateSubmissionString = JSON.stringify(
+            candidateSubmissionJson,
+          );
+          const candidateSubmissionHash = createHash('sha256')
+            .update(candidateSubmissionString)
+            .digest('hex');
+          const candidateScore = compareASCII(
+            hashDigest,
+            candidateSubmissionHash,
+          );
+          if (candidateScore > leastScore) {
+            secondLeastScore = leastScore;
+            leastScore = candidateScore;
+          } else if (candidateScore > secondLeastScore) {
+            secondLeastScore = candidateScore;
+            selectedNode.score = candidateScore;
+            selectedNode.pubkey = keys[i];
+          }
+        }
+      } else {
+        for (let i = 0; i < size; i++) {
+          const candidateSubmissionJson = {};
+          candidateSubmissionJson[keys[i]] = values[i];
+          const candidateSubmissionString = JSON.stringify(
+            candidateSubmissionJson,
+          );
+          const candidateSubmissionHash = createHash('sha256')
+            .update(candidateSubmissionString)
+            .digest('hex');
+          const candidateScore = compareASCII(
+            hashDigest,
+            candidateSubmissionHash,
+          );
+          console.log('CANDIDATE SCORE', candidateScore);
+          if (candidateScore > score) {
+            score = candidateScore;
+            selectedNode.score = candidateScore;
+            selectedNode.pubkey = keys[i];
+          }
+        }
+      }
+
+      console.log('SELECTED NODE OBJECT', selectedNode);
+      return selectedNode.pubkey;
+    }
+  }
+
+  async selectAndGenerateDistributionList(submitDistributionList, round, isPreviousRoundFailed) {
+    console.log('SelectAndGenerateDistributionList called');
+    const selectedNode = await this.nodeSelectionDistributionList(
+      round,
+      isPreviousRoundFailed,
+    );
+    console.log('Selected Node', selectedNode);
+    const submitPubKey = await this.getSubmitterAccount();
+    if (selectedNode == undefined || submitPubKey == undefined) return;
+    if (selectedNode == submitPubKey?.publicKey.toBase58()) {
+      await submitDistributionList(round);
+      const taskState = await this.getTaskState();
+      if (taskState == null) {
+        console.error('Task state not found');
+        return;
+      }
+      const avgSlotTime = await this.getAverageSlotTime();
+      if (avgSlotTime == null) {
+        console.error('Avg slot time not found');
+        return;
+      }
+      setTimeout(async () => {
+        await this.payoutTrigger(round);
+      }, (taskState.audit_window + taskState.submission_window) * avgSlotTime);
+    }
+  }
+
   getMainAccountPubkey() {
     if (taskNodeAdministered) {
       return MAIN_ACCOUNT_PUBKEY;
@@ -865,7 +1051,7 @@ async function genericHandler(...args) {
     return { error: err };
   }
 }
-let connection;
+
 const namespaceWrapper = new NamespaceWrapper();
 if (taskNodeAdministered) {
   namespaceWrapper.getRpcUrl().then(rpcUrl => {

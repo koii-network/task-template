@@ -44,14 +44,10 @@ async function setup() {
       coreLogic.task(m.roundNumber);
     } else if (m.functionCall == 'generateAndSubmitDistributionList') {
       console.log('generateAndSubmitDistributionList called');
-      coreLogic.submitDistributionList(m.roundNumber);
+      coreLogic.selectAndGenerateDistributionList(m.roundNumber, m.isPreviousRoundFailed);
     } else if (m.functionCall == 'distributionListAudit') {
       console.log('distributionListAudit called');
       coreLogic.auditDistribution(m.roundNumber);
-    } else if (m.functionCall == 'nodeSelectionDistributionList') {
-      console.log('nodeSelectionDistributionList called');
-      const selectedNode = coreLogic.nodeSelectionDistributionList(m.roundNumber, m.isPreviousRoundFailed);
-      process.send({ selectedNode: selectedNode , roundNumber: m.roundNumber});
     }
   });
   /*######################################################
@@ -92,7 +88,7 @@ async function setup() {
 
   // upload distribution list to K2
 
-  //await coreLogic.submitDistributionList(round - 2)
+  // await coreLogic.selectAndGenerateDistributionList(10);
 
   // Audit distribution list
 
