@@ -7,7 +7,7 @@ class Distribution {
    * @returns {void}
    *  
   */
-  async submitDistributionList(round) {
+  submitDistributionList = async round => {
     console.log('SUBMIT DISTRIBUTION LIST CALLED WITH ROUND', round);
     try {
       const distributionList = await this.generateDistributionList(round);
