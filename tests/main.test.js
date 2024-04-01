@@ -68,7 +68,9 @@ describe('Performing the task', () => {
   });
   it('should make the distribution submission to k2 for dummy round 1', async () => {
     const round = 1;
-    await coreLogic.submitDistributionList(round);
+    //await coreLogic.submitDistributionList(round);
+    const task = require('../task');
+    await task.distribution.submitDistributionList(round);
     const taskState = await namespaceWrapper.getTaskState();
     const schema = Joi.object()
       .pattern(
