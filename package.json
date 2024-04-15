@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --detectOpenHandles",
     "start": "node index.js",
-    "prod-debug": "nodemon prod-debug.js",
+    "prod-debug": "nodemon --ignore 'dist/*' prod-debug.js",
     "webpack": "webpack",
     "webpack:prod": "webpack --mode production"
   },
@@ -18,6 +18,7 @@
     "body-parser": "^1.20.2",
     "cross-spawn": "^7.0.3",
     "dotenv": "^16.3.0",
+    "dotenv-webpack": "^8.1.0",
     "express": "^4.18.1",
     "nedb-promises": "^6.2.1",
     "node-cron": "^3.0.2",
