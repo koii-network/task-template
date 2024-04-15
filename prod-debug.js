@@ -35,11 +35,6 @@ const startWatching = async () => {
   console.log('Watching for file changes...');
   // watch and trigger builds
   await build();
-  fs.watch('.', { recursive: true }, async (eventType, filename) => {
-    if (filename && (filename.endsWith('.js') || filename.endsWith('.css'))) {
-      await build();
-    }
-  });
 };
 
 /* build and webpack the task */
