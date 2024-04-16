@@ -8,7 +8,7 @@ data/*
 executables/*
 namespace/*
 config/*
-.env.localv
+.env.local
 .env
 taskStateInfoKeypair.json
 localKOIIDB.db
