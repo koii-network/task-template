@@ -10,6 +10,7 @@ class Submission {
     try {
       console.log('ROUND', round);
       const value = 'Hello, World!';
+      console.log("TEST", value);
       // Store the result in NeDB (optional)
       if (value) {
         await namespaceWrapper.storeSet('value', value);

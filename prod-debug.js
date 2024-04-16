@@ -49,6 +49,7 @@ const build = async () => {
       console.log('Build successful');
       copyWebpackedFile();
     }
+
     return;
   });
 };
