@@ -54,6 +54,7 @@ const copyWebpackedFile = async () => {
   const desktopNodeExecutablePath = nodeDIR + '/' + debugConfig.destinationPath;
   const desktopNodeLogPath = nodeDIR + '/' + debugConfig.logPath;
   const keywords = debugConfig.keywords;
+  const taskID = debugConfig.taskID;
 
   if (!sourcePath || !desktopNodeExecutablePath) {
     console.error('Source path or destination path not specified in .env');
@@ -69,15 +70,32 @@ const copyWebpackedFile = async () => {
       console.error('Error copying file:', err);
     } else {
       console.log('File copied successfully');
-      tailLogs(desktopNodeLogPath, keywords);
+      tailLogs(desktopNodeLogPath, keywords, taskID);
     }
   });
 };
 
 /* tail logs */
-const tailLogs = async (desktopNodeLogPath, keywords) => {
+const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
   console.log('Watchings logs for messages containing ', keywords);
+  
+  // Ensure the log file exists, or create it if it doesn't
+  try {
+    await fs.promises.access(desktopNodeLogPath, fs.constants.F_OK);
+  } catch (err) {
+    console.log(`Log file not found, creating ${desktopNodeLogPath}`);
+    await fs.promises.writeFile(desktopNodeLogPath, '', { flag: 'a' }); // 'a' flag ensures the file is created if it doesn't exist and not overwritten if it exists
+  }
+
   let tail = new Tail(desktopNodeLogPath, '\n', {}, true);
+
+  console.warn(
+    'Now watching logs for messages containing ',
+    keywords,
+    'Please start the Task',
+    taskID,
+    ' and keep it running on the Desktop Node.',
+  );
 
   tail.on('line', function (data) {
     console.log(data);

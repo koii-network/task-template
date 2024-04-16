@@ -28,6 +28,7 @@ class Debugger {
       keywords: Debugger.keywords,
       logPath: logPath,
       nodeDir: Debugger.nodeDir,
+      taskID: Debugger.taskID,
     };
   }
 
