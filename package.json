@@ -8,6 +8,7 @@
     "start": "node index.js",
     "prod-debug": "nodemon --ignore 'dist/*' prod-debug.js",
     "webpack": "webpack",
+    "webpack:test": "webpack --config test.webpack.config.js",
     "webpack:prod": "webpack --mode production"
   },
   "author": "",
