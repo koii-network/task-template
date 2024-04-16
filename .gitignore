@@ -9,5 +9,6 @@ executables/*
 namespace/*
 config/*
 .env.local
+.env
 taskStateInfoKeypair.json
 localKOIIDB.db
