@@ -62,9 +62,11 @@ async function test_coreLogic() {
   };
   if (audit == true) {
     console.log('Submission is valid, generating distribution list');
-    await coreLogic.submitDistributionList(round);
-
+    const task = require('../task');
+    //await coreLogic.submitDistributionList(round);
+    await task.distribution.submitDistributionList(round);
     await task.distribution.auditDistribution(round);
+    console.log("End Testing");
   } else {
     console.log('Submission is invalid, not generating distribution list');
   }
