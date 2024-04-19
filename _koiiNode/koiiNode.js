@@ -496,14 +496,6 @@ class NamespaceWrapper {
     }
   }
 
-  async nodeSelectionDistributionList() {
-    if (taskNodeAdministered) {
-      return await genericHandler('nodeSelectionDistributionList');
-    } else {
-      return this.#testingStakingSystemAccount.publicKey.toBase58();
-    }
-  }
-
   async payoutTrigger(round) {
     if (taskNodeAdministered) {
       return await genericHandler('payloadTrigger', round);
@@ -624,12 +616,6 @@ class NamespaceWrapper {
     } else {
       console.log('Cannot call getNodes in testing mode');
     }
-  }
-
-  // Wrapper for selection of node to prepare a distribution list
-
-  async nodeSelectionDistributionList(round) {
-    return await genericHandler('nodeSelectionDistributionList', round);
   }
 
   async getDistributionList(publicKey, round) {
@@ -867,6 +853,7 @@ class NamespaceWrapper {
   }
 
   async nodeSelectionDistributionList(round, isPreviousFailed) {
+    if (taskNodeAdministered) {
     const taskAccountDataJSON = await namespaceWrapper.getTaskState();
     console.log('EXPECTED ROUND', round);
 
@@ -995,6 +982,9 @@ class NamespaceWrapper {
       console.log('SELECTED NODE OBJECT', selectedNode);
       return selectedNode.pubkey;
     }
+  }else {
+    return this.#testingStakingSystemAccount.publicKey.toBase58();
+  }
   }
 
   async selectAndGenerateDistributionList(submitDistributionList, round, isPreviousRoundFailed) {
@@ -1031,6 +1021,7 @@ class NamespaceWrapper {
       return this.#testingMainSystemAccount.publicKey.toBase58();
     }
   }
+  
 }
 
 async function genericHandler(...args) {
