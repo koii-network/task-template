@@ -6,7 +6,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-    env_file: .env-local
+    env_file: .env.local
 
     container_name: task_node
 

@@ -10,6 +10,7 @@
     "@types/jest": "~27.5",
     "@types/next": "^9.0.0",
     "@types/node": "^18.8.0",
+    "@types/tail": "^2.2.3",
     "@typescript-eslint/eslint-plugin": "~5.26",
     "@typescript-eslint/parser": "~5.26",
     "eslint": "~8.16",
@@ -35,7 +36,8 @@
     "lint": "eslint . --ext .ts --ext .mts",
     "test": "jest --detectOpenHandles",
     "prettier": "prettier --config .prettierrc --write .",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "prod-debug": "nodemon --ignore 'dist/*' src/prod-debug.js"
   },
   "author": "Syed Ghazanfer Anwar <s.ghazanfer@koii.network>",
   "license": "Apache-2.0",
@@ -50,6 +52,7 @@
     "nedb-promises": "^6.2.1",
     "node-cron": "^3.0.2",
     "request": "^2.88.2",
+    "tail": "^2.2.6",
     "tslib": "~2.4",
     "web3.storage": "^4.4.0"
   }

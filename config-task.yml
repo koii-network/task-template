@@ -1,56 +1,52 @@
 # Name and metadata of your task
-task_name: "Your-task-name"
-author: "koii"
-description: "This will be description of your task"
-repositoryUrl: "https://github.com/koii-network/task-examples"
-imageUrl: "imageUrl"
+task_name: 'task name'
+author: 'Koii'
+description: 'description'
+repositoryUrl: 'https://github.com/koii-network/task-template' #replace with your own repo url
+imageUrl: 'imageUrl'
 
-# network value can be DEVELOPMENT , ARWEAVE or IPFS, Recommended IPFS as the cli automatically takes care of uploading the executable with the help of web3.js key
-task_executable_network: "DEVELOPMENT"
+# task_executable_network : DEVELOPMENT, ARWEAVE or IPFS
+# IPFS is the default value, as the CLI automatically manages the upload process via Spheron.
+task_executable_network: 'IPFS'
 
-# Path to your executable webpack if the selected network is IPFS otherwise leave blank
-task_audit_program: ""
+# task_audit_program: Path to your executable webpack if the selected network is IPFS and in case of DEVELOPMENT name it as main
+task_audit_program: 'dist/main.js'
 
-# Total round time of your task : it must be given in slots and each slot is roughly equal to 408ms
-round_time: 650
+# round_time: The total duration of your task, measured in slots (with each slot approximately equal to 408ms)
+round_time: 1500
+audit_window: 350
+submission_window: 350
 
-audit_window: 250
-submission_window: 250
-
-# Amounts in KOII
-
-minimum_stake_amount: 2
+# minimum_stake_amount: The minimum amount of KOII that a user must stake in order to participate in the task
+minimum_stake_amount: 1.9
 
 # total_bounty_amount cannot be grater than bounty_amount_per_round
-# total bounty is not accepted in case of update task
-total_bounty_amount: 10
+# total bounty_amount: The total bounty amount that will be distributed to the task. (Not accepted in case of update task)
+total_bounty_amount: 100
+bounty_amount_per_round: 100
 
-bounty_amount_per_round: 0.1
-
-#Number of times allowed to re-submit the distribution  list in case the distribution list is audited
+# allowed_failed_distributions: Number of times re-submission is allowed for the distribution list in case of an audit. 
 allowed_failed_distributions: 3
 
-#Space in MBs for the account size, that holds the task data
+# space: Space in MBs for the account size, that holds the task data. 
 space: 1
 
 # Note that the value field in RequirementTag is optional, so it is up to you to include it or not based on your use case.
-# To add more global variables and task variables, please refer the type,value,description format shown below
+# To add more global variables and task variables, please refer the type,value, description format shown below
 
 requirementsTags:
-  - type: TASK_VARIABLE
-    value: "WEB3.STORAGE"
-    description: "used to store the data"
   - type: CPU
-    value: "4-core"
+    value: '4-core'
   - type: RAM
-    value: "5 GB"
+    value: '5 GB'
   - type: STORAGE
-    value: "5 GB"
+    value: '5 GB'
 
-# OPTIONAL variables below 
+# OPTIONAL variables variables for creating task / REQUIRED variables for update task
 
-# OPTIONAL Only provide the taskId if you are updating the task otherwise leave blank
-task_id: ""
+# ONLY provide the task_id and migrationDescription if you are updating the task otherwise leave blank
+# task_id: Previous task id
+task_id: ''
 
-# OPTIONAL only Provide your transaction ID in case of ARWEAVE and in case of DEVELOPMENT give your executable name as main otherwise leave blank
-task_audit_program_id: "main"
+# migrationDescription: Provide the description for changes made in new version of task
+migrationDescription: ''

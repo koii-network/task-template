@@ -456,7 +456,8 @@ class NamespaceWrapper {
 
   async auditSubmission(
     // TODO: Check Types with Sid, candidatePubkey cannot be PublicKey
-    candidatePubkey: string, 
+    // TODO: Error candidatePubKey Type conflict
+    candidatePubkey: PublicKey, 
     isValid: boolean, 
     voterKeypair:Keypair, 
     round: number
@@ -477,7 +478,8 @@ class NamespaceWrapper {
           candidatePubkey
         ].votes.push({
           is_valid: isValid,
-          voter: voterKeypair.pubKey.toBase58(),
+          // TODO: Check with Sid
+          voter: voterKeypair.publicKey.toBase58(),
           slot: 100,
         });
       } else {
@@ -494,7 +496,7 @@ class NamespaceWrapper {
   
   async distributionListAuditSubmission(
     // TODO: Check Types with Sid, candidatePubkey cannot be PublicKey
-    candidatePubkey: string, 
+    candidatePubkey: PublicKey, 
     isValid: boolean, 
     voterKeypair:Keypair, 
     round: number
@@ -517,7 +519,8 @@ class NamespaceWrapper {
           candidatePubkey
         ].votes.push({
           is_valid: isValid,
-          voter: voterKeypair.pubKey.toBase58(),
+          // TODO: Check with Sid
+          voter: voterKeypair.publicKey.toBase58(),
           slot: 100,
         });
       } else {
@@ -764,6 +767,7 @@ class NamespaceWrapper {
                 submissions_audit_trigger[candidatePublicKey]
               ) {
                 console.log("VOTING TRUE ON AUDIT");
+                // TODO: Error candidatePubKey Type conflict
                 const response = await this.auditSubmission(
                   candidateKeyPairPublicKey,
                   isValid,
@@ -775,6 +779,7 @@ class NamespaceWrapper {
             } else if (isValid == false) {
               // Call auditSubmission function and isValid is passed as false
               console.log("RAISING AUDIT / VOTING FALSE");
+                // TODO: Error candidatePubKey Type conflict
               const response = await this.auditSubmission(
                 candidateKeyPairPublicKey,
                 isValid,
@@ -809,7 +814,7 @@ class NamespaceWrapper {
          return `No submisssions found in round ${round}`;
        } else {
          const keys = Object.keys(submissions);
-         const values = Object.values(submissions);
+         const values:any[] = Object.values(submissions);
          const size = values.length;
          console.log(
            'Distribution Submissions from last round: ',
