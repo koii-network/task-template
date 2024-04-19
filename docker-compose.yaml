@@ -5,6 +5,9 @@ services:
     command: yarn initialize-start
     extra_hosts:
       - "host.docker.internal:host-gateway"
+      
+    ports:
+      - 30017:30017
 
     env_file: .env.local
 
