@@ -723,8 +723,12 @@ class NamespaceWrapper {
       taskAccountDataJSON.distribution_rewards_submission[round],
     );
     const submissions =
-      taskAccountDataJSON.distribution_rewards_submission[round];
-    if (submissions == null) {
+      taskAccountDataJSON?.distribution_rewards_submission[round];
+    if (
+      submissions == null ||
+      submissions == undefined ||
+      submissions.length == 0
+    ) {
       console.log(`No submisssions found in round ${round}`);
       return `No submisssions found in round ${round}`;
     } else {
@@ -872,7 +876,6 @@ class NamespaceWrapper {
 
       // Check if the input round exists in the submissions
       if (inputRoundIndex != -1 && rounds.length >= inputRoundIndex + 2) {
-
         // Get the latest rounds (input round and two previous available rounds)
         const latestRounds = rounds.slice(inputRoundIndex, inputRoundIndex + 3);
 
@@ -885,6 +888,10 @@ class NamespaceWrapper {
         keys = [...keySets[0]].filter(key =>
           keySets.every(set => set.has(key)),
         );
+        if (keys.length == 0) {
+          console.log('No common keys found in last 3 rounds');
+          keys = Object.keys(submissions);
+        }
       } else {
         keys = Object.keys(submissions);
       }
