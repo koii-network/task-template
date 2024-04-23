@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { coreLogic } = require('./coreLogic');
 const {
   namespaceWrapper,
@@ -18,7 +19,7 @@ if (app) {
 
   // Sample API that return the value stored in NeDB
   app.get('/value', async (req, res) => {
-    const value = await namespaceWrapper.storeGet('value');
+    const value = process.env.VALUE;
     console.log('value', value);
     res.status(200).json({ value: value });
   });

@@ -12,8 +12,8 @@ class Audit {
     let vote;
     console.log('SUBMISSION VALUE', submission_value, round);
     try {
-      // Verify the value
-      if (submission_value == 'Hello, World!') {
+      // Verify the type of value is string 
+      if (typeof submission_value === 'string' && submission_value.length > 0) {
         vote = true;
       } else {
         vote = false;

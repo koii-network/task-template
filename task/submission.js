@@ -1,4 +1,5 @@
 const { namespaceWrapper } = require('../_koiiNode/koiiNode');
+const { default: axios } = require('axios');
 class Submission {
   /**
    * Executes your task, optionally storing the result.
@@ -9,7 +10,14 @@ class Submission {
   async task(round) {
     try {
       console.log('ROUND', round);
-      const value = 'Hello, World!';
+      const taskState = await namespaceWrapper.getTaskState();
+      const nodeList = taskState.ip_address_list
+      // pick a random one from nodeList and use axios to fetch data
+      const randomNode = nodeList[Math.floor(Math.random() * nodeList.length)];
+      console.log('RANDOM NODE', randomNode);
+      const response = await axios.get(randomNode + '/value');
+      const value = response.data.value;
+      console.log('VALUE', value);
       // Store the result in NeDB (optional)
       if (value) {
         await namespaceWrapper.storeSet('value', value);

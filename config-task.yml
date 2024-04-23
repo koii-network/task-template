@@ -1,5 +1,5 @@
 # Name and metadata of your task
-task_name: 'task name'
+task_name: 'Hello UPnP'
 author: 'Koii'
 description: 'description'
 repositoryUrl: 'https://github.com/koii-network/task-template' #replace with your own repo url
@@ -14,8 +14,8 @@ task_audit_program: 'dist/main.js'
 
 # round_time: The total duration of your task, measured in slots (with each slot approximately equal to 408ms)
 round_time: 1500
-audit_window: 350
-submission_window: 350
+audit_window: 550
+submission_window: 550
 
 # minimum_stake_amount: The minimum amount of KOII that a user must stake in order to participate in the task
 minimum_stake_amount: 1.9
@@ -35,6 +35,11 @@ space: 1
 # To add more global variables and task variables, please refer the type,value, description format shown below
 
 requirementsTags:
+  - type: TASK_VARIABLE
+    value: 'VALUE'
+    description: 'It could be your name, your username, or any other information you want to store in the task.'
+  - type: 'ADDON'
+    value: “REQUIRE_INTERNET”
   - type: CPU
     value: '4-core'
   - type: RAM
