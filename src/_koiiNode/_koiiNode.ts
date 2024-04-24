@@ -78,12 +78,15 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
     );
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", "false");
-    if (req.method === "OPTIONS")
+    if (req.method === "OPTIONS"){
       // if is preflight(OPTIONS) then response status 204(NO CONTENT)
-      return res.sendStatus(204);
+      res.sendStatus(204);
+      return;
+    }
     next();
-  }
-);
+    return;
+  });
+
 
 app.get("/", (_req: express.Request, res: express.Response) => {
   res.send("Hello World!");
@@ -455,8 +458,6 @@ class NamespaceWrapper {
   }
 
   async auditSubmission(
-    // TODO: Check Types with Sid, candidatePubkey cannot be PublicKey
-    // TODO: Error candidatePubKey Type conflict
     candidatePubkey: PublicKey, 
     isValid: boolean, 
     voterKeypair:Keypair, 
@@ -472,10 +473,10 @@ class NamespaceWrapper {
     } else {
       if (
         this.#testingTaskState.submissions_audit_trigger[round] &&
-        this.#testingTaskState.submissions_audit_trigger[round][candidatePubkey]
+        this.#testingTaskState.submissions_audit_trigger[round][candidatePubkey.toString()]
       ) {
         this.#testingTaskState.submissions_audit_trigger[round][
-          candidatePubkey
+          candidatePubkey.toString()
         ].votes.push({
           is_valid: isValid,
           // TODO: Check with Sid
@@ -484,7 +485,7 @@ class NamespaceWrapper {
         });
       } else {
         this.#testingTaskState.submissions_audit_trigger[round] = {
-          [candidatePubkey]: {
+          [candidatePubkey.toString()]: {
             trigger_by: this.#testingStakingSystemAccount.publicKey.toBase58(),
             slot: 100,
             votes: [],
@@ -512,11 +513,11 @@ class NamespaceWrapper {
       if (
         this.#testingTaskState.distributions_audit_trigger[round] &&
         this.#testingTaskState.distributions_audit_trigger[round][
-          candidatePubkey
+          candidatePubkey.toString()
         ]
       ) {
         this.#testingTaskState.distributions_audit_trigger[round][
-          candidatePubkey
+          candidatePubkey.toString()
         ].votes.push({
           is_valid: isValid,
           // TODO: Check with Sid
@@ -525,7 +526,7 @@ class NamespaceWrapper {
         });
       } else {
         this.#testingTaskState.distributions_audit_trigger[round] = {
-          [candidatePubkey]: {
+          [candidatePubkey.toString()]: {
             trigger_by: this.#testingStakingSystemAccount.publicKey.toBase58(),
             slot: 100,
             votes: [],
@@ -542,13 +543,7 @@ class NamespaceWrapper {
     }
   }
 
-  async nodeSelectionDistributionList(): Promise<string>{
-    if (taskNodeAdministered) {
-      return await genericHandler('nodeSelectionDistributionList');
-    } else {
-      return this.#testingStakingSystemAccount.publicKey.toBase58();
-    }
-  }
+
 
   async payoutTrigger(round: number): Promise<GenericResponseInterface>{
     if (taskNodeAdministered) {
@@ -693,10 +688,6 @@ class NamespaceWrapper {
     }
   }
 // Wrapper for selection of node to prepare a distribution list
-
-  async nodeSelectionDistributionList(round: number): Promise<string> {
-    return await genericHandler('nodeSelectionDistributionList', round);
-  }
   //TODO: Check by Sid
   async getDistributionList(publicKey: PublicKey, round: number) {
     if (taskNodeAdministered) {

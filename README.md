@@ -43,7 +43,7 @@ There are two ways to run your task during development:
 
 ## Environment Variables
 
-Rename the `.env.local.example` file to `.env.local` and make the necessary modifications. Here, you can include environment variables that your task requires. This is particularly useful if you're utilizing [custom secrets](https://docs.koii.network/develop/write-a-koii-task/task-development-kit-tdk/using-the-task-namespace/keys-and-secrets).
+Rename the `.env.local.example` file to `.env.local` and make the necessary modifications. Here, you can include the environment variables that your task requires. This is particularly useful if you're utilizing [custom secrets](https://docs.koii.network/develop/write-a-koii-task/task-development-kit-tdk/using-the-task-namespace/keys-and-secrets).
 
 ## Tips
 
