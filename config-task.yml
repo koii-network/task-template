@@ -1,5 +1,5 @@
 # Name and metadata of your task
-task_name: 'Hello UPnP'
+task_name: 'Hello UPnP v0.2'
 author: 'Koii'
 description: 'description'
 repositoryUrl: 'https://github.com/koii-network/task-template' #replace with your own repo url
