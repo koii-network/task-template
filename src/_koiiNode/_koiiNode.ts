@@ -81,9 +81,11 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
     if (req.method === "OPTIONS"){
       // if is preflight(OPTIONS) then response status 204(NO CONTENT)
       res.sendStatus(204);
+      // Changed here typescript
       return;
     }
     next();
+    // Changed here typescript
     return;
   });
 

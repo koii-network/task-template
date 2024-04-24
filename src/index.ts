@@ -10,14 +10,15 @@ if (app) {
   //  Ex. app.post('/accept-cid', async (req, res) => {})
   
   // Sample API that return your task state
-  app.get('/taskState', async (req, res) => {
+  // change to _req for typescript
+  app.get('/taskState', async (_req, res) => {
     const state = await namespaceWrapper.getTaskState();
     console.log('TASK STATE', state);
     res.status(200).json({ taskState: state });
   });
-
+  // change to _req for typescript
   // Sample API that return the value stored in NeDB
-  app.get('/value', async (req, res) => {
+  app.get('/value', async (_req, res) => {
     const value = await namespaceWrapper.storeGet('value');
     console.log('value', value);
     res.status(200).json({ value: value });
