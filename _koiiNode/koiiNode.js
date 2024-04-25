@@ -594,6 +594,7 @@ class NamespaceWrapper {
         minimum_stake_amount: 5000000000,
         available_balances: {},
         stake_list: {},
+        ip_address_list: {},
         round_time: 600,
         starting_slot: 0,
         audit_window: 200,

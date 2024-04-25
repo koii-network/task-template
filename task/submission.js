@@ -12,6 +12,7 @@ class Submission {
     try {
       console.log('ROUND', round);
       const IPAddressArray = await this.getAddressArray(); // Get the avaliable IP address array
+      // console.log(IPAddressArray);
       let randomNode;
 
       try {
@@ -29,38 +30,13 @@ class Submission {
           if (value) {
             await namespaceWrapper.storeSet('value', value);
           }
-          // Optional, return your task
+          // Optional, return your task for JEST testing purposes
           return value;
+        } else {
+          return null;
         }
       } catch (error) {
-        console.log('ERROR IN FETCHING IP ADDRESS, TRY PROXY TUNNEL');
-        const stakeList = taskState.stake_list;
-
-        const keys = Object.keys(stakeList);
-        const randomIndex = Math.floor(Math.random() * keys.length);
-        const randomKey = keys[randomIndex];
-
-        console.log(randomKey, 'publicKey');
-        const hash = createHash('sha256').update(randomKey).digest('hex');
-        // console.log(hash, "hash");
-        randomNode = hash.substring(0, 36) + '-proxy.koiidns.com';
-        console.log('RANDOM NODE', randomNode);
-        const response = await axios.get(
-          `https://${randomNode}/task/${TASK_ID}/value`,
-        );
-        // const response = await axios.get(`https://f39cc474ac41c52b0e65a68cc574ddbf7a61-proxy.koiidns.com/task/6yHNyLocR7b9YFtajRAhXzmL5rGHLNR3yFTtgjADG2B9/value`);
-        if (response.status === 200 && response.data.value) {
-          const value = response.data.value;
-          console.log('VALUE', value);
-          // Store the result in NeDB (optional)
-          if (value) {
-            await namespaceWrapper.storeSet('value', value);
-          }
-          // Optional, return your task
-          return value || null;
-        } else if (response.data.message) {
-          console.log('ERROR IN FETCHING VALUE', response.data.message);
-        }
+        console.log('ERROR IN FETCHING IP ADDRESS', error);
       }
     } catch (err) {
       console.log('ERROR IN EXECUTING TASK', err);
@@ -106,13 +82,10 @@ class Submission {
     try {
       // Get the task state from the K2
       const taskState = await namespaceWrapper.getTaskState();
-      console.log('TASK STATE', taskState);
+      // console.log('TASK STATE', taskState);
       const nodeList = taskState.ip_address_list;
-      if (nodeList && nodeList.length > 0) {
-        return nodeList;
-      } else {
-        return null;
-      }
+      console.log('Node List', nodeList);
+      return nodeList;
     } catch (e) {
       console.log('ERROR GETTING TASK STATE', e);
     }
