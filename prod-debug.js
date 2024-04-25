@@ -78,7 +78,7 @@ const copyWebpackedFile = async () => {
 /* tail logs */
 const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
   console.log('Watchings logs for messages containing ', keywords);
-  
+
   // Ensure the log file exists, or create it if it doesn't
   try {
     await fs.promises.access(desktopNodeLogPath, fs.constants.F_OK);
@@ -98,10 +98,10 @@ const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
   );
 
   tail.on('line', function (data) {
-    console.log(data);
-    // if (keywords.some(keyword => data.includes(keyword))) {
-    //   console.log(`PROD$ ${data}`);
-    // }
+    // console.log(data);
+    if (keywords.some(keyword => data.includes(keyword))) {
+      console.log(`PROD$ ${data}`);
+    }
   });
 
   tail.on('error', function (error) {

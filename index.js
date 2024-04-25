@@ -5,24 +5,10 @@ const {
   taskNodeAdministered,
   app,
 } = require('./_koiiNode/koiiNode');
+const setupRoutes = require('./routes');
 
 if (app) {
-  //  Write your Express Endpoints here.
-  //  Ex. app.post('/accept-cid', async (req, res) => {})
-  
-  // Sample API that return your task state
-  app.get('/taskState', async (req, res) => {
-    const state = await namespaceWrapper.getTaskState();
-    console.log('TASK STATE', state);
-    res.status(200).json({ taskState: state });
-  });
-
-  // Sample API that return the value stored in NeDB
-  app.get('/value', async (req, res) => {
-    const value = process.env.VALUE;
-    console.log('value', value);
-    res.status(200).json({ value: value });
-  });
+  setupRoutes(app);
 }
 
 async function setup() {
@@ -43,7 +29,10 @@ async function setup() {
       coreLogic.task(m.roundNumber);
     } else if (m.functionCall == 'generateAndSubmitDistributionList') {
       console.log('generateAndSubmitDistributionList called');
-      coreLogic.selectAndGenerateDistributionList(m.roundNumber, m.isPreviousRoundFailed);
+      coreLogic.selectAndGenerateDistributionList(
+        m.roundNumber,
+        m.isPreviousRoundFailed,
+      );
     } else if (m.functionCall == 'distributionListAudit') {
       console.log('distributionListAudit called');
       coreLogic.auditDistribution(m.roundNumber);
