@@ -896,7 +896,7 @@ class NamespaceWrapper {
         keys = Object.keys(submissions);
       }
       console.log('KEYS', keys.length);
-      const values = Object.values(submissions);
+      const values = keys.map(key => submissions[key]);
 
       let size = keys.length;
       console.log('Submissions from N-2  round: ', size);
@@ -914,10 +914,10 @@ class NamespaceWrapper {
         );
         const submitterList =
           taskAccountDataJSON.distribution_rewards_submission[round];
-        const submitterSize = Object.keys(submitterList).length;
-        console.log('SUBMITTER SIZE', submitterSize);
         const submitterKeys = Object.keys(submitterList);
         console.log('SUBMITTER KEYS', submitterKeys);
+        const submitterSize = submitterKeys.length;
+        console.log('SUBMITTER SIZE', submitterSize);
 
         for (let j = 0; j < submitterSize; j++) {
           console.log('SUBMITTER KEY CANDIDATE', submitterKeys[j]);
