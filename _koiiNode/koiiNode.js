@@ -377,16 +377,16 @@ class NamespaceWrapper {
     }
   }
 
-  async logMessage(level, message) {
+  async logMessage(level, message, action) {
     switch (level) {
       case LogLevel.Log:
-        console.log(message);
+        console.log(message, action);
         break;
       case LogLevel.Warn:
-        console.warn(message);
+        console.warn(message, action);
         break;
       case LogLevel.Error:
-        console.error(message);
+        console.error(message, action);
         break;
       default:
         console.log(
@@ -409,11 +409,11 @@ class NamespaceWrapper {
    * @returns {boolean} // true if the message is logged successfully otherwise false
    */
 
-  async logger(level, message) {
+  async logger(level, message, action) {
     if (taskNodeAdministered) {
-      return await genericHandler('logger', level, message);
+      return await genericHandler('logger', level, message, action);
     } else {
-      return await this.logMessage(level, message);
+      return await this.logMessage(level, message, action);
     }
   }
 
