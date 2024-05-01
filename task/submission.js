@@ -34,6 +34,7 @@ class Submission {
       console.log('SUBMIT TASK SLOT',await namespaceWrapper.getSlot());
       const submission = await this.fetchSubmission(round);
       console.log('SUBMISSION', submission);
+      namespaceWrapper.logger('log', `Your submission value is: ${submission}`)
       await namespaceWrapper.checkSubmissionAndUpdateRound(
         submission,
         round,

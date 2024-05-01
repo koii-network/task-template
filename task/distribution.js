@@ -111,6 +111,7 @@ class Distribution {
         distributionCandidates.length,
       );
       console.log('REWARD RECEIVED BY EACH NODE', reward);
+      namespaceWrapper.logger('warn', `REWARD RECEIVED BY EACH NODE: ${reward}`)
       for (let i = 0; i < distributionCandidates.length; i++) {
         distributionList[distributionCandidates[i]] = reward;
       }
