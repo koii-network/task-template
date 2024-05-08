@@ -51,7 +51,7 @@ fs.writeFile('docker-compose.yaml', dockerComposeTemplate, err => {
     console.log('docker-compose.yml file has been created successfully.');
   }
 });
-// 在指定目录执行命令
+
 function executeCommandInDirectory(directory, command, args) {
     return new Promise((resolve, reject) => {
       const proc = spawn(command, args, { cwd: directory, stdio: ['pipe', 'pipe', 'pipe'] });
@@ -71,20 +71,18 @@ function executeCommandInDirectory(directory, command, args) {
           reject(new Error(`Command failed with code ${code}`));
         }
       });
-  
-      // 处理需要交互的情况
+
       if (command.includes("koii-keygen")) {
-        proc.stdin.write('\n'); // 模拟按回车键
-        proc.stdin.end();       // 关闭输入，确保不会进一步等待输入
+        proc.stdin.write('\n'); 
+        proc.stdin.end();      
       }
     });
   }
-  
-  // 为每个节点目录执行命令
+
   (async () => {
     for (let i = 1; i <= numberOfNodes; i++) {
       const nodeDir = `./temp/tasknode${i}`;
-      // 确保目录存在
+
       if (!fs.existsSync(nodeDir)) {
         fs.mkdirSync(nodeDir, { recursive: true });
       }
@@ -152,7 +150,6 @@ const createEnvContent = (index) => {
   `;
 };
 
-// 写入多个.env文件
 for (let i = 1; i <= numberOfNodes; i++) {
   const filePath = `./temp/.env.local${i}`;
   const content = createEnvContent(i);
