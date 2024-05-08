@@ -1,12 +1,12 @@
 {
-  "name": "js_app_deploy",
+  "name": "Koii-Task",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "jest --detectOpenHandles",
     "start": "node index.js",
-    "prod-debug": "nodemon --ignore 'dist/*' prod-debug.js",
+    "prod-debug": "nodemon --ignore 'dist/*' debugger/prod-debug.js",
     "webpack": "webpack",
     "webpack:test": "webpack --config test.webpack.config.js",
     "webpack:prod": "webpack --mode production"

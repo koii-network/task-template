@@ -9,7 +9,7 @@ class Debugger {
   */
   static taskID =
     process.env.TASK_ID || '3sFhZoxfze7RQJqMGSR3L3gtg8AeiYZ6D42QwFc3nuEV';
-  static webpackedFilePath = process.env.WEBPACKED_FILE_PATH || 'dist/main.js';
+  static webpackedFilePath = process.env.WEBPACKED_FILE_PATH || '../dist/main.js';
   static keywords = process.env.TEST_KEYWORDS || [''];
   static nodeDir = process.env.NODE_DIR || '';
 
