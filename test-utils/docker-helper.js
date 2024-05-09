@@ -128,11 +128,11 @@ const createEnvContent = (index) => {
   INITIAL_STAKING_WALLET_BALANCE=100
   
   # environment
-  ENVIRONMENT="development"
+  ENVIRONMENT="IPFS"
   
   # If you are running a koii-test-validator use http://127.0.0.1:8899 (linux) otherwise use http://host.docker.internal:8899 for Mac and Windows
   # Location of K2 node
-  K2_NODE_URL="http://host.docker.internal:8899/"
+  K2_NODE_URL="${process.env.VALIDATOR_URL}"
   
   # Tasks to run and their stakes. This is the varaible you can add your Task ID to after
   # registering with the crete-task-cli. This variable supports a comma separated list:
