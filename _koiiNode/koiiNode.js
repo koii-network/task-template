@@ -639,54 +639,66 @@ class NamespaceWrapper {
   }
 
   async validateAndVoteOnNodes(validate, round) {
-    console.log('******/  IN VOTING /******');
-    const taskAccountDataJSON = await this.getTaskState();
+    try {
+      console.log('******/  IN VOTING /******');
+      const taskAccountDataJSON = await this.getTaskState();
 
-    console.log(
-      `Fetching the submissions of round ${round}`,
-      taskAccountDataJSON.submissions[round],
-    );
-    const submissions = taskAccountDataJSON.submissions[round];
-    if (submissions == null) {
-      console.log(`No submisssions found in round ${round}`);
-      return `No submisssions found in round ${round}`;
-    } else {
-      const keys = Object.keys(submissions);
-      const values = Object.values(submissions);
-      const size = values.length;
-      console.log('Submissions from last round: ', keys, values, size);
-      let isValid;
-      const submitterAccountKeyPair = await this.getSubmitterAccount();
-      const submitterPubkey = submitterAccountKeyPair.publicKey.toBase58();
-      for (let i = 0; i < size; i++) {
-        let candidatePublicKey = keys[i];
-        console.log('FOR CANDIDATE KEY', candidatePublicKey);
-        let candidateKeyPairPublicKey = new PublicKey(keys[i]);
-        if (candidatePublicKey == submitterPubkey) {
-          console.log('YOU CANNOT VOTE ON YOUR OWN SUBMISSIONS');
-        } else {
-          try {
-            console.log(
-              'SUBMISSION VALUE TO CHECK',
-              values[i].submission_value,
-            );
-            isValid = await validate(values[i].submission_value, round);
-            console.log(`Voting ${isValid} to ${candidatePublicKey}`);
+      console.log(
+        `Fetching the submissions of round ${round}`,
+        taskAccountDataJSON.submissions[round],
+      );
+      const submissions = taskAccountDataJSON.submissions[round];
+      if (submissions == null) {
+        console.log(`No submisssions found in round ${round}`);
+        return `No submisssions found in round ${round}`;
+      } else {
+        const keys = Object.keys(submissions);
+        const values = Object.values(submissions);
+        const size = values.length;
+        console.log('Submissions from last round: ', keys, values, size);
+        let isValid;
+        const submitterAccountKeyPair = await this.getSubmitterAccount();
+        const submitterPubkey = submitterAccountKeyPair.publicKey.toBase58();
+        for (let i = 0; i < size; i++) {
+          let candidatePublicKey = keys[i];
+          console.log('FOR CANDIDATE KEY', candidatePublicKey);
+          let candidateKeyPairPublicKey = new PublicKey(keys[i]);
+          if (candidatePublicKey == submitterPubkey) {
+            console.log('YOU CANNOT VOTE ON YOUR OWN SUBMISSIONS');
+          } else {
+            try {
+              console.log(
+                'SUBMISSION VALUE TO CHECK',
+                values[i].submission_value,
+              );
+              isValid = await validate(values[i].submission_value, round);
+              console.log(`Voting ${isValid} to ${candidatePublicKey}`);
 
-            if (isValid) {
-              // check for the submissions_audit_trigger , if it exists then vote true on that otherwise do nothing
-              const submissions_audit_trigger =
-                taskAccountDataJSON.submissions_audit_trigger[round];
-              console.log('SUBMIT AUDIT TRIGGER', submissions_audit_trigger);
-              // console.log(
-              //   "CANDIDATE PUBKEY CHECK IN AUDIT TRIGGER",
-              //   submissions_audit_trigger[candidatePublicKey]
-              // );
-              if (
-                submissions_audit_trigger &&
-                submissions_audit_trigger[candidatePublicKey]
-              ) {
-                console.log('VOTING TRUE ON AUDIT');
+              if (isValid) {
+                // check for the submissions_audit_trigger , if it exists then vote true on that otherwise do nothing
+                const submissions_audit_trigger =
+                  taskAccountDataJSON.submissions_audit_trigger[round];
+                console.log('SUBMIT AUDIT TRIGGER', submissions_audit_trigger);
+                // console.log(
+                //   "CANDIDATE PUBKEY CHECK IN AUDIT TRIGGER",
+                //   submissions_audit_trigger[candidatePublicKey]
+                // );
+                if (
+                  submissions_audit_trigger &&
+                  submissions_audit_trigger[candidatePublicKey]
+                ) {
+                  console.log('VOTING TRUE ON AUDIT');
+                  const response = await this.auditSubmission(
+                    candidateKeyPairPublicKey,
+                    isValid,
+                    submitterAccountKeyPair,
+                    round,
+                  );
+                  console.log('RESPONSE FROM AUDIT FUNCTION', response);
+                }
+              } else if (isValid == false) {
+                // Call auditSubmission function and isValid is passed as false
+                console.log('RAISING AUDIT / VOTING FALSE');
                 const response = await this.auditSubmission(
                   candidateKeyPairPublicKey,
                   isValid,
@@ -695,42 +707,37 @@ class NamespaceWrapper {
                 );
                 console.log('RESPONSE FROM AUDIT FUNCTION', response);
               }
-            } else if (isValid == false) {
-              // Call auditSubmission function and isValid is passed as false
-              console.log('RAISING AUDIT / VOTING FALSE');
-              const response = await this.auditSubmission(
-                candidateKeyPairPublicKey,
-                isValid,
-                submitterAccountKeyPair,
-                round,
-              );
-              console.log('RESPONSE FROM AUDIT FUNCTION', response);
+            } catch (err) {
+              console.log('ERROR IN ELSE CONDITION', err);
             }
-          } catch (err) {
-            console.log('ERROR IN ELSE CONDITION', err);
           }
         }
       }
+    } catch (err) {
+      console.error(err);
     }
   }
 
   async validateAndVoteOnDistributionList(validateDistribution, round) {
-    try {    // await this.checkVoteStatus();
+    try {
+      // await this.checkVoteStatus();
       console.log('******/  IN VOTING OF DISTRIBUTION LIST /******');
       const taskAccountDataJSON = await this.getTaskState();
+
       console.log(
         `Fetching the Distribution submissions of round ${round}`,
         taskAccountDataJSON.distribution_rewards_submission[round],
       );
       const submissions =
         taskAccountDataJSON?.distribution_rewards_submission[round];
+
       if (
         submissions == null ||
         submissions == undefined ||
         submissions.length == 0
       ) {
-        console.log(`No submisssions found in round ${round}`);
-        return `No submisssions found in round ${round}`;
+        console.log(`No submissions found in round ${round}`);
+        return `No submissions found in round ${round}`;
       } else {
         const keys = Object.keys(submissions);
         const values = Object.values(submissions);
@@ -752,6 +759,7 @@ class NamespaceWrapper {
           if (candidatePublicKey == submitterPubkey) {
             console.log('YOU CANNOT VOTE ON YOUR OWN DISTRIBUTION SUBMISSIONS');
           } else {
+            try {
               console.log(
                 'DISTRIBUTION SUBMISSION VALUE TO CHECK',
                 values[i].submission_value,
@@ -804,11 +812,14 @@ class NamespaceWrapper {
                   response,
                 );
               }
+            } catch (err) {
+              console.log('ERROR IN ELSE CONDITION FOR DISTRIBUTION', err);
+            }
           }
         }
       }
     } catch (err) {
-      console.error(err);
+        console.error(err);
     }
   }
   async getTaskLevelDBPath() {
@@ -857,163 +868,167 @@ class NamespaceWrapper {
   }
 
   async nodeSelectionDistributionList(round, isPreviousFailed) {
-    const taskAccountDataJSON = await namespaceWrapper.getTaskState();
-    console.log('EXPECTED ROUND', round);
+    try {
+      const taskAccountDataJSON = await namespaceWrapper.getTaskState();
+      console.log('EXPECTED ROUND', round);
 
-    const submissions = taskAccountDataJSON.submissions[round];
-    if (submissions == null) {
-      console.log('No submisssions found in N-1 round');
-      return 'No submisssions found in N-1 round';
-    } else {
-      // getting last 3 submissions for the rounds
-      const rounds = Object.keys(taskAccountDataJSON.submissions)
-        .map(Number)
-        .sort((a, b) => b - a);
-      let keys;
-      // Find the index of the input round
-      const inputRoundIndex = rounds.indexOf(round);
+      const submissions = taskAccountDataJSON.submissions[round];
+      if (submissions == null) {
+        console.log('No submisssions found in N-1 round');
+        return 'No submisssions found in N-1 round';
+      } else {
+        // getting last 3 submissions for the rounds
+        const rounds = Object.keys(taskAccountDataJSON.submissions)
+          .map(Number)
+          .sort((a, b) => b - a);
+        let keys;
+        // Find the index of the input round
+        const inputRoundIndex = rounds.indexOf(round);
 
-      // Check if the input round exists in the submissions
-      if (inputRoundIndex != -1 && rounds.length >= inputRoundIndex + 2) {
-        // Get the latest rounds (input round and two previous available rounds)
-        const latestRounds = rounds.slice(inputRoundIndex, inputRoundIndex + 3);
+        // Check if the input round exists in the submissions
+        if (inputRoundIndex != -1 && rounds.length >= inputRoundIndex + 2) {
+          // Get the latest rounds (input round and two previous available rounds)
+          const latestRounds = rounds.slice(inputRoundIndex, inputRoundIndex + 3);
 
-        // Create sets of keys for each round
-        const keySets = latestRounds.map(
-          r => new Set(Object.keys(taskAccountDataJSON.submissions[r])),
-        );
+          // Create sets of keys for each round
+          const keySets = latestRounds.map(
+            r => new Set(Object.keys(taskAccountDataJSON.submissions[r])),
+          );
 
-        // Find the keys present in all three rounds
-        keys = [...keySets[0]].filter(key =>
-          keySets.every(set => set.has(key)),
-        );
-        if (keys.length == 0) {
-          console.log('No common keys found in last 3 rounds');
+          // Find the keys present in all three rounds
+          keys = [...keySets[0]].filter(key =>
+            keySets.every(set => set.has(key)),
+          );
+          if (keys.length == 0) {
+            console.log('No common keys found in last 3 rounds');
+            keys = Object.keys(submissions);
+          }
+        } else {
           keys = Object.keys(submissions);
         }
-      } else {
-        keys = Object.keys(submissions);
-      }
-      console.log('KEYS', keys.length);
-      const values = keys.map(key => submissions[key]);
+        console.log('KEYS', keys.length);
+        const values = keys.map(key => submissions[key]);
 
-      let size = keys.length;
-      console.log('Submissions from N-2  round: ', size);
+        let size = keys.length;
+        console.log('Submissions from N-2  round: ', size);
 
-      // Check the keys i.e if the submitter shall be excluded or not
+        // Check the keys i.e if the submitter shall be excluded or not
 
-      const audit_record = taskAccountDataJSON.distributions_audit_record;
-      console.log('AUDIT RECORD');
-      console.log('ROUND DATA', audit_record[round]);
+        const audit_record = taskAccountDataJSON.distributions_audit_record;
+        console.log('AUDIT RECORD');
+        console.log('ROUND DATA', audit_record[round]);
 
-      if (audit_record[round] == 'PayoutFailed') {
-        console.log(
-          'SUBMITTER LIST',
-          taskAccountDataJSON.distribution_rewards_submission[round],
-        );
-        const submitterList =
-          taskAccountDataJSON.distribution_rewards_submission[round];
-        const submitterKeys = Object.keys(submitterList);
-        console.log('SUBMITTER KEYS', submitterKeys);
-        const submitterSize = submitterKeys.length;
-        console.log('SUBMITTER SIZE', submitterSize);
+        if (audit_record[round] == 'PayoutFailed') {
+          console.log(
+            'SUBMITTER LIST',
+            taskAccountDataJSON.distribution_rewards_submission[round],
+          );
+          const submitterList =
+            taskAccountDataJSON.distribution_rewards_submission[round];
+          const submitterKeys = Object.keys(submitterList);
+          console.log('SUBMITTER KEYS', submitterKeys);
+          const submitterSize = submitterKeys.length;
+          console.log('SUBMITTER SIZE', submitterSize);
 
-        for (let j = 0; j < submitterSize; j++) {
-          console.log('SUBMITTER KEY CANDIDATE', submitterKeys[j]);
-          const id = keys.indexOf(submitterKeys[j]);
-          console.log('ID', id);
-          if (id != -1) {
-            keys.splice(id, 1);
-            values.splice(id, 1);
-            size--;
+          for (let j = 0; j < submitterSize; j++) {
+            console.log('SUBMITTER KEY CANDIDATE', submitterKeys[j]);
+            const id = keys.indexOf(submitterKeys[j]);
+            console.log('ID', id);
+            if (id != -1) {
+              keys.splice(id, 1);
+              values.splice(id, 1);
+              size--;
+            }
+          }
+
+          console.log('KEYS FOR HASH CALC', keys.length);
+        }
+
+        // calculating the digest
+
+        const ValuesString = JSON.stringify(values);
+
+        const hashDigest = createHash('sha256')
+          .update(ValuesString)
+          .digest('hex');
+
+        console.log('HASH DIGEST', hashDigest);
+
+        // function to calculate the score
+        const calculateScore = (str = '') => {
+          return str.split('').reduce((acc, val) => {
+            return acc + val.charCodeAt(0);
+          }, 0);
+        };
+
+        // function to compare the ASCII values
+
+        const compareASCII = (str1, str2) => {
+          const firstScore = calculateScore(str1);
+          const secondScore = calculateScore(str2);
+          return Math.abs(firstScore - secondScore);
+        };
+
+        // loop through the keys and select the one with higest score
+
+        const selectedNode = {
+          score: 0,
+          pubkey: '',
+        };
+        let score = 0;
+        if (isPreviousFailed) {
+          let leastScore = -Infinity;
+          let secondLeastScore = -Infinity;
+          for (let i = 0; i < size; i++) {
+            const candidateSubmissionJson = {};
+            candidateSubmissionJson[keys[i]] = values[i];
+            const candidateSubmissionString = JSON.stringify(
+              candidateSubmissionJson,
+            );
+            const candidateSubmissionHash = createHash('sha256')
+              .update(candidateSubmissionString)
+              .digest('hex');
+            const candidateScore = compareASCII(
+              hashDigest,
+              candidateSubmissionHash,
+            );
+            if (candidateScore > leastScore) {
+              secondLeastScore = leastScore;
+              leastScore = candidateScore;
+            } else if (candidateScore > secondLeastScore) {
+              secondLeastScore = candidateScore;
+              selectedNode.score = candidateScore;
+              selectedNode.pubkey = keys[i];
+            }
+          }
+        } else {
+          for (let i = 0; i < size; i++) {
+            const candidateSubmissionJson = {};
+            candidateSubmissionJson[keys[i]] = values[i];
+            const candidateSubmissionString = JSON.stringify(
+              candidateSubmissionJson,
+            );
+            const candidateSubmissionHash = createHash('sha256')
+              .update(candidateSubmissionString)
+              .digest('hex');
+            const candidateScore = compareASCII(
+              hashDigest,
+              candidateSubmissionHash,
+            );
+            // console.log('CANDIDATE SCORE', candidateScore);
+            if (candidateScore > score) {
+              score = candidateScore;
+              selectedNode.score = candidateScore;
+              selectedNode.pubkey = keys[i];
+            }
           }
         }
 
-        console.log('KEYS FOR HASH CALC', keys.length);
+        console.log('SELECTED NODE OBJECT', selectedNode);
+        return selectedNode.pubkey;
       }
-
-      // calculating the digest
-
-      const ValuesString = JSON.stringify(values);
-
-      const hashDigest = createHash('sha256')
-        .update(ValuesString)
-        .digest('hex');
-
-      console.log('HASH DIGEST', hashDigest);
-
-      // function to calculate the score
-      const calculateScore = (str = '') => {
-        return str.split('').reduce((acc, val) => {
-          return acc + val.charCodeAt(0);
-        }, 0);
-      };
-
-      // function to compare the ASCII values
-
-      const compareASCII = (str1, str2) => {
-        const firstScore = calculateScore(str1);
-        const secondScore = calculateScore(str2);
-        return Math.abs(firstScore - secondScore);
-      };
-
-      // loop through the keys and select the one with higest score
-
-      const selectedNode = {
-        score: 0,
-        pubkey: '',
-      };
-      let score = 0;
-      if (isPreviousFailed) {
-        let leastScore = -Infinity;
-        let secondLeastScore = -Infinity;
-        for (let i = 0; i < size; i++) {
-          const candidateSubmissionJson = {};
-          candidateSubmissionJson[keys[i]] = values[i];
-          const candidateSubmissionString = JSON.stringify(
-            candidateSubmissionJson,
-          );
-          const candidateSubmissionHash = createHash('sha256')
-            .update(candidateSubmissionString)
-            .digest('hex');
-          const candidateScore = compareASCII(
-            hashDigest,
-            candidateSubmissionHash,
-          );
-          if (candidateScore > leastScore) {
-            secondLeastScore = leastScore;
-            leastScore = candidateScore;
-          } else if (candidateScore > secondLeastScore) {
-            secondLeastScore = candidateScore;
-            selectedNode.score = candidateScore;
-            selectedNode.pubkey = keys[i];
-          }
-        }
-      } else {
-        for (let i = 0; i < size; i++) {
-          const candidateSubmissionJson = {};
-          candidateSubmissionJson[keys[i]] = values[i];
-          const candidateSubmissionString = JSON.stringify(
-            candidateSubmissionJson,
-          );
-          const candidateSubmissionHash = createHash('sha256')
-            .update(candidateSubmissionString)
-            .digest('hex');
-          const candidateScore = compareASCII(
-            hashDigest,
-            candidateSubmissionHash,
-          );
-          // console.log('CANDIDATE SCORE', candidateScore);
-          if (candidateScore > score) {
-            score = candidateScore;
-            selectedNode.score = candidateScore;
-            selectedNode.pubkey = keys[i];
-          }
-        }
-      }
-
-      console.log('SELECTED NODE OBJECT', selectedNode);
-      return selectedNode.pubkey;
+    } catch (err) {
+      console.error(err);
     }
   }
 
