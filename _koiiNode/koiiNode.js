@@ -641,7 +641,14 @@ class NamespaceWrapper {
 
   async getTaskSubmissionInfo(round) {
     if (taskNodeAdministered) {
-      return await genericHandler('getTaskSubmissionInfo', round);
+      const taskSubmissionInfo = await genericHandler(
+        'getTaskSubmissionInfo',
+        round,
+      );
+      if (taskSubmissionInfo.error) {
+        return null;
+      }
+      return taskSubmissionInfo;
     } else {
       return this.#testingTaskState.submissions[round];
     }
@@ -655,12 +662,8 @@ class NamespaceWrapper {
     } catch (error) {
       console.error('Error in getting submissions for the round', error);
     }
-    if (taskAccountDataJSON == null || taskAccountDataJSON.error) {
-      console.log(
-        'No submissions found for the round',
-        round,
-        taskAccountDataJSON.error,
-      );
+    if (taskAccountDataJSON == null) {
+      console.log('No submissions found for the round', round);
       return;
     }
     console.log(
@@ -737,7 +740,14 @@ class NamespaceWrapper {
 
   async getTaskDistributionInfo(round) {
     if (taskNodeAdministered) {
-      return await genericHandler('getTaskDistributionInfo', round);
+      const taskDistributionInfo = await genericHandler(
+        'getTaskDistributionInfo',
+        round,
+      );
+      if (taskDistributionInfo.error) {
+        return null;
+      }
+      return taskDistributionInfo;
     } else {
       return this.#testingTaskState.distribution_rewards_submission[round];
     }
@@ -752,7 +762,7 @@ class NamespaceWrapper {
     } catch (error) {
       console.error('Error in getting distributions for the round', error);
     }
-    if (taskAccountDataJSON == null || taskAccountDataJSON.error) {
+    if (taskAccountDataJSON == null) {
       console.log('No distribution submissions found for the round', round);
       return;
     }
@@ -883,9 +893,14 @@ class NamespaceWrapper {
   }
 
   async nodeSelectionDistributionList(round, isPreviousFailed) {
-    const taskAccountDataJSON = await this.getTaskState({
-      is_submission_required: true,
-    });
+    let taskAccountDataJSON = null;
+    try {
+      taskAccountDataJSON = await this.getTaskSubmissionInfo(round);
+    } catch (error) {
+      console.error('Task submission not found', error);
+      return;
+    }
+
     if (taskAccountDataJSON == null) {
       console.error('Task state not found');
       return;
@@ -898,32 +913,35 @@ class NamespaceWrapper {
       return 'No submisssions found in N-1 round';
     } else {
       // getting last 3 submissions for the rounds
-      const rounds = Object.keys(taskAccountDataJSON.submissions)
-        .map(Number)
-        .sort((a, b) => b - a);
       let keys;
-      // Find the index of the input round
-      const inputRoundIndex = rounds.indexOf(round);
+      const latestRounds = [round, round - 1, round - 2].filter(r => r >= 0);
 
-      // Check if the input round exists in the submissions
-      if (inputRoundIndex != -1 && rounds.length >= inputRoundIndex + 2) {
-        // Get the latest rounds (input round and two previous available rounds)
-        const latestRounds = rounds.slice(inputRoundIndex, inputRoundIndex + 3);
-
-        // Create sets of keys for each round
-        const keySets = latestRounds.map(
-          r => new Set(Object.keys(taskAccountDataJSON.submissions[r])),
-        );
-
-        // Find the keys present in all three rounds
-        keys = [...keySets[0]].filter(key =>
-          keySets.every(set => set.has(key)),
-        );
-        if (keys.length == 0) {
-          console.log('No common keys found in last 3 rounds');
-          keys = Object.keys(submissions);
+      const promises = latestRounds.map(async r => {
+        if (r == round) {
+          return new Set(Object.keys(submissions));
+        } else {
+          let roundSubmissions = null;
+          try {
+            roundSubmissions = await this.getTaskSubmissionInfo(r);
+          } catch (error) {
+            console.error('Error in getting submissions for the round', error);
+            return new Set();
+          }
+          if (roundSubmissions && roundSubmissions.submissions[r]) {
+            return new Set(Object.keys(roundSubmissions.submissions[r]));
+          }
         }
-      } else {
+      });
+
+      const keySets = await Promise.all(promises);
+
+      // Find the keys present in all the rounds
+      keys =
+        keySets.length > 0
+          ? [...keySets[0]].filter(key => keySets.every(set => set.has(key)))
+          : [];
+      if (keys.length == 0) {
+        console.log('No common keys found in last 3 rounds');
         keys = Object.keys(submissions);
       }
       console.log('KEYS', keys.length);
@@ -935,7 +953,7 @@ class NamespaceWrapper {
       // Check the keys i.e if the submitter shall be excluded or not
       try {
         const distributionData = await this.getTaskDistributionInfo(round);
-        const audit_record = distributionData.distributions_audit_record;
+        const audit_record = distributionData?.distributions_audit_record;
         if (audit_record && audit_record[round] == 'PayoutFailed') {
           console.log('ROUND DATA', audit_record[round]);
           console.log(

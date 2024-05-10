@@ -63,7 +63,7 @@ class Distribution {
         console.error('ERROR IN FETCHING TASK SUBMISSION DATA', error);
         return distributionList;
       }
-      if (taskAccountDataJSON == null || taskAccountDataJSON.error) {
+      if (taskAccountDataJSON == null) {
         console.error('ERROR IN FETCHING TASK SUBMISSION DATA');
         return distributionList;
       }
