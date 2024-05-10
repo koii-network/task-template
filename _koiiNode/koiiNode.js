@@ -369,6 +369,7 @@ class NamespaceWrapper {
     if (taskNodeAdministered) {
       const response = await genericHandler('getTaskState', options);
       if (response.error) {
+        console.log('Error in getting task state', response.error);
         return null;
       }
       return response;
@@ -654,8 +655,12 @@ class NamespaceWrapper {
     } catch (error) {
       console.error('Error in getting submissions for the round', error);
     }
-    if (taskAccountDataJSON == null) {
-      console.log('No submissions found for the round', round);
+    if (taskAccountDataJSON == null || taskAccountDataJSON.error) {
+      console.log(
+        'No submissions found for the round',
+        round,
+        taskAccountDataJSON.error,
+      );
       return;
     }
     console.log(
@@ -747,8 +752,7 @@ class NamespaceWrapper {
     } catch (error) {
       console.error('Error in getting distributions for the round', error);
     }
-    console.log('TASK ACCOUNT DATA JSON', taskAccountDataJSON);
-    if (taskAccountDataJSON == null) {
+    if (taskAccountDataJSON == null || taskAccountDataJSON.error) {
       console.log('No distribution submissions found for the round', round);
       return;
     }
@@ -932,10 +936,8 @@ class NamespaceWrapper {
       try {
         const distributionData = await this.getTaskDistributionInfo(round);
         const audit_record = distributionData.distributions_audit_record;
-        console.log('AUDIT RECORD', audit_record);
-        console.log('ROUND DATA', audit_record[round]);
-
-        if (audit_record[round] == 'PayoutFailed') {
+        if (audit_record && audit_record[round] == 'PayoutFailed') {
+          console.log('ROUND DATA', audit_record[round]);
           console.log(
             'SUBMITTER LIST',
             distributionData.distribution_rewards_submission[round],
@@ -1061,10 +1063,15 @@ class NamespaceWrapper {
     );
     console.log('Selected Node', selectedNode);
     const submitPubKey = await this.getSubmitterAccount();
-    if (selectedNode == undefined || submitPubKey == undefined) return;
+    if (
+      selectedNode == undefined ||
+      selectedNode == '' ||
+      submitPubKey == undefined
+    )
+      return;
     if (selectedNode == submitPubKey?.publicKey.toBase58()) {
       await submitDistributionList(round);
-      const taskState = await this.getTaskState();
+      const taskState = await this.getTaskState({});
       if (taskState == null) {
         console.error('Task state not found');
         return;

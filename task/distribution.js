@@ -11,7 +11,7 @@ class Distribution {
     console.log('SUBMIT DISTRIBUTION LIST CALLED WITH ROUND', round);
     try {
       const distributionList = await this.generateDistributionList(round);
-      if(Object.keys(distributionList).length === 0) {
+      if (Object.keys(distributionList).length === 0) {
         console.log('NO DISTRIBUTION LIST GENERATED');
         return;
       }
@@ -54,6 +54,7 @@ class Distribution {
       let distributionList = {};
       let distributionCandidates = [];
       let taskAccountDataJSON = null;
+      let taskStakeListJSON = null;
       try {
         taskAccountDataJSON = await namespaceWrapper.getTaskSubmissionInfo(
           round,
@@ -62,7 +63,10 @@ class Distribution {
         console.error('ERROR IN FETCHING TASK SUBMISSION DATA', error);
         return distributionList;
       }
-
+      if (taskAccountDataJSON == null || taskAccountDataJSON.error) {
+        console.error('ERROR IN FETCHING TASK SUBMISSION DATA');
+        return distributionList;
+      }
       const submissions = taskAccountDataJSON.submissions[round];
       const submissions_audit_trigger =
         taskAccountDataJSON.submissions_audit_trigger[round];
@@ -74,10 +78,10 @@ class Distribution {
         const values = Object.values(submissions);
         const size = values.length;
         console.log('SUBMISSIONS FROM LAST ROUND: ', keys, values, size);
-        const taskStakeListJSON = await namespaceWrapper.getTaskState({
+        taskStakeListJSON = await namespaceWrapper.getTaskState({
           is_stake_list_required: true,
         });
-        if(taskStakeListJSON == null) {
+        if (taskStakeListJSON == null) {
           console.error('ERROR IN FETCHING TASK STAKING LIST');
           return distributionList;
         }
