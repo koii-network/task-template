@@ -923,13 +923,13 @@ class NamespaceWrapper {
           let roundSubmissions = null;
           try {
             roundSubmissions = await this.getTaskSubmissionInfo(r);
+            if (roundSubmissions && roundSubmissions.submissions[r]) {
+              return new Set(Object.keys(roundSubmissions.submissions[r]));
+            }
           } catch (error) {
             console.error('Error in getting submissions for the round', error);
-            return new Set();
           }
-          if (roundSubmissions && roundSubmissions.submissions[r]) {
-            return new Set(Object.keys(roundSubmissions.submissions[r]));
-          }
+          return new Set();
         }
       });
 
