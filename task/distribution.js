@@ -183,6 +183,11 @@ class Distribution {
         round,
         _dummyTaskState,
       );
+
+      if(Object.keys(generateDistributionList).length === 0) {
+        console.log('UNABLE TO GENERATE DISTRIBUTION LIST');
+        return true;
+      }
       // Compare distribution list
       const parsed = fetchedDistributionList;
       console.log(
