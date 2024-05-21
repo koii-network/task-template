@@ -655,6 +655,7 @@ class NamespaceWrapper {
   }
 
   async validateAndVoteOnNodes(validate, round) {
+    if (taskNodeAdministered) {
     console.log('******/  IN VOTING /******');
     let taskAccountDataJSON = null;
     try {
@@ -736,6 +737,9 @@ class NamespaceWrapper {
         }
       }
     }
+  }else{
+    return;
+  }
   }
 
   async getTaskDistributionInfo(round) {
