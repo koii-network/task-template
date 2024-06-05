@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --detectOpenHandles",
+    "unitTest": "node tests/unitTest.js",
     "start": "node index.js",
     "prod-debug": "nodemon --ignore 'dist/*' prod-debug.js",
     "webpack": "webpack",
