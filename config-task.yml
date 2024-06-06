@@ -1,9 +1,9 @@
 # Name and metadata of your task
-task_name: 'task name'
+task_name: 'EZ Testing Task'
 author: 'Koii'
-description: 'description'
+description: 'This is a simple task for testing purposes. You can use this task to test your Koii Task and its functionalities. Feel free to test your code!'
 repositoryUrl: 'https://github.com/koii-network/task-template' #replace with your own repo url
-imageUrl: 'imageUrl'
+imageUrl: 'https://bafybeidzhth77azohk5vxojhm2cgpncg67doxgaqlpa5sqmr5nkpxwzvgq.ipfs.w3s.link/ezsandbox.png'
 
 # task_executable_network : DEVELOPMENT, ARWEAVE or IPFS
 # IPFS is the default value, as the CLI automatically manages the upload process via Spheron.
@@ -13,9 +13,9 @@ task_executable_network: 'IPFS'
 task_audit_program: 'dist/main.js'
 
 # round_time: The total duration of your task, measured in slots (with each slot approximately equal to 408ms)
-round_time: 1500
-audit_window: 350
-submission_window: 350
+round_time: 2000
+audit_window: 600
+submission_window: 600
 
 # minimum_stake_amount: The minimum amount of KOII that a user must stake in order to participate in the task
 minimum_stake_amount: 1.9
@@ -23,7 +23,7 @@ minimum_stake_amount: 1.9
 # total_bounty_amount cannot be grater than bounty_amount_per_round
 # total bounty_amount: The total bounty amount that will be distributed to the task. (Not accepted in case of update task)
 total_bounty_amount: 100
-bounty_amount_per_round: 100
+bounty_amount_per_round: 0.00001
 
 # allowed_failed_distributions: Number of times re-submission is allowed for the distribution list in case of an audit. 
 allowed_failed_distributions: 3

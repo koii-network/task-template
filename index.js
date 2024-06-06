@@ -40,12 +40,13 @@ async function setup() {
     } else if (m.functionCall == 'executeTask') {
       console.log('executeTask called');
       coreLogic.task(m.roundNumber);
+      // This EZ testing task do not distribute rewards
     } else if (m.functionCall == 'generateAndSubmitDistributionList') {
       console.log('generateAndSubmitDistributionList called');
-      coreLogic.selectAndGenerateDistributionList(m.roundNumber, m.isPreviousRoundFailed);
+      // coreLogic.selectAndGenerateDistributionList(m.roundNumber, m.isPreviousRoundFailed);
     } else if (m.functionCall == 'distributionListAudit') {
       console.log('distributionListAudit called');
-      coreLogic.auditDistribution(m.roundNumber);
+      // coreLogic.auditDistribution(m.roundNumber);
     }
   });
   /*######################################################
