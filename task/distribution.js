@@ -1,4 +1,4 @@
-const { namespaceWrapper } = require('../_koiiNode/koiiNode');
+const { namespaceWrapper } = require('@_koii/namespaceWrapper');
 
 class Distribution {
   /**
@@ -184,7 +184,7 @@ class Distribution {
         _dummyTaskState,
       );
 
-      if(Object.keys(generateDistributionList).length === 0) {
+      if (Object.keys(generateDistributionList).length === 0) {
         console.log('UNABLE TO GENERATE DISTRIBUTION LIST');
         return true;
       }
