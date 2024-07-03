@@ -4,7 +4,7 @@ const {
   namespaceWrapper,
   taskNodeAdministered,
   app,
-} = require('@_koii/namespaceWrapper');
+} = require('@_koii/namespace-wrapper');
 
 if (app) {
   //  Write your Express Endpoints here.
