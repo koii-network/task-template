@@ -1,5 +1,5 @@
 const { coreLogic } = require('../coreLogic');
-const { namespaceWrapper, _server } = require('@_koii/namespaceWrapper');
+const { namespaceWrapper, _server } = require('@_koii/namespace-wrapper');
 const Joi = require('joi');
 const axios = require('axios');
 beforeAll(async () => {
@@ -39,10 +39,11 @@ describe('Performing the task', () => {
     }
   });
 
-  it('should make the make an audit on submission', async () => {
+  it('should make an audit on submission', async () => {
     const round = 1;
     await coreLogic.auditTask(round);
     const taskState = await namespaceWrapper.getTaskState();
+    console.log('TASK STATE', taskState);
     console.log('audit task', taskState.submissions_audit_trigger);
     const schema = Joi.object()
       .pattern(
@@ -86,7 +87,10 @@ describe('Performing the task', () => {
       )
       .required()
       .min(1);
-    console.log(taskState.distribution_rewards_submission);
+    console.log(
+      'Distribution submission',
+      taskState.distribution_rewards_submission,
+    );
     const validationResult = schema.validate(
       taskState.distribution_rewards_submission,
     );
@@ -96,7 +100,7 @@ describe('Performing the task', () => {
       throw new Error("Distribution submission doesn't exist or is incorrect");
     }
   });
-  it('should make the make an audit on distribution submission', async () => {
+  it('should make an audit on distribution submission', async () => {
     const round = 1;
     await coreLogic.auditDistribution(round);
     const taskState = await namespaceWrapper.getTaskState();
@@ -149,7 +153,7 @@ describe('Performing the task', () => {
   });
 
   it('should test the endpoint', async () => {
-    const response = await axios.get('http://localhost:10000');
+    const response = await axios.get('http://localhost:3000');
     expect(response.status).toBe(200);
     expect(response.data).toEqual('Hello World!');
   });

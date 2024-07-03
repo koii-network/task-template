@@ -1,4 +1,4 @@
-const { namespaceWrapper } = require('@_koii/namespaceWrapper');
+const { namespaceWrapper } = require('@_koii/namespace-wrapper');
 const task = require('./task');
 
 class CoreLogic {
