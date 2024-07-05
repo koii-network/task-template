@@ -1,14 +1,15 @@
 const { coreLogic } = require('./coreLogic');
+
 const {
   namespaceWrapper,
   taskNodeAdministered,
   app,
-} = require('./_koiiNode/koiiNode');
+} = require('@_koii/namespace-wrapper');
 
 if (app) {
   //  Write your Express Endpoints here.
   //  Ex. app.post('/accept-cid', async (req, res) => {})
-  
+
   // Sample API that return your task state
   app.get('/taskState', async (req, res) => {
     const state = await namespaceWrapper.getTaskState();
@@ -42,7 +43,10 @@ async function setup() {
       coreLogic.task(m.roundNumber);
     } else if (m.functionCall == 'generateAndSubmitDistributionList') {
       console.log('generateAndSubmitDistributionList called');
-      coreLogic.selectAndGenerateDistributionList(m.roundNumber, m.isPreviousRoundFailed);
+      coreLogic.selectAndGenerateDistributionList(
+        m.roundNumber,
+        m.isPreviousRoundFailed,
+      );
     } else if (m.functionCall == 'distributionListAudit') {
       console.log('distributionListAudit called');
       coreLogic.auditDistribution(m.roundNumber);

@@ -1,4 +1,4 @@
-const { namespaceWrapper } = require('../_koiiNode/koiiNode');
+const { namespaceWrapper } = require('@_koii/namespace-wrapper');
 
 class Audit {
   /**
@@ -33,7 +33,10 @@ class Audit {
   async auditTask(roundNumber) {
     console.log('AUDIT CALLED IN ROUND', roundNumber);
     console.log('CURRENT SLOT IN AUDIT', await namespaceWrapper.getSlot());
-    await namespaceWrapper.validateAndVoteOnNodes(this.validateNode, roundNumber);
+    await namespaceWrapper.validateAndVoteOnNodes(
+      this.validateNode,
+      roundNumber,
+    );
   }
 }
 const audit = new Audit();
