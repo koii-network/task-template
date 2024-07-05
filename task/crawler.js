@@ -1,9 +1,12 @@
 const puppeteer = require('puppeteer');
 // const { addSubmission } = require('./supabase');
 const { namespaceWrapper } = require('@_koii/namespace-wrapper');
+const { KoiiStorageClient } = require('@_koii/storage-task-sdk');
 
 (async () => {
   try {
+    console.log("Mars was here *************** ")
+
     // Launch a new browser instance
     const browser = await puppeteer.launch({ headless: false }); // Set headless: false for debugging
 
