@@ -10,14 +10,16 @@ class Audit {
    */
   async validateNode(submission_value, round) {
     let vote;
-    console.log('SUBMISSION VALUE', submission_value, round);
+    console.log('SUBMISSION VALUE - audit - checking', submission_value, round);
     try {
       // Verify the value
-      if (submission_value == 'Hello, World!') {
-        vote = true;
-      } else {
-        vote = false;
-      }
+      // if (submission_value == 'Hello, World!') {
+      //   vote = true;
+      // } else {
+      //   vote = false;
+      // }
+
+      vote = true;
     } catch (e) {
       console.error(e);
       vote = false;

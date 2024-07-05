@@ -1,9 +1,9 @@
 # Name and metadata of your task
-task_name: 'task name'
-author: 'Koii'
-description: 'description'
+task_name: 'Mars task name'
+author: 'Mars Koii'
+description: 'Mars description'
 repositoryUrl: 'https://github.com/koii-network/task-template' #replace with your own repo url
-imageUrl: 'imageUrl'
+imageUrl: 'https://i.imgur.com/PsfKIlG.jpeg'
 
 # task_executable_network : DEVELOPMENT, ARWEAVE or IPFS
 # IPFS is the default value, as the CLI automatically manages the upload process via Spheron.
@@ -22,8 +22,8 @@ minimum_stake_amount: 1.9
 
 # total_bounty_amount cannot be grater than bounty_amount_per_round
 # total bounty_amount: The total bounty amount that will be distributed to the task. (Not accepted in case of update task)
-total_bounty_amount: 100
-bounty_amount_per_round: 100
+total_bounty_amount: 10
+bounty_amount_per_round: 0.1
 
 # allowed_failed_distributions: Number of times re-submission is allowed for the distribution list in case of an audit. 
 allowed_failed_distributions: 3
@@ -46,7 +46,7 @@ requirementsTags:
 
 # ONLY provide the task_id and migrationDescription if you are updating the task otherwise leave blank
 # task_id: Previous task id
-task_id: ''
+task_id: '714jCoZej4LxGL6QZwwgvur8NBro4oJv3GGNZKt7ajJc'
 
 # migrationDescription: Provide the description for changes made in new version of task
-migrationDescription: ''
+migrationDescription: 'Updating image'
