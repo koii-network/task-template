@@ -12,13 +12,13 @@ const Tail = require('tail').Tail;
         "scripts": {
             "prod-debug": "node prod-debug.js"
         }
-    - Create a .env file in the root of the project with the following content: 
+    - Create a .env file in the root of the project with the following content:
         WEBPACKED_FILE_PATH=dist/hello-world.js
         DESTINATION_PATH=/_some_CID_task_file_name_.js
         LOG_PATH=/logs/_some_Task_ID_.log
         KEYWORD=DEBUG
         NODE_DIR=/path/to/node/dir/
-    - Run the script using the command: yarn prod-debug
+    - Run the script using the command: npm run prod-debug
     - Change a file in the project and see the script trigger a build and copy the file to the Desktop Node runtime folder
     - Check the logs from the desktop node that contain your keyword
 */
@@ -32,7 +32,7 @@ const startWatching = async () => {
 /* build and webpack the task */
 const build = async () => {
   console.log('Building...');
-  const child = await spawn('yarn', ['webpack:test'], { stdio: 'inherit' });
+  const child = await spawn('npm', ['run', 'webpack:test'], { stdio: 'inherit' });
 
   await child.on('close', code => {
     if (code !== 0) {
@@ -78,7 +78,7 @@ const copyWebpackedFile = async () => {
 /* tail logs */
 const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
   console.log('Watchings logs for messages containing ', keywords);
-  
+
   // Ensure the log file exists, or create it if it doesn't
   try {
     await fs.promises.access(desktopNodeLogPath, fs.constants.F_OK);
