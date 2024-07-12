@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { namespaceWrapper } = require('@_koii/namespace-wrapper');
 const task = require('./task');
 
