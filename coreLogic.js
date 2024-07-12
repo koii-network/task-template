@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config(); // required to use local staking wallet during testing in namespaceWrapper
 const { namespaceWrapper } = require('@_koii/namespace-wrapper');
 const task = require('./task');
 
