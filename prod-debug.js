@@ -88,7 +88,7 @@ const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
       await fs.promises.access(dirPath, fs.constants.F_OK);
     } catch (dirErr) {
       console.log("Unable to find task directory. Please make sure you have the correct task ID set in your .env file, and run the task on the Desktop Node before running prod-debug.");
-      return;
+      process.exit(1);
     }
 
   // Ensure the log file exists, or create it if it doesn't
