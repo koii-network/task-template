@@ -3,6 +3,7 @@ const fs = require('fs');
 require('dotenv').config();
 const Debugger = require('./debugger');
 const Tail = require('tail').Tail;
+const path = require('path');
 
 /*
     This script is used to watch for file changes in the project and trigger a build and copy the webpacked file to the Desktop Node runtime folder.
