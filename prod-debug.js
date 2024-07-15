@@ -32,7 +32,9 @@ const startWatching = async () => {
 /* build and webpack the task */
 const build = async () => {
   console.log('Building...');
-  const child = await spawn('npm', ['run', 'webpack:test'], { stdio: 'inherit' });
+  const child = await spawn('npm', ['run', 'webpack:test'], {
+    stdio: 'inherit',
+  });
 
   await child.on('close', code => {
     if (code !== 0) {
@@ -53,7 +55,7 @@ const copyWebpackedFile = async () => {
   const sourcePath = __dirname + '/' + debugConfig.webpackedFilePath;
   const desktopNodeExecutablePath = nodeDIR + '/' + debugConfig.destinationPath;
   const desktopNodeLogPath = nodeDIR + '/' + debugConfig.logPath;
-  const keywords = debugConfig.keywords;
+  const keyword = debugConfig.keyword;
   const taskID = debugConfig.taskID;
 
   if (!sourcePath || !desktopNodeExecutablePath) {
@@ -70,14 +72,14 @@ const copyWebpackedFile = async () => {
       console.error('Error copying file:', err);
     } else {
       console.log('File copied successfully');
-      tailLogs(desktopNodeLogPath, keywords, taskID);
+      tailLogs(desktopNodeLogPath, keyword, taskID);
     }
   });
 };
 
 /* tail logs */
-const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
-  console.log('Watchings logs for messages containing ', keywords);
+const tailLogs = async (desktopNodeLogPath, keyword, taskID) => {
+  console.log(`Watching logs for messages containing '${keyword}'`);
 
   // Ensure the log file exists, or create it if it doesn't
   try {
@@ -90,11 +92,7 @@ const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
   let tail = new Tail(desktopNodeLogPath, '\n', {}, true);
 
   console.warn(
-    'Now watching logs for messages containing ',
-    keywords,
-    'Please start the Task',
-    taskID,
-    ' and keep it running on the Desktop Node.',
+    `Now watching logs for messages containing '${keyword}'. Please start the Task ${taskID} and keep it running on the Desktop Node.`,
   );
 
   tail.on('line', function (data) {
