@@ -3,6 +3,7 @@ const fs = require('fs');
 require('dotenv').config();
 const Debugger = require('./debugger');
 const Tail = require('tail').Tail;
+const path = require('path');
 
 /*
     This script is used to watch for file changes in the project and trigger a build and copy the webpacked file to the Desktop Node runtime folder.
@@ -78,6 +79,18 @@ const copyWebpackedFile = async () => {
 /* tail logs */
 const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
   console.log('Watchings logs for messages containing ', keywords);
+
+
+    // Extract the directory path from the full log file path
+    const dirPath = path.dirname(desktopNodeLogPath);
+
+    // Check if the directory exists, create it if it doesn't
+    try {
+      await fs.promises.access(dirPath, fs.constants.F_OK);
+    } catch (dirErr) {
+      console.log("Unable to find task directory. Please make sure you have the correct task ID set in your .env file, and run the task on the Desktop Node before running prod-debug.");
+      process.exit(1);
+    }
 
   // Ensure the log file exists, or create it if it doesn't
   try {
