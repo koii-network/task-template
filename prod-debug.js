@@ -80,6 +80,7 @@ const copyWebpackedFile = async () => {
 const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
   console.log('Watchings logs for messages containing ', keywords);
 
+
     // Extract the directory path from the full log file path
     const dirPath = path.dirname(desktopNodeLogPath);
 
