@@ -10,7 +10,7 @@ class Debugger {
   static taskID =
     process.env.TASK_ID || 'AK2P1L8NWGwWarbHeM7tX2mr4hJA7ZVXGSSSz5PWHBHv';
   static webpackedFilePath = process.env.WEBPACKED_FILE_PATH || 'dist/main.js';
-  static keywords = process.env.TEST_KEYWORDS || [''];
+  static keyword = process.env.TEST_KEYWORD || 'TEST';
   static nodeDir = process.env.NODE_DIR || '';
 
   static async getConfig() {
@@ -25,7 +25,7 @@ class Debugger {
     return {
       webpackedFilePath: Debugger.webpackedFilePath,
       destinationPath: destinationPath,
-      keywords: Debugger.keywords,
+      keyword: Debugger.keyword,
       logPath: logPath,
       nodeDir: Debugger.nodeDir,
       taskID: Debugger.taskID,
@@ -86,7 +86,7 @@ class Debugger {
     }
 
     const data = JSON.parse(accountInfo.data.toString());
-    console.log('data.task_audit_program', data.task_audit_program)
+    console.log('data.task_audit_program', data.task_audit_program);
     return data.task_audit_program;
   }
 }
