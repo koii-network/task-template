@@ -1,0 +1,5 @@
+{
+  "events": {
+    "crash": "echo 'Application has crashed' && kill $(ps aux | grep '[n]odemon' | awk '{print $2}')"
+  }
+}
