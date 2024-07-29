@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --detectOpenHandles",
-    "unitTest": "node tests/unitTest.js",
+    "test": "node tests/unitTest.js",
+    "jest-test": "jest --detectOpenHandles",
     "start": "node index.js",
     "prod-debug": "nodemon --ignore 'dist/*' prod-debug.js",
     "webpack": "webpack",
@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@_koi/web3.js": "^0.0.7",
+    "@_koii/namespace-wrapper": "^1.0.6",
     "axios": "^1.7.2",
     "body-parser": "^1.20.2",
     "cross-spawn": "^7.0.3",
