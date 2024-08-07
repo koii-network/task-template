@@ -4,7 +4,7 @@ author: 'Koii'
 description: 'description'
 repositoryUrl: 'https://github.com/koii-network/task-template' #replace with your own repo url
 imageUrl: 'imageUrl'
-
+infoUrl: 'infoUrl'
 # task_executable_network : DEVELOPMENT, ARWEAVE or IPFS
 # IPFS is the default value, as the CLI automatically manages the upload process via the Koii Storage SDK.
 task_executable_network: 'IPFS'
@@ -52,3 +52,5 @@ task_id: ''
 
 # migrationDescription: Provide the description for changes made in new version of task
 migrationDescription: ''
+
+
