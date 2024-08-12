@@ -49,7 +49,7 @@ class Submission {
    *
    */
   async fetchSubmission(round) {
-    console.log('FETCH SUBMISSION');
+    console.log(`FETCH SUBMISSION FOR ROUND ${round}`);
     // Fetch the value from NeDB
     const value = await namespaceWrapper.storeGet('value'); // retrieves the value
     // Return cid/value, etc.
