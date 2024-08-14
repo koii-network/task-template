@@ -33,7 +33,9 @@ const startWatching = async () => {
 /* build and webpack the task */
 const build = async () => {
   console.log('Building...');
-  const child = await spawn('npm', ['run', 'webpack:test'], { stdio: 'inherit' });
+  const child = await spawn('npm', ['run', 'webpack:test'], {
+    stdio: 'inherit',
+  });
 
   await child.on('close', code => {
     if (code !== 0) {
@@ -80,17 +82,18 @@ const copyWebpackedFile = async () => {
 const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
   console.log('Watchings logs for messages containing ', keywords);
 
+  // Extract the directory path from the full log file path
+  const dirPath = path.dirname(desktopNodeLogPath);
 
-    // Extract the directory path from the full log file path
-    const dirPath = path.dirname(desktopNodeLogPath);
-
-    // Check if the directory exists, create it if it doesn't
-    try {
-      await fs.promises.access(dirPath, fs.constants.F_OK);
-    } catch (dirErr) {
-      console.log("Unable to find task directory. Please make sure you have the correct task ID set in your .env file, and run the task on the Desktop Node before running prod-debug.");
-      process.exit(1);
-    }
+  // Check if the directory exists, create it if it doesn't
+  try {
+    await fs.promises.access(dirPath, fs.constants.F_OK);
+  } catch (dirErr) {
+    console.log(
+      'Unable to find task directory. Please make sure you have the correct task ID set in your .env file, and run the task on the Desktop Node before running prod-debug.',
+    );
+    process.exit(1);
+  }
 
   // Ensure the log file exists, or create it if it doesn't
   try {

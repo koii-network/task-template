@@ -37,13 +37,13 @@ Should you encounter any issues, don't hesitate to reach out by opening a ticket
 
 ```sh
 npm test
-````
+```
 
 Simulate rounds using unitTest.js.
 
 ```sh
 npm jest-test
-````
+```
 
 Runs tests using Just.
 

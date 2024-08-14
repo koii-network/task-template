@@ -86,7 +86,7 @@ class Debugger {
     }
 
     const data = JSON.parse(accountInfo.data.toString());
-    console.log('data.task_audit_program', data.task_audit_program)
+    console.log('data.task_audit_program', data.task_audit_program);
     return data.task_audit_program;
   }
 }
