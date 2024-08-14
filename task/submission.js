@@ -1,4 +1,4 @@
-const { NamespaceWrapper } = require('@_koii/namespace-wrapper');
+const { namespaceWrapper } = require('@_koii/namespace-wrapper');
 
 class Submission {
   /**
@@ -13,7 +13,7 @@ class Submission {
     const value = 'Hello, World!';
     // Store the result in NeDB (optional)
     if (value) {
-      await NamespaceWrapper.storeSet('value', value);
+      await namespaceWrapper.storeSet('value', value);
     }
     // Optional, return your task
     return value;
@@ -28,10 +28,10 @@ class Submission {
   async submitTask(round) {
     console.log('SUBMIT TASK CALLED ROUND NUMBER', round);
     try {
-      console.log('SUBMIT TASK SLOT', await NamespaceWrapper.getSlot());
+      console.log('SUBMIT TASK SLOT', await namespaceWrapper.getSlot());
       const submission = await this.fetchSubmission(round);
       console.log('SUBMISSION', submission);
-      await NamespaceWrapper.checkSubmissionAndUpdateRound(submission, round);
+      await namespaceWrapper.checkSubmissionAndUpdateRound(submission, round);
       console.log('SUBMISSION CHECKED AND ROUND UPDATED');
       return submission;
     } catch (error) {
@@ -47,7 +47,7 @@ class Submission {
    */
   async fetchSubmission(round) {
     console.log(`FETCH SUBMISSION FOR ROUND ${round}`);
-    const value = await NamespaceWrapper.storeGet('value'); 
+    const value = await namespaceWrapper.storeGet('value'); 
     return value;
   }
 }
