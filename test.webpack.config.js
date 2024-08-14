@@ -8,7 +8,7 @@ module.exports = {
   mode: 'development',
   devtool: 'source-map',
   optimization: {
-    usedExports: false, // <- no remove unused function
+    usedExports: false, 
   },
   stats: {
     moduleTrace: false,

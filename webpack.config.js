@@ -1,6 +1,8 @@
 module.exports = {
   entry: './index.js',
   target: 'node',
+  // When uploading to arweave use the production mode
+  // mode:"production",
   mode: 'development',
   devtool: 'source-map',
   optimization: {
