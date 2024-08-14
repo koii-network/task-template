@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@_koii/namespace-wrapper": "^1.0.1",
+    "@_koii/namespace-wrapper": "^1.0.8",
     "@_koii/web3.js": "^0.1.11",
     "axios": "^1.7.2",
     "cross-spawn": "^7.0.3",
