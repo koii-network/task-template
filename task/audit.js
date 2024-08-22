@@ -1,5 +1,5 @@
 const { namespaceWrapper } = require('@_koii/namespace-wrapper');
-const { auditSubmission } = require('../task.js');
+const { auditSubmission } = require('../editTask.js');
 
 class Audit {
   /**
