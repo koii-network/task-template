@@ -82,7 +82,6 @@ class Distribution {
       const keys = Object.keys(submissions);
       const stakeList = taskStakeListJSON.stake_list;
       let candidates = [];
-      // Edit Your Stake Slash Logic Here
       keys.forEach(candidatePublicKey => {
         const votes =
           submissions_audit_trigger?.[candidatePublicKey]?.votes || [];

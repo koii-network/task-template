@@ -10,7 +10,6 @@ class Audit {
    * @returns {Promise<boolean>} The validation result, return true if the submission is correct, false otherwise
    */
   async validateNode(submission_value, round) {
-    // Write Your Validation Logic Here
     console.log(`VALIDATE NODE FOR ROUND ${round}`);
     return await auditSubmission(submission_value, round);
   }
