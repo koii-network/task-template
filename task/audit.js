@@ -1,4 +1,5 @@
 const { namespaceWrapper } = require('@_koii/namespace-wrapper');
+const { auditSubmission } = require('../task.js');
 
 class Audit {
   /**
@@ -11,7 +12,7 @@ class Audit {
   async validateNode(submission_value, round) {
     // Write Your Validation Logic Here
     console.log(`VALIDATE NODE FOR ROUND ${round}`);
-    return submission_value === 'Hello, World!';
+    return await auditSubmission(submission_value, round);
   }
   /**
    * Vote on the other nodes Submissions

@@ -1,4 +1,5 @@
 const { namespaceWrapper } = require('@_koii/namespace-wrapper');
+const { executeTask, makeSubmission } = require('../editTask.js');
 
 class Submission {
   /**
@@ -8,15 +9,10 @@ class Submission {
    * @returns {void}
    */
   async task(round) {
-    console.log('ROUND', round);
-    // Edit your task logic here and generate a value for submission. If you want to use a file as your submission, use our IPFS service here: https://www.koii.network/docs/develop/write-a-koii-task/task-development-kit-tdk/using-the-task-namespace/koii-storage
-    const value = 'Hello, World!';
-    // Store the result in NeDB (optional)
-    if (value) {
-      await namespaceWrapper.storeSet('value', value);
+    const value = await executeTask(round);
+    if (value !== undefined) {
+      return value;
     }
-    // Optional, return your task
-    return value;
   }
 
   /**
@@ -46,9 +42,7 @@ class Submission {
    * @returns {Promise<string>} The submission value that you will use in audit. It can be the real value, cid, etc.
    */
   async fetchSubmission(round) {
-    console.log(`FETCH SUBMISSION FOR ROUND ${round}`);
-    const value = await namespaceWrapper.storeGet('value');
-    return value;
+    return await makeSubmission(round);
   }
 }
 

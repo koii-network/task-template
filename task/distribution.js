@@ -1,4 +1,5 @@
 const { namespaceWrapper } = require('@_koii/namespace-wrapper');
+const { makeRewardList } = require('../editTask.js');
 
 class Distribution {
   /**
@@ -47,11 +48,11 @@ class Distribution {
    * @param {number} round - The current round number
    * @returns {Promise<object>} The distribution list for the given round
    */
-  async generateDistributionList(round, _dummyTaskState) {
+  async generateDistributionList(round) {
     try {
       console.log('GENERATE DISTRIBUTION LIST CALLED WITH ROUND', round);
       let distributionList = {};
-      let distributionCandidates = [];
+
       let taskAccountDataJSON, taskStakeListJSON;
       try {
         taskAccountDataJSON =
@@ -80,6 +81,7 @@ class Distribution {
       }
       const keys = Object.keys(submissions);
       const stakeList = taskStakeListJSON.stake_list;
+      let candidates = [];
       // Edit Your Stake Slash Logic Here
       keys.forEach(candidatePublicKey => {
         const votes =
@@ -88,28 +90,17 @@ class Distribution {
           (acc, vote) => acc + (vote.is_valid ? 1 : -1),
           0,
         );
-
-        if (validVotes < 0) {
-          const slashedStake = stakeList[candidatePublicKey] * 0.7;
-          distributionList[candidatePublicKey] = -slashedStake;
-          console.log(
-            'CANDIDATE STAKE SLASHED',
-            candidatePublicKey,
-            slashedStake,
-          );
-        } else {
-          distributionCandidates.push(candidatePublicKey);
-        }
+        candidates.push({
+          publickey: candidatePublicKey,
+          votes: validVotes,
+          stake: stakeList[candidatePublicKey],
+        });
       });
-      // Edit Your Distribution Logic Here
-      const reward = Math.floor(
-        taskStakeListJSON.bounty_amount_per_round /
-          distributionCandidates.length,
+      distributionList = await makeRewardList(
+        round,
+        candidates,
+        taskStakeListJSON.bounty_amount_per_round,
       );
-      console.log('REWARD PER NODE', reward);
-      distributionCandidates.forEach(candidate => {
-        distributionList[candidate] = reward;
-      });
       console.log('FINAL DISTRIBUTION LIST', distributionList);
       return distributionList;
     } catch (err) {
