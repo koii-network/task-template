@@ -42,7 +42,10 @@ class Submission {
    * @returns {Promise<string>} The submission value that you will use in audit. It can be the real value, cid, etc.
    */
   async fetchSubmission(round) {
-    return await makeSubmission(round);
+    const result = await makeSubmission(round);
+    if (result !== undefined) {
+      return result;
+    }
   }
 }
 

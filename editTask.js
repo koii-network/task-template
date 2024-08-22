@@ -10,8 +10,12 @@ async function executeTask(roundNumber) {
 
 async function makeSubmission(roundNumber) {
   // Submit your task proofs for auditing
-  console.log(`MAKE SUBMISSION FOR ROUND ${roundNumber}`);
-  return await namespaceWrapper.storeGet('value');
+  try {
+    console.log(`MAKE SUBMISSION FOR ROUND ${roundNumber}`);
+    return await namespaceWrapper.storeGet('value');
+  } catch (error) {
+    console.log('ERROR IN SUBMISSION', error);
+  }
 }
 
 async function auditSubmission(submission, roundNumber) {
