@@ -96,7 +96,7 @@ class Distribution {
           stake: stakeList[candidatePublicKey],
         });
       });
-      distributionList = await makeRewardList(
+      distributionList = makeRewardList(
         round,
         candidates,
         taskStakeListJSON.bounty_amount_per_round,

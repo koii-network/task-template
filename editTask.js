@@ -21,7 +21,7 @@ async function auditSubmission(submission, roundNumber) {
   return submission === 'Hello, World!';
 }
 
-async function makeRewardList(round, submitters, bounty) {
+function makeRewardList(round, submitters, bounty) {
   console.log(`MAKE REWARD LIST FOR ROUND ${round}`);
   const rewardList = {};
   const approvedSubmitters = [];
