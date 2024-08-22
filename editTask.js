@@ -14,7 +14,7 @@ async function makeSubmission(roundNumber) {
   return await namespaceWrapper.storeGet('value');
 }
 
-function auditSubmission(submission, roundNumber) {
+async function auditSubmission(submission, roundNumber) {
   // Audit a submission
   // This function should return true if the submission is correct, false otherwise
   console.log(`AUDIT SUBMISSION FOR ROUND ${roundNumber}`);
