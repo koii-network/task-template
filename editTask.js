@@ -2,21 +2,23 @@ const { namespaceWrapper } = require('@_koii/namespace-wrapper');
 
 async function startTask(roundNumber) {
   // Run your task and store the proofs to be submitted for auditing
-  // The submission of the proofs is done in the makeSubmission function
+  // The submission of the proofs is done in the fetchSubmission function
   console.log(`EXECUTE TASK FOR ROUND ${roundNumber}`);
-  // you can optionally return this value to be used in debugging
-  await namespaceWrapper.storeSet('value', 'Hello, World!');
+  try {
+    // you can optionally return this value to be used in debugging
+    await namespaceWrapper.storeSet('value', 'Hello, World!');
+  } catch (error) {
+    console.error('START TASK ERROR:', error);
+  }
 }
 
 async function fetchSubmission(roundNumber) {
   // Submit your task proofs for auditing
   try {
-    const userStaking = await namespaceWrapper.getSubmitterAccount();
-    console.log('USER STAKING', userStaking);
     console.log(`MAKE SUBMISSION FOR ROUND ${roundNumber}`);
     return await namespaceWrapper.storeGet('value');
   } catch (error) {
-    console.log('ERROR IN SUBMISSION', error);
+    console.error('FETCH SUBMISSION ERROR:', error);
   }
 }
 
