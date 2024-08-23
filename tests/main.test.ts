@@ -2,18 +2,20 @@ import { coreLogic } from "../src/coreLogic";
 import { namespaceWrapper, _server } from "../src/_koiiNode/_koiiNode";
 import * as Joi from "joi";
 import axios from "axios";
+import { audit, distribution, submission } from "../src/task";
+const task = {audit, distribution, submission};
 beforeAll(async () => {
   await namespaceWrapper.defaultTaskSetup();
 });
 
-describe("Performing the task", () => {
-  it("should performs the core logic task", async () => {
+describe('Performing the task', () => {
+  it('should performs the core logic task', async () => {
     const round = 1;
     const result = await coreLogic.task(round);
-    expect(result).not.toContain("ERROR IN EXECUTING TASK");
+    expect(result).not.toContain('ERROR IN EXECUTING TASK');
   });
 
-  it("should make the submission to k2 for dummy round 1", async () => {
+  it('should make the submission to k2 for dummy round 1', async () => {
     const round = 1;
     await coreLogic.submitTask(round);
     const taskState = await namespaceWrapper.getTaskState();
@@ -26,8 +28,8 @@ describe("Performing the task", () => {
             submission_value: Joi.string().required(),
             slot: Joi.number().integer().required(),
             round: Joi.number().integer().required(),
-          })
-        )
+          }),
+        ),
       )
       .required()
       .min(1);
@@ -39,11 +41,11 @@ describe("Performing the task", () => {
     }
   });
 
-  it("should make the make an audit on submission", async () => {
+  it('should make the make an audit on submission', async () => {
     const round = 1;
     await coreLogic.auditTask(round);
     const taskState = await namespaceWrapper.getTaskState();
-    console.log("audit task", taskState.submissions_audit_trigger);
+    console.log('audit task', taskState.submissions_audit_trigger);
     const schema = Joi.object()
       .pattern(
         Joi.string(),
@@ -53,22 +55,23 @@ describe("Performing the task", () => {
             trigger_by: Joi.string().required(),
             slot: Joi.number().integer().required(),
             votes: Joi.array().required(),
-          })
-        )
+          }),
+        ),
       )
       .required();
     const validationResult = schema.validate(
-      taskState.submissions_audit_trigger
+      taskState.submissions_audit_trigger,
     );
     try {
       expect(validationResult.error).toBeUndefined();
     } catch (e) {
-      throw new Error("Submission audit is incorrect");
+      throw new Error('Submission audit is incorrect');
     }
   });
-  it("should make the distribution submission to k2 for dummy round 1", async () => {
+  it('should make the distribution submission to k2 for dummy round 1', async () => {
     const round = 1;
-    await coreLogic.submitDistributionList(round);
+    //await coreLogic.submitDistributionList(round);
+    await task.distribution.submitDistributionList(round);
     const taskState = await namespaceWrapper.getTaskState();
     const schema = Joi.object()
       .pattern(
@@ -79,14 +82,14 @@ describe("Performing the task", () => {
             submission_value: Joi.string().required(),
             slot: Joi.number().integer().required(),
             round: Joi.number().integer().required(),
-          })
-        )
+          }),
+        ),
       )
       .required()
       .min(1);
     console.log(taskState.distribution_rewards_submission);
     const validationResult = schema.validate(
-      taskState.distribution_rewards_submission
+      taskState.distribution_rewards_submission,
     );
     try {
       expect(validationResult.error).toBeUndefined();
@@ -94,11 +97,11 @@ describe("Performing the task", () => {
       throw new Error("Distribution submission doesn't exist or is incorrect");
     }
   });
-  it("should make the make an audit on distribution submission", async () => {
+  it('should make the make an audit on distribution submission', async () => {
     const round = 1;
     await coreLogic.auditDistribution(round);
     const taskState = await namespaceWrapper.getTaskState();
-    console.log("audit task", taskState.distributions_audit_trigger);
+    console.log('audit task', taskState.distributions_audit_trigger);
     const schema = Joi.object()
       .pattern(
         Joi.string(),
@@ -108,55 +111,51 @@ describe("Performing the task", () => {
             trigger_by: Joi.string().required(),
             slot: Joi.number().integer().required(),
             votes: Joi.array().required(),
-          })
-        )
+          }),
+        ),
       )
       .required();
     const validationResult = schema.validate(
-      taskState.distributions_audit_trigger
+      taskState.distributions_audit_trigger,
     );
     try {
       expect(validationResult.error).toBeUndefined();
     } catch (e) {
-      throw new Error("Distribution audit is incorrect");
+      throw new Error('Distribution audit is incorrect');
     }
   });
 
-  it("should make sure the submitted distribution list is valid", async () => {
+  it('should make sure the submitted distribution list is valid', async () => {
     const round = 1;
     const distributionList = await namespaceWrapper.getDistributionList(
       null,
-      round
+      round,
     );
     console.log(
-      "Generated distribution List",
-      JSON.parse(distributionList.toString())
+      'Generated distribution List',
+      JSON.parse(distributionList.toString()),
     );
     const schema = Joi.object()
       .pattern(Joi.string().required(), Joi.number().integer().required())
       .required();
     const validationResult = schema.validate(
-      JSON.parse(distributionList.toString())
+      JSON.parse(distributionList.toString()),
     );
     console.log(validationResult);
     try {
       expect(validationResult.error).toBeUndefined();
     } catch (e) {
-      throw new Error("Submitted distribution list is not valid");
+      throw new Error('Submitted distribution list is not valid');
     }
   });
 
-  it("should test the endpoint", async () => {
-    const response = await axios.get("http://localhost:10000");
+  it('should test the endpoint', async () => {
+    const response = await axios.get('http://localhost:10000');
     expect(response.status).toBe(200);
-    expect(response.data).toEqual("Hello World!");
+    expect(response.data).toEqual('Hello World!');
   });
 });
 
-afterAll(() => {
-  return new Promise<void>((resolve) => {
-    _server.close(() => {
-      resolve();
-    });
-  });
+afterAll(async () => {
+  _server.close();
 });

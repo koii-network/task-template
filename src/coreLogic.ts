@@ -1,33 +1,41 @@
-import { submission, audit, distribution } from "../src/task";
 
+import {audit, distribution,submission} from "./task"
+import {namespaceWrapper} from "./_koiiNode/_koiiNode" 
 const task = {
-  submission,
   audit,
   distribution,
+  submission,
 };
-
 class CoreLogic {
-  async task(round: number) {
+  async task(round) {
     const result = await task.submission.task(round);
     return result;
   }
 
-  async submitTask(round: number) {
+  async submitTask(round) {
     const submission = await task.submission.submitTask(round);
     return submission;
   }
 
-  async auditTask(round: number) {
+  async auditTask(round) {
     await task.audit.auditTask(round);
   }
 
-  async submitDistributionList(round: number) {
-    await task.distribution.submitDistributionList(round);
+  async selectAndGenerateDistributionList(
+    round,
+    isPreviousRoundFailed = false,
+  ) {
+    await namespaceWrapper.selectAndGenerateDistributionList(
+      task.distribution.submitDistributionList,
+      round,
+      isPreviousRoundFailed,
+    );
   }
 
-  async auditDistribution(round: number) {
+  async auditDistribution(round) {
     await task.distribution.auditDistribution(round);
   }
 }
-
 export const coreLogic = new CoreLogic();
+
+
