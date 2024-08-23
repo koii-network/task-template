@@ -96,9 +96,9 @@ class Distribution {
         });
       });
       distributionList = makeRewardList(
-        round,
         candidates,
         taskStakeListJSON.bounty_amount_per_round,
+        round,
       );
       console.log('FINAL DISTRIBUTION LIST', distributionList);
       return distributionList;

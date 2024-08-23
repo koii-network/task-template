@@ -1,6 +1,6 @@
 const { namespaceWrapper } = require('@_koii/namespace-wrapper');
 
-async function executeTask(roundNumber) {
+async function startTask(roundNumber) {
   // Run your task and store the proofs to be submitted for auditing
   // The submission of the proofs is done in the makeSubmission function
   console.log(`EXECUTE TASK FOR ROUND ${roundNumber}`);
@@ -8,9 +8,11 @@ async function executeTask(roundNumber) {
   await namespaceWrapper.storeSet('value', 'Hello, World!');
 }
 
-async function makeSubmission(roundNumber) {
+async function fetchSubmission(roundNumber) {
   // Submit your task proofs for auditing
   try {
+    const userStaking = await namespaceWrapper.getSubmitterAccount();
+    console.log('USER STAKING', userStaking);
     console.log(`MAKE SUBMISSION FOR ROUND ${roundNumber}`);
     return await namespaceWrapper.storeGet('value');
   } catch (error) {
@@ -25,8 +27,8 @@ async function auditSubmission(submission, roundNumber) {
   return submission === 'Hello, World!';
 }
 
-function makeRewardList(round, submitters, bounty) {
-  console.log(`MAKE REWARD LIST FOR ROUND ${round}`);
+function makeRewardList(submitters, bounty, roundNumber) {
+  console.log(`MAKE REWARD LIST FOR ROUND ${roundNumber}`);
   const rewardList = {};
   const approvedSubmitters = [];
   // Slash the stake of submitters who submitted incorrect values
@@ -51,8 +53,8 @@ function makeRewardList(round, submitters, bounty) {
 }
 
 module.exports = {
-  executeTask,
-  makeSubmission,
+  startTask,
+  fetchSubmission,
   auditSubmission,
   makeRewardList,
 };
