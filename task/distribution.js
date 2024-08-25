@@ -90,7 +90,7 @@ class Distribution {
           0,
         );
         candidates.push({
-          publickey: candidatePublicKey,
+          publicKey: candidatePublicKey,
           votes: validVotes,
           stake: stakeList[candidatePublicKey],
         });

@@ -36,7 +36,7 @@ function makeRewardList(submitters, bounty, roundNumber) {
   // Slash the stake of submitters who submitted incorrect values
   // and make a list of submitters who submitted correct values
   for (const submitter of submitters) {
-    rewardList[submitter] = 0;
+    rewardList[submitter.publicKey] = 0;
     if (submitter.votes < 0) {
       const slashedStake = submitter.stake * 0.7;
       rewardList[submitter.publicKey] = -slashedStake;
