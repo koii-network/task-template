@@ -1,5 +1,5 @@
 const { namespaceWrapper } = require('@_koii/namespace-wrapper');
-const { executeTask, makeSubmission } = require('../editTask.js');
+const { startTask, fetchSubmission } = require('../editTask.js');
 
 class Submission {
   /**
@@ -9,7 +9,7 @@ class Submission {
    * @returns {void}
    */
   async task(round) {
-    const value = await executeTask(round);
+    const value = await startTask(round);
     if (value !== undefined) {
       return value;
     }
@@ -42,7 +42,7 @@ class Submission {
    * @returns {Promise<string>} The submission value that you will use in audit. It can be the real value, cid, etc.
    */
   async fetchSubmission(round) {
-    const result = await makeSubmission(round);
+    const result = await fetchSubmission(round);
     if (result !== undefined) {
       return result;
     }
