@@ -1,4 +1,4 @@
-import { taskRunner } from '@_koii/task-runner';
+import { taskRunner } from '@_koii/task-manager';
 import '../src/index.js';
 
 const numRounds = process.argv[2] || 1;

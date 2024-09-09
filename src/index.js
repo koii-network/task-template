@@ -1,5 +1,5 @@
 import { namespaceWrapper, app } from '@_koii/namespace-wrapper';
-import { initializeTaskManager } from '@_koii/task-runner';
+import { initializeTaskManager } from '@_koii/task-manager';
 import { setupRoutes } from './routes.js';
 
 async function setup() {
