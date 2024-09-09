@@ -23,12 +23,12 @@ audit_window: 600
 submission_window: 600
 
 # Minimum stake amount: The minimum amount of KOII that a user must stake in order to participate in the task.
-minimum_stake_amount: 1.9
+minimum_stake_amount: 0.1
 
 # Task Bounty Type: KOII, KPL
 task_type: 'KOII'
 
-# OPTIONAL (ONLY IF Task Type = KPL) : Token Mint Address, Fire Token as an example here. 
+# OPTIONAL (ONLY IF Task Type = KPL) : Token Mint Address, Fire Token as an example here.
 token_type: "FJG2aEPtertCXoedgteCCMmgngSZo1Zd715oNBzR7xpR"
 
 # Total bounty amount: The total bounty amount that will be distributed to the task. (Not accepted in case of update task).
