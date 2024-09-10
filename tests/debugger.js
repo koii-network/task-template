@@ -2,6 +2,7 @@ import 'dotenv/config';
 import os from 'os';
 import path from 'path';
 import { Connection, PublicKey } from '@_koii/web3.js';
+import { borsh_bpf_js_deserialize } from './wasm/bincode_js.cjs';
 
 class Debugger {
   /*
@@ -85,11 +86,59 @@ class Debugger {
       console.log(`${taskId} doesn't contain any distribution list data`);
       return null;
     }
+    let data;
+    try {
+      data = JSON.parse(accountInfo.data.toString());
+    } catch (e) {
+      const buffer = accountInfo.data;
+      data = borsh_bpf_js_deserialize(buffer);
+      data = parseTaskState(data);
+    }
 
-    const data = JSON.parse(accountInfo.data.toString());
     console.log('data.task_audit_program', data.task_audit_program);
     return data.task_audit_program;
   }
+}
+
+function parseTaskState(taskState) {
+  taskState.stake_list = objectify(taskState.stake_list, true);
+  taskState.ip_address_list = objectify(taskState.ip_address_list, true);
+  taskState.distributions_audit_record = objectify(
+    taskState.distributions_audit_record,
+    true,
+  );
+  taskState.distributions_audit_trigger = objectify(
+    taskState.distributions_audit_trigger,
+    true,
+  );
+  taskState.submissions = objectify(taskState.submissions, true);
+  taskState.submissions_audit_trigger = objectify(
+    taskState.submissions_audit_trigger,
+    true,
+  );
+  taskState.distribution_rewards_submission = objectify(
+    taskState.distribution_rewards_submission,
+    true,
+  );
+  taskState.available_balances = objectify(taskState.available_balances, true);
+  return taskState;
+}
+
+function objectify(data, recursive = false) {
+  if (data instanceof Map) {
+    const obj = Object.fromEntries(data);
+    if (recursive) {
+      for (const key in obj) {
+        if (obj[key] instanceof Map) {
+          obj[key] = objectify(obj[key], true);
+        } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+          obj[key] = objectify(obj[key], true);
+        }
+      }
+    }
+    return obj;
+  }
+  return data;
 }
 
 export default Debugger;
