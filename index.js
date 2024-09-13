@@ -1,27 +1,43 @@
+const express = require('express');
 const { coreLogic } = require('./coreLogic');
+const { namespaceWrapper, taskNodeAdministered, app } = require('@_koii/namespace-wrapper');
+const winston = require('winston');
 
-const {
-  namespaceWrapper,
-  taskNodeAdministered,
-  app,
-} = require('@_koii/namespace-wrapper');
+// Set up logging
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.simple(),
+  transports: [
+    new winston.transports.Console(),
+  ],
+});
 
 if (app) {
-  //  Write your Express Endpoints here.
-  //  Ex. app.post('/accept-cid', async (req, res) => {})
+  // Middleware to handle JSON requests
+  app.use(express.json());
 
-  // Sample API that return your task state
+  // Endpoint to return task state
   app.get('/taskState', async (req, res) => {
-    const state = await namespaceWrapper.getTaskState();
-    console.log('TASK STATE', state);
-    res.status(200).json({ taskState: state });
+    try {
+      const state = await namespaceWrapper.getTaskState();
+      logger.info('TASK STATE', { state });
+      res.status(200).json({ taskState: state });
+    } catch (error) {
+      logger.error('Error fetching task state', { error });
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
   });
 
-  // Sample API that return the value stored in NeDB
+  // Endpoint to return value stored in NeDB
   app.get('/value', async (req, res) => {
-    const value = await namespaceWrapper.storeGet('value');
-    console.log('value', value);
-    res.status(200).json({ value: value });
+    try {
+      const value = await namespaceWrapper.storeGet('value');
+      logger.info('VALUE', { value });
+      res.status(200).json({ value });
+    } catch (error) {
+      logger.error('Error fetching value', { error });
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
   });
 }
 
@@ -29,77 +45,48 @@ async function setup() {
   /*######################################################
   ################## DO NOT EDIT BELOW #################
   ######################################################*/
-  await namespaceWrapper.defaultTaskSetup();
-  process.on('message', m => {
-    console.log('CHILD got message:', m);
-    if (m.functionCall == 'submitPayload') {
-      console.log('submitPayload called');
-      coreLogic.submitTask(m.roundNumber);
-    } else if (m.functionCall == 'auditPayload') {
-      console.log('auditPayload called');
-      coreLogic.auditTask(m.roundNumber);
-    } else if (m.functionCall == 'executeTask') {
-      console.log('executeTask called');
-      coreLogic.task(m.roundNumber);
-    } else if (m.functionCall == 'generateAndSubmitDistributionList') {
-      console.log('generateAndSubmitDistributionList called');
-      coreLogic.selectAndGenerateDistributionList(
-        m.roundNumber,
-        m.isPreviousRoundFailed,
-      );
-    } else if (m.functionCall == 'distributionListAudit') {
-      console.log('distributionListAudit called');
-      coreLogic.auditDistribution(m.roundNumber);
+  try {
+    await namespaceWrapper.defaultTaskSetup();
+  } catch (error) {
+    logger.error('Error during task setup', { error });
+    process.exit(1); // Exit the process if setup fails
+  }
+
+  process.on('message', async (m) => {
+    logger.info('Received message', { message: m });
+
+    switch (m.functionCall) {
+      case 'submitPayload':
+        logger.info('submitPayload called');
+        await coreLogic.submitTask(m.roundNumber);
+        break;
+      case 'auditPayload':
+        logger.info('auditPayload called');
+        await coreLogic.auditTask(m.roundNumber);
+        break;
+      case 'executeTask':
+        logger.info('executeTask called');
+        await coreLogic.task(m.roundNumber);
+        break;
+      case 'generateAndSubmitDistributionList':
+        logger.info('generateAndSubmitDistributionList called');
+        await coreLogic.selectAndGenerateDistributionList(m.roundNumber, m.isPreviousRoundFailed);
+        break;
+      case 'distributionListAudit':
+        logger.info('distributionListAudit called');
+        await coreLogic.auditDistribution(m.roundNumber);
+        break;
+      default:
+        logger.warn('Unknown function call', { functionCall: m.functionCall });
     }
   });
   /*######################################################
   ################ DO NOT EDIT ABOVE ###################
   ######################################################*/
-
-  /* GUIDE TO CALLS K2 FUNCTIONS MANUALLY
-
-      If you wish to do the development by avoiding the timers then you can do the intended calls to K2 
-      directly using these function calls. 
-
-      To disable timers please set the TIMERS flag in task-node ENV to disable
-
-      NOTE : K2 will still have the windows to accept the submission value, audit, so you are expected
-      to make calls in the intended slots of your round time. 
-
-  */
-
-  // Get the task state
-  // console.log(await namespaceWrapper.getTaskState());
-
-  // Get round
-  // const round = await namespaceWrapper.getRound();
-  // console.log("ROUND", round);
-
-  // Call to do the work for the task
-  // await coreLogic.task();
-
-  // Submission to K2 (Preferablly you should submit the cid received from IPFS)
-  // await coreLogic.submitTask(round - 1);
-
-  // Audit submissions
-  // await coreLogic.auditTask(round - 1);
-
-  // Upload distribution list to K2
-  // await coreLogic.selectAndGenerateDistributionList(10);
-
-  // Audit distribution list
-  // await coreLogic.auditDistribution(round - 2);
-
-  // Payout trigger
-  // const responsePayout = await namespaceWrapper.payoutTrigger();
-  // console.log("RESPONSE TRIGGER", responsePayout);
-
-  // Logs to be displayed on desktop-node
-  // namespaceWrapper.logger('error', 'Internet connection lost');
-  // await namespaceWrapper.logger('warn', 'Stakes are running low');
-  // await namespaceWrapper.logger('log', 'Task is running');
 }
 
-if (taskNodeAdministered) {
-  setup();
-}
+// Initialize the setup
+setup().catch(error => {
+  logger.error('Setup failed', { error });
+  process.exit(1);
+});
