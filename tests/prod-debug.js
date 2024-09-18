@@ -5,6 +5,7 @@ import Debugger from './debugger.js';
 import { Tail } from 'tail';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import chalk from 'chalk';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -118,10 +119,11 @@ const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
   );
 
   tail.on('line', function (data) {
-    console.log(data);
-    // if (keywords.some(keyword => data.includes(keyword))) {
-    //   console.log(`PROD$ ${data}`);
-    // }
+    if (keywords.some(keyword => data.includes(keyword))) {
+      console.log(chalk.magenta(data));
+    } else {
+      console.log(data);
+    }
   });
 
   tail.on('error', function (error) {
