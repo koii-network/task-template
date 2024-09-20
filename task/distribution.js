@@ -102,10 +102,7 @@ class Distribution {
         }
       });
       // Edit Your Distribution Logic Here
-      const reward = Math.floor(
-        taskStakeListJSON.bounty_amount_per_round /
-          distributionCandidates.length,
-      );
+      const reward = 0;
       console.log('REWARD PER NODE', reward);
       distributionCandidates.forEach(candidate => {
         distributionList[candidate] = reward;

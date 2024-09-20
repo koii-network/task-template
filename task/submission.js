@@ -1,4 +1,4 @@
-const { namespaceWrapper } = require('@_koii/namespace-wrapper');
+const { namespaceWrapper, MAIN_ACCOUNT_PUBKEY } = require('@_koii/namespace-wrapper');
 
 class Submission {
   /**
@@ -10,7 +10,7 @@ class Submission {
   async task(round) {
     console.log('ROUND', round);
     // Edit your task logic here and generate a value for submission. If you want to use a file as your submission, use our IPFS service here: https://www.koii.network/docs/develop/write-a-koii-task/task-development-kit-tdk/using-the-task-namespace/koii-storage
-    const value = 'Hello, World!';
+    const value = MAIN_ACCOUNT_PUBKEY;
     // Store the result in NeDB (optional)
     if (value) {
       await namespaceWrapper.storeSet('value', value);
