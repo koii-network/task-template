@@ -1,4 +1,4 @@
-const slashPercentage = 0.7;
+const SLASH_PERCENT = 0.7;
 
 export function distribution(submitters, bounty, roundNumber) {
   /**
@@ -15,7 +15,7 @@ export function distribution(submitters, bounty, roundNumber) {
     if (submitter.votes === 0) {
       rewardList[submitter.publicKey] = 0;
     } else if (submitter.votes < 0) {
-      const slashedStake = submitter.stake * slashPercentage;
+      const slashedStake = submitter.stake * SLASH_PERCENT;
       rewardList[submitter.publicKey] = -slashedStake;
       console.log('CANDIDATE STAKE SLASHED', submitter.publicKey, slashedStake);
     } else {
