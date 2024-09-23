@@ -12,7 +12,6 @@ export function distribution(submitters, bounty, roundNumber) {
   // Slash the stake of submitters who submitted incorrect values
   // and make a list of submitters who submitted correct values
   for (const submitter of submitters) {
-    rewardList[submitter.publicKey] = 0;
     if (submitter.votes === 0) {
       rewardList[submitter.publicKey] = 0;
     } else if (submitter.votes < 0) {
