@@ -1,9 +1,14 @@
-const { spawn } = require('cross-spawn');
-const fs = require('fs');
-require('dotenv').config();
-const Debugger = require('./debugger');
-const Tail = require('tail').Tail;
-const path = require('path');
+import { spawn } from 'cross-spawn';
+import fs from 'fs';
+import 'dotenv/config';
+import Debugger from './debugger.js';
+import { Tail } from 'tail';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import chalk from 'chalk';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /*
     This script is used to watch for file changes in the project and trigger a build and copy the webpacked file to the Desktop Node runtime folder.
@@ -114,10 +119,11 @@ const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
   );
 
   tail.on('line', function (data) {
-    console.log(data);
-    // if (keywords.some(keyword => data.includes(keyword))) {
-    //   console.log(`PROD$ ${data}`);
-    // }
+    if (keywords.some(keyword => data.includes(keyword))) {
+      console.log(chalk.magenta(data));
+    } else {
+      console.log(data);
+    }
   });
 
   tail.on('error', function (error) {

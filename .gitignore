@@ -13,3 +13,5 @@ config/*
 .env
 taskStateInfoKeypair.json
 localKOIIDB.db
+metadata.json
+.npmrc

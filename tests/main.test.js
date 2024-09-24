@@ -1,7 +1,7 @@
-const { coreLogic } = require('../coreLogic');
-const { namespaceWrapper, _server } = require('@_koii/namespace-wrapper');
-const Joi = require('joi');
-const axios = require('axios');
+import { taskRunner } from '@_koii/task-manager';
+import { namespaceWrapper, _server } from '@_koii/namespace-wrapper';
+import Joi from 'joi';
+import axios from 'axios';
 beforeAll(async () => {
   await namespaceWrapper.defaultTaskSetup();
 });
@@ -9,13 +9,13 @@ beforeAll(async () => {
 describe('Performing the task', () => {
   it('should performs the core logic task', async () => {
     const round = 1;
-    const result = await coreLogic.task(round);
+    const result = await taskRunner.task(round);
     expect(result).not.toContain('ERROR IN EXECUTING TASK');
   });
 
   it('should make the submission to k2 for dummy round 1', async () => {
     const round = 1;
-    await coreLogic.submitTask(round);
+    await taskRunner.submitTask(round);
     const taskState = await namespaceWrapper.getTaskState();
     const schema = Joi.object()
       .pattern(
@@ -41,7 +41,7 @@ describe('Performing the task', () => {
 
   it('should make an audit on submission', async () => {
     const round = 1;
-    await coreLogic.auditTask(round);
+    await taskRunner.auditTask(round);
     const taskState = await namespaceWrapper.getTaskState();
     console.log('TASK STATE', taskState);
     console.log('audit task', taskState.submissions_audit_trigger);
@@ -69,7 +69,7 @@ describe('Performing the task', () => {
   });
   it('should make the distribution submission to k2 for dummy round 1', async () => {
     const round = 1;
-    //await coreLogic.submitDistributionList(round);
+    //await taskRunner.submitDistributionList(round);
     const task = require('../task');
     await task.distribution.submitDistributionList(round);
     const taskState = await namespaceWrapper.getTaskState();
@@ -102,7 +102,7 @@ describe('Performing the task', () => {
   });
   it('should make an audit on distribution submission', async () => {
     const round = 1;
-    await coreLogic.auditDistribution(round);
+    await taskRunner.auditDistribution(round);
     const taskState = await namespaceWrapper.getTaskState();
     console.log('audit task', taskState.distributions_audit_trigger);
     const schema = Joi.object()

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   env: {
     browser: true,
     commonjs: true,
@@ -9,6 +9,7 @@ module.exports = {
   extends: 'eslint:recommended',
   parserOptions: {
     ecmaVersion: 15,
+    sourceType: 'module',
   },
   rules: {},
   ignorePatterns: ['dist/', 'node_modules/'],
