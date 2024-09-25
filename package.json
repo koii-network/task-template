@@ -18,7 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@_koii/namespace-wrapper": "^1.0.8",
+    "@_koii/namespace-wrapper": "^1.0.11",
     "@_koii/task-manager": "^0.0.3",
     "@_koii/web3.js": "^0.1.11",
     "axios": "^1.7.2",
