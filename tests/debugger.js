@@ -6,7 +6,7 @@ import { borsh_bpf_js_deserialize } from './wasm/bincode_js.cjs';
 
 class Debugger {
   /*
-  Create .env file with following variables or direclty input values to be used in live-debugging mode.
+  Create .env file with following variables or directly input values to be used in live-debugging mode.
   */
   static taskID = process.env.TASK_ID;
   static webpackedFilePath =
