@@ -22,6 +22,10 @@ export function distribution(submitters, bounty, roundNumber) {
       approvedSubmitters.push(submitter.publicKey);
     }
   }
+  if (approvedSubmitters.length === 0) {
+    console.log('NO NODES TO REWARD');
+    return distributionList;
+  }
   // reward the submitters who submitted correct values
   const reward = Math.floor(bounty / approvedSubmitters.length);
   console.log('REWARD PER NODE', reward);
