@@ -1,35 +1,28 @@
-import 'dotenv/config';
 import os from 'os';
 import path from 'path';
 import { Connection, PublicKey } from '@_koii/web3.js';
 import { borsh_bpf_js_deserialize } from './wasm/bincode_js.cjs';
+import { TASK_ID, TEST_KEYWORDS, WEBPACKED_FILE } from '../config';
 
 class Debugger {
-  /*
-  Create .env file with following variables or directly input values to be used in live-debugging mode.
-  */
-  static taskID = process.env.TASK_ID;
-  static webpackedFilePath =
-    process.env.WEBPACKED_FILE_PATH || '../dist/main.js';
-  static keywords = (process.env.TEST_KEYWORDS || ['']).split(',');
-  static nodeDir = process.env.NODE_DIR || '';
+  static nodeDir = '';
 
   static async getConfig() {
     Debugger.nodeDir = await this.getNodeDirectory();
 
     let destinationPath =
-      'executables/' + (await this.gettask_audit_program()) + '.js';
-    let logPath = 'namespace/' + Debugger.taskID + '/task.log';
+      'executables/' + (await this.get_task_audit_program()) + '.js';
+    let logPath = 'namespace/' + TASK_ID + '/task.log';
 
     console.log('Debugger.nodeDir', Debugger.nodeDir);
 
     return {
-      webpackedFilePath: Debugger.webpackedFilePath,
+      webpackedFilePath: WEBPACKED_FILE,
       destinationPath: destinationPath,
-      keywords: Debugger.keywords,
+      keywords: TEST_KEYWORDS,
       logPath: logPath,
       nodeDir: Debugger.nodeDir,
-      taskID: Debugger.taskID,
+      taskID: TASK_ID,
     };
   }
 
@@ -77,11 +70,11 @@ class Debugger {
     return nodeDirectory;
   }
 
-  static async gettask_audit_program() {
+  static async get_task_audit_program() {
     const connection = new Connection('https://testnet.koii.network');
-    const taskId = Debugger.taskID;
+    const taskId = TASK_ID;
     const accountInfo = await connection.getAccountInfo(new PublicKey(taskId));
-    if (!accountInfo) {
+    if (!accountInfo?.data) {
       console.log(`${taskId} doesn't contain any distribution list data`);
       return null;
     }
