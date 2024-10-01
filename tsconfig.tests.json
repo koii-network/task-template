@@ -5,8 +5,7 @@
 
     /* Modules */
     "module": "commonjs",
-    "rootDir": "./src",
-    "outDir": "./dist",
+    "rootDir": "./tests",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
 
@@ -25,5 +24,4 @@
     "skipLibCheck": true
   },
   "include": ["tests/**/*"],
-  "exclude": ["node_modules", "dist", "src"]
 }
