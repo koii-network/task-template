@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
     /* Language and Environment */
-    "target": "es2016",
+    "target": "es2020",
 
     /* Modules */
     "module": "commonjs",
+    "moduleResolution": "Node",
     "rootDir": "./tests",
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
 
     /* Type Checking */
@@ -23,5 +25,5 @@
     /* Completeness */
     "skipLibCheck": true
   },
-  "include": ["tests/**/*"],
+  "include": ["tests/**/*"]
 }
