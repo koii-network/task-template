@@ -3,16 +3,15 @@ import os from "os";
 import path from "path";
 import { Connection, PublicKey } from "@_koii/web3.js";
 import { borsh_bpf_js_deserialize } from "./wasm/bincode_js.cjs";
+import { TASK_ID, WEBPACKED_FILE_PATH, TEST_KEYWORDS } from "./config.js";
 
 class Debugger {
   /*
   Create .env file with following variables or directly input values to be used in live-debugging mode.
   */
-  static taskID = process.env.TASK_ID;
-  static webpackedFilePath =
-    process.env.WEBPACKED_FILE_PATH || "../dist/main.js";
-  static keywords = (process.env.TEST_KEYWORDS || "").split(",");
-  static nodeDir = process.env.NODE_DIR || "";
+  static taskID = TASK_ID;
+  static webpackedFilePath = WEBPACKED_FILE_PATH;
+  static keywords = TEST_KEYWORDS;
 
   static async getConfig() {
     Debugger.nodeDir = await this.getNodeDirectory();
