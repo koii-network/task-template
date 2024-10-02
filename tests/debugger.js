@@ -11,7 +11,7 @@ class Debugger {
   static taskID = process.env.TASK_ID;
   static webpackedFilePath =
     process.env.WEBPACKED_FILE_PATH || '../dist/main.js';
-  static keywords = (process.env.TEST_KEYWORDS || ['']).split(',');
+  static keywords = (process.env.TEST_KEYWORDS || '').split(',');
   static nodeDir = process.env.NODE_DIR || '';
 
   static async getConfig() {
