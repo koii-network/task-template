@@ -1,15 +1,27 @@
 # Task Name: (Required) 
-task_name: 'task name'
+task_name: 'Task Name'
+
 # Task Author: (Required) 
 author: 'Koii'
-# Task Description: (Required) 
-description: 'description'
+
+# Task Description: (Task Description or Task Description Markdown is Required) 
+description: 'Task Description'
+
+# Task Description Markdown: (Task Description or Task Description Markdown is Required) 
+# By filling in this field, we will use your markdown file as the task description.
+markdownDescriptionPath: # "./example.md"
+
 # Repository URL: (Required)
 repositoryUrl: 'https://github.com/koii-network/task-template' 
+
 # Image URL: (Required) Will be displayed in desktop node
 imageUrl: 'imageUrl'
-# Info URL: (Required) Will be displayed in desktop node
+
+# Info URL: (Optional) Will be displayed in desktop node
 infoUrl: 'infoUrl'
+
+# Ocean Link: (Optional) Koii Ocean Project Link Page, apply to join Koii Ocean here! https://www.koii.network/ocean
+koiiOceanUrl: 'koiiOceanUrl'
 
 # Task executable network: (Required | DEVELOPMENT, ARWEAVE, or IPFS) : IPFS is the default and common value
 task_executable_network: 'IPFS'
@@ -57,8 +69,8 @@ requirementsTags:
   - type: STORAGE
     value: '5 GB'
   - type: TASK_VARIABLE
-    value: 'TWITTER_PASSWORD'
-    description: 'The password of your volunteer Twitter account.'
+    value: 'RANDOM WORDS'
+    description: 'RANDOM ONES'
 
 # Tags: You can select the tags here via https://www.koii.network/docs/develop/command-line-tool/create-task-cli/create-task#tags
 tags: ["AI", "ML"] 
