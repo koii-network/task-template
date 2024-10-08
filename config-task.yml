@@ -39,7 +39,7 @@ task_executable_network: "IPFS"
 
 ## Task Audit Program ##
 # Task Executable Network IPFS: Path to your executable.
-# Task Executable Network DEVELOPMENT: Leave it as 'main'.
+# Task Executable Network DEVELOPMENT: The value should be 'main'.
 # Keep this as-is unless you know you need to change it.
 task_audit_program: "dist/main.js"
 
