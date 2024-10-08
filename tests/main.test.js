@@ -1,16 +1,35 @@
-import { taskRunner } from "@_koii/task-manager";
-import { namespaceWrapper, _server } from "@_koii/namespace-wrapper";
-import Joi from "joi";
-import axios from "axios";
+import { initializeTaskManager } from '@_koii/task-manager';
+import { getTaskManager } from '@_koii/task-manager';
+import { setup } from '../src/task/0-setup.js';
+import { task } from '../src/task/1-task.js';
+import { submission } from '../src/task/2-submission.js';
+import { audit } from '../src/task/3-audit.js';
+import { distribution } from '../src/task/4-distribution.js';
+
+
+
+import { taskRunner } from '@_koii/task-manager';
+import { namespaceWrapper, _server } from '@_koii/namespace-wrapper';
+import Joi from 'joi';
+import axios from 'axios';
 beforeAll(async () => {
   await namespaceWrapper.defaultTaskSetup();
+  initializeTaskManager({
+    setup,
+    task,
+    submission,
+    audit,
+    distribution,
+  });
 });
 
 describe("Performing the task", () => {
   it("should performs the core logic task", async () => {
     const round = 1;
-    const result = await taskRunner.task(round);
-    expect(result).not.toContain("ERROR IN EXECUTING TASK");
+    await taskRunner.task(round);
+    const value = await namespaceWrapper.storeGet('value');
+    expect(value).toBeDefined();
+    expect(value).not.toBeNull();
   });
 
   it("should make the submission to k2 for dummy round 1", async () => {
@@ -69,9 +88,8 @@ describe("Performing the task", () => {
   });
   it("should make the distribution submission to k2 for dummy round 1", async () => {
     const round = 1;
-    //await taskRunner.submitDistributionList(round);
-    const task = require("../task");
-    await task.distribution.submitDistributionList(round);
+    await taskRunner.submitDistributionList(round);
+
     const taskState = await namespaceWrapper.getTaskState();
     const schema = Joi.object()
       .pattern(
