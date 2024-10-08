@@ -19,7 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "@_koii/namespace-wrapper": "^1.0.11",
-    "@_koii/task-manager": "^0.0.14",
+    "@_koii/task-manager": "^0.0.21",
     "@_koii/web3.js": "^0.1.11",
     "axios": "^1.7.2",
     "chalk": "^5.3.0",
