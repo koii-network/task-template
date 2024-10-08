@@ -1,45 +1,23 @@
-######################## ALL FIELDS ARE REQUIRED UNLESS OTHERWISE NOTED #########################
+# Task Name: (Required)
+task_name: 'task name'
+# Task Author: (Required)
+author: 'Koii'
+# Task Description: (Required)
+description: 'description'
+# Repository URL: (Required)
+repositoryUrl: 'https://github.com/koii-network/task-template'
+# Image URL: (Required) Will be displayed in desktop node
+imageUrl: 'imageUrl'
+# Info URL: (Required) Will be displayed in desktop node
+infoUrl: 'infoUrl'
 
-######################################### TASK METADATA #########################################
-############################ Will be displayed in the desktop node ##############################
+# Task executable network: (Required | DEVELOPMENT, ARWEAVE, or IPFS) : IPFS is the default and common value
+task_executable_network: 'IPFS'
 
-## Task Name ##
-# Maximum 24 Characters
-task_name: "task name"
+# Task audit program: (Required) IPFS: Path to your executable | DEVELOPMENT: Leave it as 'main'
+task_audit_program: 'dist/main.js'
 
-## Task Author ##
-author: "Koii"
-
-## Task Description ##
-description: "description"
-
-## Repository URL ##
-# Must be public for whitelisted tasks
-repositoryUrl: "https://github.com/koii-network/task-template"
-
-## Image URL ##
-# 230x86 pixels
-imageUrl: "imageUrl"
-
-## Info URL ##
-infoUrl: "infoUrl"
-
-####################################### TASK CONFIGURATION ######################################
-
-## Task Executable Network ##
-# IPFS or DEVELOPMENT
-# Keep this as-is unless you know you need to change it.
-task_executable_network: "IPFS"
-
-## Task Audit Program ##
-# Task Executable Network IPFS: Path to your executable.
-# Task Executable Network DEVELOPMENT: Leave it as 'main'.
-# Keep this as-is unless you know you need to change it.
-task_audit_program: "dist/main.js"
-
-## Round Time ##
-# Duration of task, measured in slots (with each slot approximately equal to 408ms).
-# See https://www.koii.network/docs/concepts/what-are-tasks/what-are-tasks/gradual-consensus for more information on how round time, audit window, and submission window work.
+# Round time: (Required) Duration of task, measured in slots (with each slot approximately equal to 408ms).
 round_time: 1500
 
 ## Audit Window ##
@@ -94,16 +72,12 @@ requirementsTags:
   - type: STORAGE
     value: "5 GB"
   - type: TASK_VARIABLE
-    value: "TWITTER_PASSWORD"
-    description: "The password of your volunteer Twitter account."
+    value: 'TWITTER_PASSWORD'
+    description: 'The password of your volunteer Twitter account.'
 
-## Tags ##
-# Current tag options: https://www.koii.network/docs/develop/command-line-tool/create-task-cli/create-task#tags
-tags: ["Witness"]
-
-# Environment ##
-# TEST or PRODUCTION
-# Production mode will expose your task to all the task runners, even if not whitelisted.
+# Tags: You can select the tags here via https://www.koii.network/docs/develop/command-line-tool/create-task-cli/create-task#tags
+tags: ["AI", "ML"]
+# Environment: (Required | TEST or PRODUCTION) Production mode will expose your task to all the task runners.
 environment: "TEST"
 
 #################################### FOR UPDATING TASKS ONLY ####################################
