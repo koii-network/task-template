@@ -6,5 +6,4 @@ jest_tests:
   image: node:latest
   script:
     - npm install
-    - npm run jest-test || echo "Jest tests failed, but continuing..."
-  allow_failure: true
+    - npm run jest-test
