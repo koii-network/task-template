@@ -19,7 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "@_koii/namespace-wrapper": "^1.0.11",
-    "@_koii/task-manager": "^0.0.3",
+    "@_koii/task-manager": "^0.0.21",
     "@_koii/web3.js": "^0.1.11",
     "@babel/preset-env": "^7.25.7",
     "axios": "^1.7.7",

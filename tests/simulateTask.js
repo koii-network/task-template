@@ -1,5 +1,5 @@
-import { taskRunner } from '@_koii/task-manager';
-import '../src/index.js';
+import { taskRunner } from "@_koii/task-manager";
+import "../src/index.js";
 
 const numRounds = process.argv[2] || 1;
 const roundDelay = process.argv[3] || 5000;
@@ -25,7 +25,7 @@ async function executeTasks() {
       await sleep(roundDelay);
     }
   }
-  console.log('All tasks executed. Test completed.');
+  console.log("All tasks executed. Test completed.");
   process.exit(0);
 }
 
