@@ -88,7 +88,7 @@ describe('Performing the task', () => {
   });
   it('should make the distribution submission to k2 for dummy round 1', async () => {
     const round = 1;
-    await taskRunner.submit123DistributionList(round);
+    await taskRunner.submitDistributionList(round);
 
     const taskState = await namespaceWrapper.getTaskState();
     const schema = Joi.object()
