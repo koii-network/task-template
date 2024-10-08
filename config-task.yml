@@ -5,7 +5,7 @@
 
 ## Task Name ##
 # Maximum 24 characters.
-task_name: "task name"
+task_name: "Task Name"
 
 ## Task Author ##
 author: "Koii"
@@ -17,7 +17,7 @@ markdownDescriptionPath: "./TaskDescription.md"
 
 ## Task Description ##
 # Ignored if you specify a markdown file.
-description: "description"
+description: "Task description."
 
 ## Repository URL ##
 # Must be public for whitelisted tasks.
