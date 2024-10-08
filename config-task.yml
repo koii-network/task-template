@@ -100,8 +100,8 @@ requirementsTags:
   - type: STORAGE
     value: "5 GB"
   - type: TASK_VARIABLE
-    value: "TWITTER_PASSWORD"
-    description: "The password of your volunteer Twitter account."
+    value: "TEST_VARIABLE"
+    description: "An example to demonstrate the use of task variables."
 
 ## Tags ##
 # See https://www.koii.network/docs/develop/command-line-tool/create-task-cli/create-task#tags for available tag options.
