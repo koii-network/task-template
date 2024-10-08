@@ -1,23 +1,51 @@
-# Task Name: (Required)
-task_name: 'task name'
-# Task Author: (Required)
-author: 'Koii'
-# Task Description: (Required)
-description: 'description'
-# Repository URL: (Required)
-repositoryUrl: 'https://github.com/koii-network/task-template'
-# Image URL: (Required) Will be displayed in desktop node
-imageUrl: 'imageUrl'
-# Info URL: (Required) Will be displayed in desktop node
-infoUrl: 'infoUrl'
+######################## ALL FIELDS ARE REQUIRED UNLESS OTHERWISE NOTED #########################
 
-# Task executable network: (Required | DEVELOPMENT, ARWEAVE, or IPFS) : IPFS is the default and common value
-task_executable_network: 'IPFS'
+######################################### TASK METADATA #########################################
+############################ Will be displayed in the desktop node ##############################
 
-# Task audit program: (Required) IPFS: Path to your executable | DEVELOPMENT: Leave it as 'main'
-task_audit_program: 'dist/main.js'
+## Task Name ##
+# Maximum 24 characters.
+task_name: "task name"
 
-# Round time: (Required) Duration of task, measured in slots (with each slot approximately equal to 408ms).
+## Task Author ##
+author: "Koii"
+
+# Task Description Markdown ##
+# If you specify a markdown file, the description field will be ignored.
+# Markdown is recommended for better formatting.
+markdownDescriptionPath: "./TaskDescription.md"
+
+## Task Description ##
+# Ignored if you specify a markdown file.
+description: "description"
+
+## Repository URL ##
+# Must be public for whitelisted tasks.
+repositoryUrl: "https://github.com/koii-network/task-template"
+
+## Image URL ##
+# 230x86 pixels.
+imageUrl: "imageUrl"
+
+## Info URL ##
+infoUrl: "infoUrl"
+
+####################################### TASK CONFIGURATION ######################################
+
+## Task Executable Network ##
+# IPFS or DEVELOPMENT
+# Keep this as IPFS unless you know you need to change it.
+task_executable_network: "IPFS"
+
+## Task Audit Program ##
+# Task Executable Network IPFS: Path to your executable.
+# Task Executable Network DEVELOPMENT: Leave it as 'main'.
+# Keep this as-is unless you know you need to change it.
+task_audit_program: "dist/main.js"
+
+## Round Time ##
+# Duration of task, measured in slots (with each slot approximately equal to 408ms).
+# See https://www.koii.network/docs/concepts/what-are-tasks/what-are-tasks/gradual-consensus for more information on how round time, audit window, and submission window work.
 round_time: 1500
 
 ## Audit Window ##
@@ -58,8 +86,8 @@ allowed_failed_distributions: 3
 
 ## Space ##
 # Expected Task Data Size in MBs for the account size.
-# Minimums: 2 for whitelisted tasks, 1 for production, 0.1 for testing
-# Calculation Details: https://www.koii.network/docs/develop/command-line-tool/create-task-cli/create-task#space
+# Minimums: 2 for whitelisted tasks, 1 for production, 0.1 for testing.
+# See https://www.koii.network/docs/develop/command-line-tool/create-task-cli/create-task#space for calculation details.
 space: 0.1
 
 ## Requirement Tags (Optional) ##
@@ -72,12 +100,16 @@ requirementsTags:
   - type: STORAGE
     value: "5 GB"
   - type: TASK_VARIABLE
-    value: 'TWITTER_PASSWORD'
-    description: 'The password of your volunteer Twitter account.'
+    value: "TWITTER_PASSWORD"
+    description: "The password of your volunteer Twitter account."
 
-# Tags: You can select the tags here via https://www.koii.network/docs/develop/command-line-tool/create-task-cli/create-task#tags
-tags: ["AI", "ML"]
-# Environment: (Required | TEST or PRODUCTION) Production mode will expose your task to all the task runners.
+## Tags ##
+# See https://www.koii.network/docs/develop/command-line-tool/create-task-cli/create-task#tags for available tag options.
+tags: ["Witness"]
+
+# Environment ##
+# TEST or PRODUCTION
+# Production mode will expose your task to all the task runners, even if not whitelisted.
 environment: "TEST"
 
 #################################### FOR UPDATING TASKS ONLY ####################################
