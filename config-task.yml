@@ -46,7 +46,7 @@ task_audit_program: "dist/main.js"
 ## Round Time ##
 # Duration of task, measured in slots (with each slot approximately equal to 408ms).
 # See https://www.koii.network/docs/concepts/what-are-tasks/what-are-tasks/gradual-consensus for more information on how round time, audit window, and submission window work.
-round_time: 1500
+round_time: 1000
 
 ## Audit Window ##
 # The audit window should be at least 1/3 of the round time.
