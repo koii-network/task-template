@@ -23,8 +23,8 @@ beforeAll(async () => {
   });
 });
 
-describe('Performing the task', () => {
-  it('should performs the core logic task', async () => {
+describe("Performing the task", () => {
+  it("should performs the core logic task", async () => {
     const round = 1;
     await taskRunner.task(round);
     const value = await namespaceWrapper.storeGet('value');
@@ -32,7 +32,7 @@ describe('Performing the task', () => {
     expect(value).not.toBeNull();
   });
 
-  it('should make the submission to k2 for dummy round 1', async () => {
+  it("should make the submission to k2 for dummy round 1", async () => {
     const round = 1;
     await taskRunner.submitTask(round);
     const taskState = await namespaceWrapper.getTaskState();
@@ -58,12 +58,12 @@ describe('Performing the task', () => {
     }
   });
 
-  it('should make an audit on submission', async () => {
+  it("should make an audit on submission", async () => {
     const round = 1;
     await taskRunner.auditTask(round);
     const taskState = await namespaceWrapper.getTaskState();
-    console.log('TASK STATE', taskState);
-    console.log('audit task', taskState.submissions_audit_trigger);
+    console.log("TASK STATE", taskState);
+    console.log("audit task", taskState.submissions_audit_trigger);
     const schema = Joi.object()
       .pattern(
         Joi.string(),
@@ -83,10 +83,10 @@ describe('Performing the task', () => {
     try {
       expect(validationResult.error).toBeUndefined();
     } catch (e) {
-      throw new Error('Submission audit is incorrect');
+      throw new Error("Submission audit is incorrect");
     }
   });
-  it('should make the distribution submission to k2 for dummy round 1', async () => {
+  it("should make the distribution submission to k2 for dummy round 1", async () => {
     const round = 1;
     await taskRunner.submitDistributionList(round);
 
@@ -106,7 +106,7 @@ describe('Performing the task', () => {
       .required()
       .min(1);
     console.log(
-      'Distribution submission',
+      "Distribution submission",
       taskState.distribution_rewards_submission,
     );
     const validationResult = schema.validate(
@@ -118,11 +118,11 @@ describe('Performing the task', () => {
       throw new Error("Distribution submission doesn't exist or is incorrect");
     }
   });
-  it('should make an audit on distribution submission', async () => {
+  it("should make an audit on distribution submission", async () => {
     const round = 1;
     await taskRunner.auditDistribution(round);
     const taskState = await namespaceWrapper.getTaskState();
-    console.log('audit task', taskState.distributions_audit_trigger);
+    console.log("audit task", taskState.distributions_audit_trigger);
     const schema = Joi.object()
       .pattern(
         Joi.string(),
@@ -142,18 +142,18 @@ describe('Performing the task', () => {
     try {
       expect(validationResult.error).toBeUndefined();
     } catch (e) {
-      throw new Error('Distribution audit is incorrect');
+      throw new Error("Distribution audit is incorrect");
     }
   });
 
-  it('should make sure the submitted distribution list is valid', async () => {
+  it("should make sure the submitted distribution list is valid", async () => {
     const round = 1;
     const distributionList = await namespaceWrapper.getDistributionList(
       null,
       round,
     );
     console.log(
-      'Generated distribution List',
+      "Generated distribution List",
       JSON.parse(distributionList.toString()),
     );
     const schema = Joi.object()
@@ -166,14 +166,14 @@ describe('Performing the task', () => {
     try {
       expect(validationResult.error).toBeUndefined();
     } catch (e) {
-      throw new Error('Submitted distribution list is not valid');
+      throw new Error("Submitted distribution list is not valid");
     }
   });
 
-  it('should test the endpoint', async () => {
-    const response = await axios.get('http://localhost:3000');
+  it("should test the endpoint", async () => {
+    const response = await axios.get("http://localhost:3000");
     expect(response.status).toBe(200);
-    expect(response.data).toEqual({ message: 'Running', status: 200 });
+    expect(response.data).toEqual({ message: "Running", status: 200 });
   });
 });
 

@@ -1,27 +1,26 @@
-import 'dotenv/config';
-import os from 'os';
-import path from 'path';
-import { Connection, PublicKey } from '@_koii/web3.js';
-import { borsh_bpf_js_deserialize } from './wasm/bincode_js.cjs';
+import "dotenv/config";
+import os from "os";
+import path from "path";
+import { Connection, PublicKey } from "@_koii/web3.js";
+import { borsh_bpf_js_deserialize } from "./wasm/bincode_js.cjs";
+import { TASK_ID, WEBPACKED_FILE_PATH, TEST_KEYWORDS } from "./config.js";
 
 class Debugger {
   /*
   Create .env file with following variables or directly input values to be used in live-debugging mode.
   */
-  static taskID = process.env.TASK_ID;
-  static webpackedFilePath =
-    process.env.WEBPACKED_FILE_PATH || '../dist/main.js';
-  static keywords = (process.env.TEST_KEYWORDS || ['']).split(',');
-  static nodeDir = process.env.NODE_DIR || '';
+  static taskID = TASK_ID;
+  static webpackedFilePath = WEBPACKED_FILE_PATH;
+  static keywords = TEST_KEYWORDS;
 
   static async getConfig() {
     Debugger.nodeDir = await this.getNodeDirectory();
 
     let destinationPath =
-      'executables/' + (await this.gettask_audit_program()) + '.js';
-    let logPath = 'namespace/' + Debugger.taskID + '/task.log';
+      "executables/" + (await this.getAuditProgram()) + ".js";
+    let logPath = "namespace/" + Debugger.taskID + "/task.log";
 
-    console.log('Debugger.nodeDir', Debugger.nodeDir);
+    console.log("Debugger.nodeDir", Debugger.nodeDir);
 
     return {
       webpackedFilePath: Debugger.webpackedFilePath,
@@ -41,44 +40,44 @@ class Debugger {
     let nodeDirectory;
 
     switch (os.platform()) {
-      case 'linux':
+      case "linux":
         nodeDirectory = path.join(
           homeDirectory,
-          '.config',
-          'KOII-Desktop-Node',
+          ".config",
+          "KOII-Desktop-Node",
         );
         break;
-      case 'darwin':
+      case "darwin":
         nodeDirectory = path.join(
           homeDirectory,
-          'Library',
-          'Application Support',
-          'KOII-Desktop-Node',
+          "Library",
+          "Application Support",
+          "KOII-Desktop-Node",
         );
         break;
-      case 'win32':
+      case "win32":
         // For Windows, construct the path explicitly as specified
         nodeDirectory = path.join(
           homeDirectory,
-          'AppData',
-          'Roaming',
-          'KOII-Desktop-Node',
+          "AppData",
+          "Roaming",
+          "KOII-Desktop-Node",
         );
         break;
       default:
         nodeDirectory = path.join(
           homeDirectory,
-          'AppData',
-          'Roaming',
-          'KOII-Desktop-Node',
+          "AppData",
+          "Roaming",
+          "KOII-Desktop-Node",
         );
     }
 
     return nodeDirectory;
   }
 
-  static async gettask_audit_program() {
-    const connection = new Connection('https://testnet.koii.network');
+  static async getAuditProgram() {
+    const connection = new Connection("https://testnet.koii.network");
     const taskId = Debugger.taskID;
     const accountInfo = await connection.getAccountInfo(new PublicKey(taskId));
     if (!accountInfo) {
@@ -94,7 +93,7 @@ class Debugger {
       data = parseTaskState(data);
     }
 
-    console.log('data.task_audit_program', data.task_audit_program);
+    console.log("data.task_audit_program", data.task_audit_program);
     return data.task_audit_program;
   }
 }
@@ -130,7 +129,7 @@ function objectify(data, recursive = false) {
       for (const key in obj) {
         if (obj[key] instanceof Map) {
           obj[key] = objectify(obj[key], true);
-        } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+        } else if (typeof obj[key] === "object" && obj[key] !== null) {
           obj[key] = objectify(obj[key], true);
         }
       }
