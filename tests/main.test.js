@@ -1,5 +1,4 @@
-import { initializeTaskManager } from '@_koii/task-manager';
-import { getTaskManager } from '@_koii/task-manager';
+import { initializeTaskManager, taskRunner } from '@_koii/task-manager';
 import { setup } from '../src/task/0-setup.js';
 import { task } from '../src/task/1-task.js';
 import { submission } from '../src/task/2-submission.js';
@@ -8,10 +7,10 @@ import { distribution } from '../src/task/4-distribution.js';
 
 
 
-import { taskRunner } from '@_koii/task-manager';
 import { namespaceWrapper, _server } from '@_koii/namespace-wrapper';
 import Joi from 'joi';
 import axios from 'axios';
+
 beforeAll(async () => {
   await namespaceWrapper.defaultTaskSetup();
   initializeTaskManager({
