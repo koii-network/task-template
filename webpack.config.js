@@ -1,10 +1,10 @@
 export default {
-  entry: './src/index.js',
-  target: 'node',
+  entry: "./src/index.js",
+  target: "node",
   // When uploading to arweave use the production mode
   // mode:"production",
-  mode: 'development',
-  devtool: 'source-map',
+  mode: "development",
+  devtool: "source-map",
   optimization: {
     usedExports: false,
   },

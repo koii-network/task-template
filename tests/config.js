@@ -5,9 +5,8 @@ export const TASK_ID =
 export const WEBPACKED_FILE_PATH =
   process.env.WEBPACKED_FILE_PATH || "../dist/main.js";
 
-  const envKeywords = process.env.TEST_KEYWORDS ?? "";
+const envKeywords = process.env.TEST_KEYWORDS ?? "";
 
-export const TEST_KEYWORDS = envKeywords? envKeywords.split(",") : [
-  "TEST",
-  "EZ TESTING",
-];
+export const TEST_KEYWORDS = envKeywords
+  ? envKeywords.split(",")
+  : ["TEST", "EZ TESTING"];

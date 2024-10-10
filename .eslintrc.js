@@ -6,11 +6,11 @@ export default {
     node: true,
     jest: true,
   },
-  extends: 'eslint:recommended',
+  extends: "eslint:recommended",
   parserOptions: {
     ecmaVersion: 15,
-    sourceType: 'module',
+    sourceType: "module",
   },
   rules: {},
-  ignorePatterns: ['dist/', 'node_modules/'],
+  ignorePatterns: ["dist/", "node_modules/"],
 };

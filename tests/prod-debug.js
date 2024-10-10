@@ -22,7 +22,7 @@ const build = async () => {
     stdio: "inherit",
   });
 
-  await child.on("close", code => {
+  await child.on("close", (code) => {
     if (code !== 0) {
       console.error("Build failed");
     } else {
@@ -53,7 +53,7 @@ const copyWebpackedFile = async () => {
     `Copying webpacked file from ${sourcePath} to ${desktopNodeExecutablePath}...`,
   );
 
-  fs.copyFile(sourcePath, desktopNodeExecutablePath, async err => {
+  fs.copyFile(sourcePath, desktopNodeExecutablePath, async (err) => {
     if (err) {
       console.error("Error copying file:", err);
     } else {
@@ -95,7 +95,7 @@ const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
   );
 
   tail.on("line", function (data) {
-    if (keywords.some(keyword => keyword && data.includes(keyword))) {
+    if (keywords.some((keyword) => keyword && data.includes(keyword))) {
       console.log(chalk.magenta(data));
     } else {
       console.log(data);
