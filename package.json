@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "test": "jest",
+    "test": "node tests/simulateTask.js",
     "jest-test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "start": "node index.js",
     "prod-debug": "nodemon --ignore 'dist/*' tests/prod-debug.js",
@@ -18,8 +18,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@_koii/namespace-wrapper": "^1.0.11",
-    "@_koii/task-manager": "^0.0.22",
+    "@_koii/namespace-wrapper": "^1.0.13",
+    "@_koii/task-manager": "^0.0.24",
     "@_koii/web3.js": "^0.1.11",
     "@babel/preset-env": "^7.25.7",
     "axios": "^1.7.7",

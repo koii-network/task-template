@@ -1,4 +1,4 @@
-import { namespaceWrapper } from '@_koii/namespace-wrapper';
+import { namespaceWrapper } from "@_koii/namespace-wrapper";
 
 export async function submission(roundNumber) {
   /**
@@ -7,8 +7,8 @@ export async function submission(roundNumber) {
    */
   try {
     console.log(`MAKE SUBMISSION FOR ROUND ${roundNumber}`);
-    return await namespaceWrapper.storeGet('value');
+    return await namespaceWrapper.storeGet("value");
   } catch (error) {
-    console.error('MAKE SUBMISSION ERROR:', error);
+    console.error("MAKE SUBMISSION ERROR:", error);
   }
 }

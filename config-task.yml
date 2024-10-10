@@ -44,7 +44,7 @@ task_executable_network: "IPFS"
 task_audit_program: "dist/main.js"
 
 ## Round Time ##
-# Duration of task, measured in slots (with each slot approximately equal to 408ms).
+# Duration of task, measured in slots (with each slot approximately equal to 408ms). Should be at least 800 slots.
 # See https://www.koii.network/docs/concepts/what-are-tasks/what-are-tasks/gradual-consensus for more information on how round time, audit window, and submission window work.
 round_time: 1500
 

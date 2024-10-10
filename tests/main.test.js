@@ -1,17 +1,14 @@
-import { initializeTaskManager } from '@_koii/task-manager';
-import { getTaskManager } from '@_koii/task-manager';
-import { setup } from '../src/task/0-setup.js';
-import { task } from '../src/task/1-task.js';
-import { submission } from '../src/task/2-submission.js';
-import { audit } from '../src/task/3-audit.js';
-import { distribution } from '../src/task/4-distribution.js';
+import { initializeTaskManager, taskRunner } from "@_koii/task-manager";
+import { setup } from "../src/task/0-setup.js";
+import { task } from "../src/task/1-task.js";
+import { submission } from "../src/task/2-submission.js";
+import { audit } from "../src/task/3-audit.js";
+import { distribution } from "../src/task/4-distribution.js";
 
+import { namespaceWrapper, _server } from "@_koii/namespace-wrapper";
+import Joi from "joi";
+import axios from "axios";
 
-
-import { taskRunner } from '@_koii/task-manager';
-import { namespaceWrapper, _server } from '@_koii/namespace-wrapper';
-import Joi from 'joi';
-import axios from 'axios';
 beforeAll(async () => {
   await namespaceWrapper.defaultTaskSetup();
   initializeTaskManager({
@@ -27,7 +24,7 @@ describe("Performing the task", () => {
   it("should performs the core logic task", async () => {
     const round = 1;
     await taskRunner.task(round);
-    const value = await namespaceWrapper.storeGet('value');
+    const value = await namespaceWrapper.storeGet("value");
     expect(value).toBeDefined();
     expect(value).not.toBeNull();
   });

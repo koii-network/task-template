@@ -1,11 +1,11 @@
-version: '3.2'
+version: "3.2"
 services:
   task_node:
     image: public.ecr.aws/koii-network/task_node:latest
     command: yarn initialize-start
     extra_hosts:
       - "host.docker.internal:host-gateway"
-      
+
     ports:
       - 30017:30017
 

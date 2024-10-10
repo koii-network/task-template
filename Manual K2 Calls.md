@@ -16,13 +16,13 @@ console.log(await namespaceWrapper.getTaskState());
 
 ```js
 const round = await namespaceWrapper.getRound();
-console.log('ROUND', round);
+console.log("ROUND", round);
 ```
 
 ## Call to do the work for the task
 
 ```js
-import { taskRunner } from '@_koii/taskRunner';
+import { taskRunner } from "@_koii/taskRunner";
 await taskRunner.task();
 ```
 
@@ -31,28 +31,28 @@ await taskRunner.task();
 Preferably you should submit the CID received from IPFS.
 
 ```js
-import { taskRunner } from '@_koii/taskRunner';
+import { taskRunner } from "@_koii/taskRunner";
 await taskRunner.submitTask(round - 1);
 ```
 
 ## Audit submissions
 
 ```js
-import { taskRunner } from '@_koii/taskRunner';
+import { taskRunner } from "@_koii/taskRunner";
 await taskRunner.auditTask(round - 1);
 ```
 
 ## Upload distribution list to K2
 
 ```js
-import { taskRunner } from '@_koii/taskRunner';
+import { taskRunner } from "@_koii/taskRunner";
 await taskRunner.selectAndGenerateDistributionList(10);
 ```
 
 ## Audit distribution list
 
 ```js
-import { taskRunner } from '@_koii/taskRunner';
+import { taskRunner } from "@_koii/taskRunner";
 await coreLogic.auditDistribution(round - 2);
 ```
 
@@ -60,13 +60,13 @@ await coreLogic.auditDistribution(round - 2);
 
 ```js
 const responsePayout = await namespaceWrapper.payoutTrigger();
-console.log('RESPONSE TRIGGER', responsePayout);
+console.log("RESPONSE TRIGGER", responsePayout);
 ```
 
 ## Logs to be displayed on desktop-node
 
 ```js
-namespaceWrapper.logger('error', 'Internet connection lost');
-await namespaceWrapper.logger('warn', 'Stakes are running low');
-await namespaceWrapper.logger('log', 'Task is running');
+namespaceWrapper.logger("error", "Internet connection lost");
+await namespaceWrapper.logger("warn", "Stakes are running low");
+await namespaceWrapper.logger("log", "Task is running");
 ```
