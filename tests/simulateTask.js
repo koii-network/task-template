@@ -1,64 +1,82 @@
 import { taskRunner } from "@_koii/task-manager";
+
 import "../src/index.js";
-import { namespaceWrapper } from "@_koii/namespace-wrapper";
-import axios from "axios";
+import { namespaceWrapper, app } from "@_koii/namespace-wrapper";
+import { setupRoutes } from "../src/routes.js";
+
+setupRoutes(app);
+
 const numRounds = process.argv[2] || 1;
 const roundDelay = process.argv[3] || 5000;
 const functionDelay = process.argv[4] || 1000;
 
-let TASK_TIME = 0;
-let AUDIT_TIME = 0;
+let TASK_TIMES = [];
+let SUBMISSION_TIMES = [];
+let AUDIT_TIMES = [];
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 await namespaceWrapper.stakeOnChain();
 async function executeTasks() {
-  for (let i = 0; i < numRounds; i++) {
-    let round = i;
+  for (let round = 0; round < numRounds; round++) {
     const taskStartTime = Date.now();
     await taskRunner.task(round);
     const taskEndTime = Date.now();
+    TASK_TIMES.push(taskEndTime - taskStartTime);
+    await sleep(functionDelay);
 
-    if (taskEndTime - taskStartTime > TASK_TIME) {
-      TASK_TIME = taskEndTime - taskStartTime;
-    }
-    await sleep(functionDelay);
+    const taskSubmissionStartTime = Date.now();
     await taskRunner.submitTask(round);
+    const taskSubmissionEndTime = Date.now();
+    SUBMISSION_TIMES.push(taskSubmissionEndTime - taskSubmissionStartTime);
     await sleep(functionDelay);
+
     const auditStartTime = Date.now();
     await taskRunner.auditTask(round);
     const auditEndTime = Date.now();
-    if (auditEndTime - auditStartTime > AUDIT_TIME) {
-      AUDIT_TIME = auditEndTime - auditStartTime;
-    }
+    AUDIT_TIMES.push(auditEndTime - auditStartTime);
     await sleep(functionDelay);
+
     await taskRunner.selectAndGenerateDistributionList(round);
     await sleep(functionDelay);
+
     await taskRunner.auditDistribution(round);
 
-    if (i < numRounds - 1) {
+    if (round < numRounds - 1) {
       await sleep(roundDelay);
-    }
-
-    const taskState = await namespaceWrapper.getTaskState({});
-    const IP_list = Object.values(taskState.ip_address_list);
-    for (let i = 0; i < IP_list.length; i++) {
-      const response = await axios.get(`http://${IP_list[i]}:3000`);
-      console.log(response.data);
     }
   }
   console.log("TIME METRICS BELOW");
-  console.table([
-    {
-      Metric: "SIMULATED_AUDIT_WINDOW",
-      Value: Math.ceil(TASK_TIME / 408) + " SLOTS",
-    },
-    {
-      Metric: "SIMULATED_SUBMISSION_WINDOW",
-      Value: Math.ceil(AUDIT_TIME / 408) + " SLOTS",
-    },
-  ]);
+  function metrics(name, times) {
+    const average = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+    const formatTime = (ms) => (ms / 1000).toFixed(4);
+    const formatSlot = (ms) => Math.ceil(ms / 408);
+    const min = Math.min(...times);
+    const max = Math.max(...times);
+    const avg = average(times);
+    const timeMin = formatTime(min);
+    const timeMax = formatTime(max);
+    const timeAvg = formatTime(avg);
+    const slotMin = formatSlot(min);
+    const slotMax = formatSlot(max);
+    const slotAvg = formatSlot(avg);
+
+    return {
+      Metric: `SIMULATED ${name} WINDOW`,
+      "Avg Time (s)": timeAvg,
+      "Avg Slots": slotAvg,
+      "Min Time (s)": timeMin,
+      "Min Slots": slotMin,
+      "Max Time (s)": timeMax,
+      "Max Slots": slotMax,
+    };
+  }
+  const timeMetrics = metrics("TASK", TASK_TIMES);
+  const submissionMetrics = metrics("SUBMISSION", SUBMISSION_TIMES);
+  const auditMetrics = metrics("AUDIT", AUDIT_TIMES);
+
+  console.table([timeMetrics, submissionMetrics, auditMetrics]);
 
   console.log("All tasks executed. Test completed.");
   process.exit(0);
