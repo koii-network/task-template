@@ -44,13 +44,6 @@ async function executeTasks() {
     if (i < numRounds - 1) {
       await sleep(roundDelay);
     }
-
-    const taskState = await namespaceWrapper.getTaskState({});
-    const IP_list = Object.values(taskState.ip_address_list);
-    for (let i = 0; i < IP_list.length; i++) {
-      const response = await axios.get(`${IP_list[i]}/secret`);
-      console.log(response.data);
-    }
   }
   console.log("TIME METRICS BELOW");
   function metrics(name, times) {
