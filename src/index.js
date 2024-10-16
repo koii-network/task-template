@@ -4,6 +4,7 @@ import { task } from "./task/1-task.js";
 import { submission } from "./task/2-submission.js";
 import { audit } from "./task/3-audit.js";
 import { distribution } from "./task/4-distribution.js";
+import { routes } from "./routes.js";
 
 initializeTaskManager({
   setup,
@@ -11,4 +12,5 @@ initializeTaskManager({
   submission,
   audit,
   distribution,
+  routes,
 });
