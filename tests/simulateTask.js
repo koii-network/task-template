@@ -1,5 +1,4 @@
 import { taskRunner } from "@_koii/task-manager";
-import axios from "axios";
 
 import "../src/index.js";
 import { namespaceWrapper, app } from "@_koii/namespace-wrapper";
