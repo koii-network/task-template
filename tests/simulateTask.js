@@ -11,8 +11,9 @@ const numRounds = process.argv[2] || 1;
 const roundDelay = process.argv[3] || 5000;
 const functionDelay = process.argv[4] || 1000;
 
-let TASK_TIME = 0;
-let AUDIT_TIME = 0;
+let TASK_TIMES = [];
+let SUBMISSION_TIMES = [];
+let AUDIT_TIMES = [];
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -24,19 +25,17 @@ async function executeTasks() {
     const taskStartTime = Date.now();
     await taskRunner.task(round);
     const taskEndTime = Date.now();
-
-    if (taskEndTime - taskStartTime > TASK_TIME) {
-      TASK_TIME = taskEndTime - taskStartTime;
-    }
+    TASK_TIMES.push(taskEndTime - taskStartTime);
     await sleep(functionDelay);
+    const taskSubmissionStartTime = Date.now();
     await taskRunner.submitTask(round);
+    const taskSubmissionEndTime = Date.now();
+    SUBMISSION_TIMES.push(taskSubmissionEndTime - taskSubmissionStartTime);
     await sleep(functionDelay);
     const auditStartTime = Date.now();
     await taskRunner.auditTask(round);
     const auditEndTime = Date.now();
-    if (auditEndTime - auditStartTime > AUDIT_TIME) {
-      AUDIT_TIME = auditEndTime - auditStartTime;
-    }
+    AUDIT_TIMES.push(auditEndTime - auditStartTime);
     await sleep(functionDelay);
     await taskRunner.selectAndGenerateDistributionList(round);
     await sleep(functionDelay);
@@ -54,16 +53,34 @@ async function executeTasks() {
     }
   }
   console.log("TIME METRICS BELOW");
-  console.table([
-    {
-      Metric: "SIMULATED_AUDIT_WINDOW",
-      Value: Math.ceil(TASK_TIME / 408) + " SLOTS",
-    },
-    {
-      Metric: "SIMULATED_SUBMISSION_WINDOW",
-      Value: Math.ceil(AUDIT_TIME / 408) + " SLOTS",
-    },
-  ]);
+  function metrics(name, times) {
+    const average = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+    const format = (ms) => (ms / 1000).toFixed(4);
+    const min = Math.min(...times);
+    const max = Math.max(...times);
+    const avg = average(times);
+    const timeMin = format(min);
+    const timeMax = format(max);
+    const timeAvg = format(avg);
+    const slotMin = Math.ceil(min / 408);
+    const slotMax = Math.ceil(max / 408);
+    const slotAvg = Math.ceil(avg / 408);
+
+    return {
+      Metric: `SIMULATED ${name} WINDOW`,
+      "Avg Time (s)": timeAvg,
+      "Avg Slots": slotAvg,
+      "Min Time (s)": timeMin,
+      "Min Slots": slotMin,
+      "Max Time (s)": timeMax,
+      "Max Slots": slotMax,
+    };
+  }
+  const timeMetrics = metrics("TASK", TASK_TIMES);
+  const submissionMetrics = metrics("SUBMISSION", SUBMISSION_TIMES);
+  const auditMetrics = metrics("AUDIT", AUDIT_TIMES);
+
+  console.table([timeMetrics, submissionMetrics, auditMetrics]);
 
   console.log("All tasks executed. Test completed.");
   process.exit(0);
