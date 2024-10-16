@@ -21,23 +21,28 @@ await namespaceWrapper.stakeOnChain();
 async function executeTasks() {
   for (let i = 0; i < numRounds; i++) {
     let round = i;
+
     const taskStartTime = Date.now();
     await taskRunner.task(round);
     const taskEndTime = Date.now();
     TASK_TIMES.push(taskEndTime - taskStartTime);
     await sleep(functionDelay);
+
     const taskSubmissionStartTime = Date.now();
     await taskRunner.submitTask(round);
     const taskSubmissionEndTime = Date.now();
     SUBMISSION_TIMES.push(taskSubmissionEndTime - taskSubmissionStartTime);
     await sleep(functionDelay);
+
     const auditStartTime = Date.now();
     await taskRunner.auditTask(round);
     const auditEndTime = Date.now();
     AUDIT_TIMES.push(auditEndTime - auditStartTime);
     await sleep(functionDelay);
+
     await taskRunner.selectAndGenerateDistributionList(round);
     await sleep(functionDelay);
+
     await taskRunner.auditDistribution(round);
 
     if (i < numRounds - 1) {
@@ -47,16 +52,17 @@ async function executeTasks() {
   console.log("TIME METRICS BELOW");
   function metrics(name, times) {
     const average = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
-    const format = (ms) => (ms / 1000).toFixed(4);
+    const formatTime = (ms) => (ms / 1000).toFixed(4);
+    const formatSlot = (ms) => Math.ceil(ms / 408);
     const min = Math.min(...times);
     const max = Math.max(...times);
     const avg = average(times);
-    const timeMin = format(min);
-    const timeMax = format(max);
-    const timeAvg = format(avg);
-    const slotMin = Math.ceil(min / 408);
-    const slotMax = Math.ceil(max / 408);
-    const slotAvg = Math.ceil(avg / 408);
+    const timeMin = formatTime(min);
+    const timeMax = formatTime(max);
+    const timeAvg = formatTime(avg);
+    const slotMin = formatSlot(min);
+    const slotMax = formatSlot(max);
+    const slotAvg = formatSlot(avg);
 
     return {
       Metric: `SIMULATED ${name} WINDOW`,
