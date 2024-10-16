@@ -19,9 +19,7 @@ function sleep(ms) {
 }
 await namespaceWrapper.stakeOnChain();
 async function executeTasks() {
-  for (let i = 0; i < numRounds; i++) {
-    let round = i;
-
+  for (let round = 0; round < numRounds; round++) {
     const taskStartTime = Date.now();
     await taskRunner.task(round);
     const taskEndTime = Date.now();
@@ -45,7 +43,7 @@ async function executeTasks() {
 
     await taskRunner.auditDistribution(round);
 
-    if (i < numRounds - 1) {
+    if (round < numRounds - 1) {
       await sleep(roundDelay);
     }
   }
