@@ -1,7 +1,12 @@
 import { taskRunner } from "@_koii/task-manager";
-import "../src/index.js";
-import { namespaceWrapper } from "@_koii/namespace-wrapper";
 import axios from "axios";
+
+import "../src/index.js";
+import { namespaceWrapper, app } from "@_koii/namespace-wrapper";
+import { setupRoutes } from "../src/routes.js";
+
+setupRoutes(app);
+
 const numRounds = process.argv[2] || 1;
 const roundDelay = process.argv[3] || 5000;
 const functionDelay = process.argv[4] || 1000;
@@ -44,7 +49,7 @@ async function executeTasks() {
     const taskState = await namespaceWrapper.getTaskState({});
     const IP_list = Object.values(taskState.ip_address_list);
     for (let i = 0; i < IP_list.length; i++) {
-      const response = await axios.get(`http://${IP_list[i]}:3000`);
+      const response = await axios.get(`${IP_list[i]}/secret`);
       console.log(response.data);
     }
   }
