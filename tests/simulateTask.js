@@ -1,10 +1,7 @@
 import { taskRunner } from "@_koii/task-manager";
 
 import "../src/index.js";
-import { namespaceWrapper, app } from "@_koii/namespace-wrapper";
-import { setupRoutes } from "../src/routes.js";
-
-setupRoutes(app);
+import { namespaceWrapper } from "@_koii/namespace-wrapper";
 
 const numRounds = process.argv[2] || 1;
 const roundDelay = process.argv[3] || 5000;
@@ -81,5 +78,4 @@ async function executeTasks() {
   console.log("All tasks executed. Test completed.");
   process.exit(0);
 }
-
-executeTasks();
+setTimeout(executeTasks, 1500);

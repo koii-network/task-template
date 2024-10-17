@@ -4,6 +4,7 @@ import { task } from "../src/task/1-task.js";
 import { submission } from "../src/task/2-submission.js";
 import { audit } from "../src/task/3-audit.js";
 import { distribution } from "../src/task/4-distribution.js";
+import { routes } from "../src/task/5-routes.js";
 
 import { namespaceWrapper, _server } from "@_koii/namespace-wrapper";
 import Joi from "joi";
@@ -17,6 +18,7 @@ beforeAll(async () => {
     submission,
     audit,
     distribution,
+    routes,
   });
 });
 
