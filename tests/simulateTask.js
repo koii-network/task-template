@@ -78,5 +78,4 @@ async function executeTasks() {
   console.log("All tasks executed. Test completed.");
   process.exit(0);
 }
-
-executeTasks();
+setTimeout(executeTasks, 1500);
