@@ -1,4 +1,4 @@
-import { namespaceWrapper } from "@_koii/namespace-wrapper";
+import { namespaceWrapper, app } from "@_koii/namespace-wrapper";
 
 export function routes() {
   /**
