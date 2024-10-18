@@ -3,7 +3,6 @@ import fs from "fs";
 import path from "path";
 import "dotenv/config";
 import { Tail } from "tail";
-import path from "path";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
 import { TEST_KEYWORDS, WEBPACKED_FILE_PATH, TASK_ID } from "./config.js";
@@ -59,15 +58,43 @@ const startProdDebug = async () => {
     if (err) {
       console.error("Error copying file:", err);
     } else {
-      console.log("File copied successfully");
-      tailLogs();
+      console.log("Executable file copied successfully");
     }
   });
+
+  // Set the prod-debug flag in the metadata file
+  fs.readFile(metadataPath, "utf8", (err, data) => {
+    if (err) {
+      throw err;
+    }
+
+    try {
+      const jsonData = JSON.parse(data);
+      jsonData["prod-debug"] = true;
+
+      fs.writeFile(
+        metadataPath,
+        JSON.stringify(jsonData, null, 2),
+        "utf8",
+        (writeErr) => {
+          if (writeErr) {
+            throw writeErr;
+          }
+
+          console.log("Metadata file updated successfully");
+        },
+      );
+    } catch (err) {
+      console.error("Error setting prod-debug flag:", parseErr);
+      return;
+    }
+  });
+  tailLogs();
 };
 
 /* tail logs */
 const tailLogs = async () => {
-  console.log("Watching logs for messages containing ", keywords);
+  console.log("Watching logs for messages containing ", TEST_KEYWORDS);
   const logPath = path.join(nodeDir, "namespace/", TASK_ID, "task.log");
   // Extract the directory path from the full log file path
   const dirPath = path.dirname(logPath);
@@ -93,7 +120,7 @@ const tailLogs = async () => {
   let tail = new Tail(logPath, "\n", {}, true);
 
   console.log(
-    `Now watching logs for messages containing ${keywords.join(", ")}. Please start the task ${TASK_ID} and keep it running on the Desktop Node.`,
+    `Now watching logs for messages containing ${TEST_KEYWORDS.join(", ")}. Please start the task ${TASK_ID} and keep it running on the Desktop Node.`,
   );
 
   tail.on("line", function (data) {
