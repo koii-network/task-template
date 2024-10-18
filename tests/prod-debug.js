@@ -7,14 +7,10 @@ import path from "path";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
 import { TEST_KEYWORDS, WEBPACKED_FILE_PATH, TASK_ID } from "./config.js";
-import {
-  parseTaskState,
-  getFileCIDs,
-  getNodeDirectory,
-} from "./utils/index.js";
+import { getFileCIDs, getNodeDirectory } from "./utils/index.js";
 
-const nodeDir = await this.getNodeDirectory();
-const { executable, metadata } = await this.getFileCIDs();
+const nodeDir = await getNodeDirectory();
+const { executable, metadata } = await getFileCIDs();
 
 const metadataPath = path.join(nodeDir, "metadata/", `${metadata}.json`);
 

@@ -1,5 +1,6 @@
 import { Connection, PublicKey } from "@_koii/web3.js";
 import { borsh_bpf_js_deserialize } from "./wasm/bincode_js.cjs";
+import { parseTaskState } from "./index.js";
 
 export async function getFileCIDs() {
   const connection = new Connection("https://testnet.koii.network");
