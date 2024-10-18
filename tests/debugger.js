@@ -16,19 +16,31 @@ class Debugger {
   static async getConfig() {
     Debugger.nodeDir = await this.getNodeDirectory();
 
-    let destinationPath =
-      "executables/" + (await this.getAuditProgram()) + ".js";
-    let logPath = "namespace/" + Debugger.taskID + "/task.log";
+    const { executable, metadata } = await this.getFileCIDs();
 
-    console.log("Debugger.nodeDir", Debugger.nodeDir);
+    const executablePath = path.join(
+      Debugger.nodeDir,
+      "executables/",
+      `${executable}.js`,
+    );
+    const metadataPath = path.join(
+      Debugger.nodeDir,
+      "metadata/",
+      `${metadata}.json`,
+    );
+    const logPath = path.join(
+      Debugger.nodeDir,
+      "logs/",
+      `${Debugger.taskID}.log`,
+    );
 
     return {
-      webpackedFilePath: Debugger.webpackedFilePath,
-      destinationPath: destinationPath,
-      keywords: Debugger.keywords,
-      logPath: logPath,
-      nodeDir: Debugger.nodeDir,
-      taskID: Debugger.taskID,
+      taskID: TASK_ID,
+      keywords: TEST_KEYWORDS,
+      webpackedFilePath: WEBPACKED_FILE_PATH,
+      executablePath,
+      metadataPath,
+      logPath,
     };
   }
 
@@ -55,16 +67,8 @@ class Debugger {
           "KOII-Desktop-Node",
         );
         break;
-      case "win32":
-        // For Windows, construct the path explicitly as specified
-        nodeDirectory = path.join(
-          homeDirectory,
-          "AppData",
-          "Roaming",
-          "KOII-Desktop-Node",
-        );
-        break;
       default:
+        // windows is the default
         nodeDirectory = path.join(
           homeDirectory,
           "AppData",
@@ -76,7 +80,7 @@ class Debugger {
     return nodeDirectory;
   }
 
-  static async getAuditProgram() {
+  static async getFileCIDs() {
     const connection = new Connection("https://testnet.koii.network");
     const taskId = Debugger.taskID;
     const accountInfo = await connection.getAccountInfo(new PublicKey(taskId));
@@ -93,8 +97,10 @@ class Debugger {
       data = parseTaskState(data);
     }
 
-    console.log("data.task_audit_program", data.task_audit_program);
-    return data.task_audit_program;
+    return {
+      executable: data.task_audit_program,
+      metadata: data.task_metadata,
+    };
   }
 }
 
