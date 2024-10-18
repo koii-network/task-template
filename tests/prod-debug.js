@@ -1,11 +1,22 @@
 import { spawn } from "cross-spawn";
 import fs from "fs";
+import path from "path";
 import "dotenv/config";
-import Debugger from "./debugger.js";
 import { Tail } from "tail";
 import path from "path";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
+import { TEST_KEYWORDS, WEBPACKED_FILE_PATH, TASK_ID } from "./config.js";
+import {
+  parseTaskState,
+  getFileCIDs,
+  getNodeDirectory,
+} from "./utils/index.js";
+
+const nodeDir = await this.getNodeDirectory();
+const { executable, metadata } = await this.getFileCIDs();
+
+const metadataPath = path.join(nodeDir, "metadata/", `${metadata}.json`);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,48 +38,43 @@ const build = async () => {
       console.error("Build failed");
     } else {
       console.log("Build successful");
-      copyWebpackedFile();
+      startProdDebug();
     }
     return;
   });
 };
 
 /* copy the task to the Desktop Node runtime folder */
-const copyWebpackedFile = async () => {
-  const debugConfig = await Debugger.getConfig();
-  console.log("debugConfig", debugConfig);
-  const nodeDIR = debugConfig.nodeDir;
-  const sourcePath = __dirname + "/" + debugConfig.webpackedFilePath;
-  const desktopNodeExecutablePath = nodeDIR + "/" + debugConfig.destinationPath;
-  const desktopNodeLogPath = nodeDIR + "/" + debugConfig.logPath;
-  const keywords = debugConfig.keywords;
-  const taskID = debugConfig.taskID;
+const startProdDebug = async () => {
+  // Copy the webpacked file to the Desktop Node
+  const sourcePath = path.join(__dirname, WEBPACKED_FILE_PATH);
+  const executablePath = path.join(nodeDir, "executables/", `${executable}.js`);
 
-  if (!sourcePath || !desktopNodeExecutablePath) {
+  if (!sourcePath || !executablePath) {
     console.error("Source path or destination path not specified in .env");
     return;
   }
 
   console.log(
-    `Copying webpacked file from ${sourcePath} to ${desktopNodeExecutablePath}...`,
+    `Copying webpacked file from ${sourcePath} to ${executablePath}...`,
   );
 
-  fs.copyFile(sourcePath, desktopNodeExecutablePath, async (err) => {
+  fs.copyFile(sourcePath, executablePath, async (err) => {
     if (err) {
       console.error("Error copying file:", err);
     } else {
       console.log("File copied successfully");
-      tailLogs(desktopNodeLogPath, keywords, taskID);
+      tailLogs();
     }
   });
 };
 
 /* tail logs */
-const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
-  console.log("Watchings logs for messages containing ", keywords);
-
+const tailLogs = async () => {
+  console.log("Watching logs for messages containing ", keywords);
+  const logPath = path.join(nodeDir, "namespace/", TASK_ID, "task.log");
   // Extract the directory path from the full log file path
-  const dirPath = path.dirname(desktopNodeLogPath);
+  const dirPath = path.dirname(logPath);
 
   // Check if the directory exists, create it if it doesn't
   try {
@@ -82,16 +88,16 @@ const tailLogs = async (desktopNodeLogPath, keywords, taskID) => {
 
   // Ensure the log file exists, or create it if it doesn't
   try {
-    await fs.promises.access(desktopNodeLogPath, fs.constants.F_OK);
+    await fs.promises.access(logPath, fs.constants.F_OK);
   } catch (err) {
-    console.log(`Log file not found, creating ${desktopNodeLogPath}`);
-    await fs.promises.writeFile(desktopNodeLogPath, "", { flag: "a" }); // 'a' flag ensures the file is created if it doesn't exist and not overwritten if it exists
+    console.log(`Log file not found, creating ${logPath}`);
+    await fs.promises.writeFile(logPath, "", { flag: "a" }); // 'a' flag ensures the file is created if it doesn't exist and not overwritten if it exists
   }
 
-  let tail = new Tail(desktopNodeLogPath, "\n", {}, true);
+  let tail = new Tail(logPath, "\n", {}, true);
 
   console.log(
-    `Now watching logs for messages containing ${keywords.join(", ")}. Please start the task ${taskID} and keep it running on the Desktop Node.`,
+    `Now watching logs for messages containing ${keywords.join(", ")}. Please start the task ${TASK_ID} and keep it running on the Desktop Node.`,
   );
 
   tail.on("line", function (data) {
