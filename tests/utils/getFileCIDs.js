@@ -1,13 +1,13 @@
 import { Connection, PublicKey } from "@_koii/web3.js";
 import { borsh_bpf_js_deserialize } from "./wasm/bincode_js.cjs";
 import { parseTaskState } from "./index.js";
+import { TASK_ID } from "../config.js";
 
 export async function getFileCIDs() {
   const connection = new Connection("https://testnet.koii.network");
-  const taskId = Debugger.taskID;
-  const accountInfo = await connection.getAccountInfo(new PublicKey(taskId));
+  const accountInfo = await connection.getAccountInfo(new PublicKey(TASK_ID));
   if (!accountInfo) {
-    console.log(`${taskId} doesn't contain any distribution list data`);
+    console.log(`${TASK_ID} doesn't contain any distribution list data`);
     return null;
   }
   let data;
