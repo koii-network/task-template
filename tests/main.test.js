@@ -1,21 +1,39 @@
-const { coreLogic } = require('../coreLogic');
-const { namespaceWrapper, _server } = require('../_koiiNode/koiiNode');
-const Joi = require('joi');
-const axios = require('axios');
+import { initializeTaskManager, taskRunner } from "@_koii/task-manager";
+import { setup } from "../src/task/0-setup.js";
+import { task } from "../src/task/1-task.js";
+import { submission } from "../src/task/2-submission.js";
+import { audit } from "../src/task/3-audit.js";
+import { distribution } from "../src/task/4-distribution.js";
+import { routes } from "../src/task/5-routes.js";
+
+import { namespaceWrapper, _server } from "@_koii/namespace-wrapper";
+import Joi from "joi";
+import axios from "axios";
+
 beforeAll(async () => {
   await namespaceWrapper.defaultTaskSetup();
+  initializeTaskManager({
+    setup,
+    task,
+    submission,
+    audit,
+    distribution,
+    routes,
+  });
 });
 
-describe('Performing the task', () => {
-  it('should performs the core logic task', async () => {
+describe("Performing the task", () => {
+  it("should performs the core logic task", async () => {
     const round = 1;
-    const result = await coreLogic.task(round);
-    expect(result).not.toContain('ERROR IN EXECUTING TASK');
+    await taskRunner.task(round);
+    const value = await namespaceWrapper.storeGet("value");
+    expect(value).toBeDefined();
+    expect(value).not.toBeNull();
   });
 
-  it('should make the submission to k2 for dummy round 1', async () => {
+  it("should make the submission to k2 for dummy round 1", async () => {
     const round = 1;
-    await coreLogic.submitTask(round);
+    await taskRunner.submitTask(round);
     const taskState = await namespaceWrapper.getTaskState();
     const schema = Joi.object()
       .pattern(
@@ -39,11 +57,12 @@ describe('Performing the task', () => {
     }
   });
 
-  it('should make the make an audit on submission', async () => {
+  it("should make an audit on submission", async () => {
     const round = 1;
-    await coreLogic.auditTask(round);
+    await taskRunner.auditTask(round);
     const taskState = await namespaceWrapper.getTaskState();
-    console.log('audit task', taskState.submissions_audit_trigger);
+    console.log("TASK STATE", taskState);
+    console.log("audit task", taskState.submissions_audit_trigger);
     const schema = Joi.object()
       .pattern(
         Joi.string(),
@@ -63,14 +82,13 @@ describe('Performing the task', () => {
     try {
       expect(validationResult.error).toBeUndefined();
     } catch (e) {
-      throw new Error('Submission audit is incorrect');
+      throw new Error("Submission audit is incorrect");
     }
   });
-  it('should make the distribution submission to k2 for dummy round 1', async () => {
+  it("should make the distribution submission to k2 for dummy round 1", async () => {
     const round = 1;
-    //await coreLogic.submitDistributionList(round);
-    const task = require('../task');
-    await task.distribution.submitDistributionList(round);
+    await taskRunner.submitDistributionList(round);
+
     const taskState = await namespaceWrapper.getTaskState();
     const schema = Joi.object()
       .pattern(
@@ -86,7 +104,10 @@ describe('Performing the task', () => {
       )
       .required()
       .min(1);
-    console.log(taskState.distribution_rewards_submission);
+    console.log(
+      "Distribution submission",
+      taskState.distribution_rewards_submission,
+    );
     const validationResult = schema.validate(
       taskState.distribution_rewards_submission,
     );
@@ -96,11 +117,11 @@ describe('Performing the task', () => {
       throw new Error("Distribution submission doesn't exist or is incorrect");
     }
   });
-  it('should make the make an audit on distribution submission', async () => {
+  it("should make an audit on distribution submission", async () => {
     const round = 1;
-    await coreLogic.auditDistribution(round);
+    await taskRunner.auditDistribution(round);
     const taskState = await namespaceWrapper.getTaskState();
-    console.log('audit task', taskState.distributions_audit_trigger);
+    console.log("audit task", taskState.distributions_audit_trigger);
     const schema = Joi.object()
       .pattern(
         Joi.string(),
@@ -120,18 +141,18 @@ describe('Performing the task', () => {
     try {
       expect(validationResult.error).toBeUndefined();
     } catch (e) {
-      throw new Error('Distribution audit is incorrect');
+      throw new Error("Distribution audit is incorrect");
     }
   });
 
-  it('should make sure the submitted distribution list is valid', async () => {
+  it("should make sure the submitted distribution list is valid", async () => {
     const round = 1;
     const distributionList = await namespaceWrapper.getDistributionList(
       null,
       round,
     );
     console.log(
-      'Generated distribution List',
+      "Generated distribution List",
       JSON.parse(distributionList.toString()),
     );
     const schema = Joi.object()
@@ -144,14 +165,14 @@ describe('Performing the task', () => {
     try {
       expect(validationResult.error).toBeUndefined();
     } catch (e) {
-      throw new Error('Submitted distribution list is not valid');
+      throw new Error("Submitted distribution list is not valid");
     }
   });
 
-  it('should test the endpoint', async () => {
-    const response = await axios.get('http://localhost:10000');
+  it("should test the endpoint", async () => {
+    const response = await axios.get("http://localhost:3000");
     expect(response.status).toBe(200);
-    expect(response.data).toEqual('Hello World!');
+    expect(response.data).toEqual({ message: "Running", status: 200 });
   });
 });
 
