@@ -1,6 +1,6 @@
 {
   "name": "koii-task-template",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "",
   "main": "src/index.js",
   "type": "module",
@@ -19,7 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "@_koii/namespace-wrapper": "^1.0.14",
-    "@_koii/task-manager": "0.0.29",
+    "@_koii/task-manager": "^1.0.0",
     "@_koii/web3.js": "^0.1.11",
     "@babel/preset-env": "^7.25.7",
     "axios": "^1.7.7",
