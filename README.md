@@ -35,29 +35,31 @@ Should you encounter any issues, don't hesitate to reach out by opening a ticket
 
 ## Available Scripts
 
-```sh
-npm test
-```
 
-Simulate rounds using unitTest.js.
+Simulate rounds using simulateTask.js.
 
 ```sh
-npm jest-test
+yarn test
 ```
 
-Runs tests using Just.
+Runs Jest unit tests.
 
 ```sh
-npm run webpack
+yarn jest-test
 ```
+
 
 Builds the project and generates the main script: `dist/main.js`.
 
 ```sh
-npm run prod-debug
+yarn webpack
 ```
 
 Runs the live debugger (must have the task running in the desktop node).
+
+```sh
+yarn prod-debug
+```
 
 ## Runtime Options
 
