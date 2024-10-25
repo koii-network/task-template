@@ -22,7 +22,7 @@ console.log("ROUND", round);
 ## Call to do the work for the task
 
 ```js
-import { taskRunner } from "@_koii/taskRunner";
+import { taskRunner } from "@_koii/task-manager";
 await taskRunner.task();
 ```
 
@@ -31,28 +31,28 @@ await taskRunner.task();
 Preferably you should submit the CID received from IPFS.
 
 ```js
-import { taskRunner } from "@_koii/taskRunner";
+import { taskRunner } from "@_koii/task-manager";
 await taskRunner.submitTask(round - 1);
 ```
 
 ## Audit submissions
 
 ```js
-import { taskRunner } from "@_koii/taskRunner";
+import { taskRunner } from "@_koii/task-manager";
 await taskRunner.auditTask(round - 1);
 ```
 
 ## Upload distribution list to K2
 
 ```js
-import { taskRunner } from "@_koii/taskRunner";
+import { taskRunner } from "@_koii/task-manager";
 await taskRunner.selectAndGenerateDistributionList(10);
 ```
 
 ## Audit distribution list
 
 ```js
-import { taskRunner } from "@_koii/taskRunner";
+import { taskRunner } from "@_koii/task-manager";
 await coreLogic.auditDistribution(round - 2);
 ```
 
