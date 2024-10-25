@@ -5,7 +5,7 @@ import { submission } from "../src/task/2-submission.js";
 import { audit } from "../src/task/3-audit.js";
 import { distribution } from "../src/task/4-distribution.js";
 import { routes } from "../src/task/5-routes.js";
-
+import { Keypair } from "@_koii/web3.js";
 import { namespaceWrapper, _server } from "@_koii/namespace-wrapper";
 import Joi from "joi";
 import axios from "axios";
@@ -173,6 +173,34 @@ describe("Performing the task", () => {
     const response = await axios.get("http://localhost:3000");
     expect(response.status).toBe(200);
     expect(response.data).toEqual({ message: "Running", status: 200 });
+  });
+
+  it("should generate a empty distribution list when submission is 0", async () => {
+    const submitters = [];
+    const bounty = Math.floor(Math.random() * 1e15) + 1;
+    const roundNumber = Math.floor(Math.random() * 1e5) + 1;
+    const distributionList = distribution(submitters, bounty, roundNumber);
+    expect(distributionList).toEqual({});
+  });
+
+  it("should generate a distribution list contains all the submitters", async () => {
+    const simulatedSubmitters = 10000;
+    const submitters = [];
+    // 10k is the rough maximum number of submitters
+    for (let i = 0; i < simulatedSubmitters; i++) {
+      const publicKey = `mockPublicKey${i}`; 
+      submitters.push({
+        publicKey,
+        votes: Math.floor(Math.random() * simulatedSubmitters) - 5000, 
+        stake: Math.floor(Math.random() * 1e9) + 1
+      });
+    }
+    const bounty = Math.floor(Math.random() * 1e15) + 1;
+    const roundNumber = 1;
+    const distributionList = distribution(submitters, bounty, roundNumber);
+    expect(Object.keys(distributionList).length).toBe(submitters.length);
+    expect(Object.keys(distributionList).sort()).toEqual(submitters.map(submitter => submitter.publicKey).sort());
+
   });
 });
 
