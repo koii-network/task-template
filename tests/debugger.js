@@ -85,12 +85,16 @@ class Debugger {
       return null;
     }
     let data;
-    if (accountInfo.owner === "Koiitask22222222222222222222222222222222222") {
+    const owner = accountInfo.owner.toBase58();
+    if (owner === "Koiitask22222222222222222222222222222222222") {
       data = JSON.parse(accountInfo.data.toString());
-    } else {
+    } else if (owner === "KPLTRVs6jA7QTthuJH2cEmyCEskFbSV2xpZw46cganN") {
       const buffer = accountInfo.data;
       data = borsh_bpf_js_deserialize(buffer);
       data = parseTaskState(data);
+    } else {
+      console.error(`Not a valid Task ID ${taskId}`);
+      return null;
     }
 
     console.log("data.task_audit_program", data.task_audit_program);
