@@ -85,9 +85,9 @@ class Debugger {
       return null;
     }
     let data;
-    try {
+    if (accountInfo.owner === "Koiitask22222222222222222222222222222222222") {
       data = JSON.parse(accountInfo.data.toString());
-    } catch (e) {
+    } else {
       const buffer = accountInfo.data;
       data = borsh_bpf_js_deserialize(buffer);
       data = parseTaskState(data);
