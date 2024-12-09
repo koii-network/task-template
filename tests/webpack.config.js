@@ -1,7 +1,11 @@
-const path = require("path");
-const Dotenv = require("dotenv-webpack");
+import path from 'path'
+import Dotenv from 'dotenv-webpack'
+import { fileURLToPath } from "url";
 
-module.exports = {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default {
   mode: "development",
   entry: "./src/index.ts",
   output: {
