@@ -13,11 +13,12 @@
     "lint": "eslint . --fix",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\""
   },
+  "type": "module",
   "author": "Koii Network",
   "license": "ISC",
   "dependencies": {
     "@_koii/namespace-wrapper": "^1.0.11",
-    "@_koii/task-manager": "^0.0.12",
+    "@_koii/task-manager": "^1.0.1",
     "@_koii/web3.js": "^0.1.11",
     "dotenv": "^16.3.0"
   },
@@ -25,6 +26,7 @@
     "@types/cross-spawn": "^6.0.6",
     "@types/eslint": "^9.6.1",
     "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
     "@types/js-yaml": "^4.0.9",
     "@types/lodash": "^4.17.9",
     "@types/node": "^22.7.4",
@@ -37,7 +39,7 @@
     "dotenv-webpack": "^8.1.0",
     "eslint": "8.4.1",
     "globals": "^15.9.0",
-    "jest": "^29.5.0",
+    "jest": "^29.7.0",
     "joi": "^17.9.2",
     "prettier": "^3.3.3",
     "tail": "^2.2.6",

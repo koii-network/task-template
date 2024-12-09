@@ -1,28 +1,35 @@
+import "dotenv/config";
 import os from "os";
 import path from "path";
 import { Connection, PublicKey } from "@_koii/web3.js";
 import { borsh_bpf_js_deserialize } from "./wasm/bincode_js.cjs";
-import { TASK_ID, TEST_KEYWORDS, WEBPACKED_FILE } from "../config";
+import { TASK_ID, WEBPACKED_FILE_PATH, TEST_KEYWORDS } from "./config";
 
 class Debugger {
-  static nodeDir = "";
+  /*
+  Create .env file with following variables or directly input values to be used in live-debugging mode.
+  */
+  static taskID = TASK_ID;
+  static webpackedFilePath = WEBPACKED_FILE_PATH;
+  static keywords = TEST_KEYWORDS;
+  static nodeDir: string;
 
   static async getConfig() {
     Debugger.nodeDir = await this.getNodeDirectory();
 
     let destinationPath =
-      "executables/" + (await this.get_task_audit_program()) + ".js";
+      "executables/" + (await this.getAuditProgram()) + ".js";
     let logPath = "namespace/" + TASK_ID + "/task.log";
 
     console.log("Debugger.nodeDir", Debugger.nodeDir);
 
     return {
-      webpackedFilePath: WEBPACKED_FILE,
+      webpackedFilePath: Debugger.webpackedFilePath,
       destinationPath: destinationPath,
-      keywords: TEST_KEYWORDS,
+      keywords: Debugger.keywords,
       logPath: logPath,
       nodeDir: Debugger.nodeDir,
-      taskID: TASK_ID,
+      taskID: Debugger.taskID,
     };
   }
 
@@ -62,27 +69,32 @@ class Debugger {
     return nodeDirectory;
   }
 
-  static async get_task_audit_program() {
+  static async getAuditProgram() {
     const connection = new Connection("https://testnet.koii.network");
-    const taskId = TASK_ID;
+    const taskId = Debugger.taskID;
     const accountInfo = await connection.getAccountInfo(new PublicKey(taskId));
     if (!accountInfo?.data) {
       console.log(`${taskId} doesn't contain any distribution list data`);
       return null;
     }
     let data;
-    try {
+    const owner = accountInfo.owner.toBase58();
+    if (owner === "Koiitask22222222222222222222222222222222222") {
       data = JSON.parse(accountInfo.data.toString());
-    } catch (e) {
+    } else if (owner === "KPLTRVs6jA7QTthuJH2cEmyCEskFbSV2xpZw46cganN") {
       const buffer = accountInfo.data;
       data = borsh_bpf_js_deserialize(buffer);
       data = parseTaskState(data);
+    } else {
+      console.error(`Not a valid Task ID ${taskId}`);
+      return null;
     }
 
     console.log("data.task_audit_program", data.task_audit_program);
     return data.task_audit_program;
   }
 }
+
 
 function parseTaskState(taskState) {
   taskState.stake_list = objectify(taskState.stake_list, true);

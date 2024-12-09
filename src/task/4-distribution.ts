@@ -1,5 +1,6 @@
-import type { Submitter, DistributionList } from "@_koii/task-manager";
-
+// Define the percentage by which to slash the stake of submitters who submitted incorrect values
+// 0.7 = 70%
+import { Submitter, DistributionList } from "@_koii/task-manager";
 const SLASH_PERCENT = 0.7;
 
 export function distribution(
