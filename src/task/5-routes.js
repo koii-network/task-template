@@ -1,6 +1,6 @@
 import { namespaceWrapper, app } from "@_koii/namespace-wrapper";
 
-export function routes() {
+export async function routes() {
   /**
    *
    * Define all your custom routes here
