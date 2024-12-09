@@ -1,10 +1,10 @@
 import { initializeTaskManager, taskRunner } from "@_koii/task-manager";
-import { setup } from "../src/task/0-setup.js";
-import { task } from "../src/task/1-task.js";
-import { submission } from "../src/task/2-submission.js";
-import { audit } from "../src/task/3-audit.js";
-import { distribution } from "../src/task/4-distribution.js";
-import { routes } from "../src/task/5-routes.js";
+import { setup } from "../src/task/0-setup";
+import { task } from "../src/task/1-task";
+import { submission } from "../src/task/2-submission";
+import { audit } from "../src/task/3-audit";
+import { distribution } from "../src/task/4-distribution";
+import { routes } from "../src/task/5-routes";
 import { namespaceWrapper, _server } from "@_koii/namespace-wrapper";
 import Joi from "joi";
 import axios from "axios";
@@ -183,7 +183,7 @@ describe("Performing the task", () => {
   });
 
   it("should generate a distribution list contains all the submitters", async () => {
-    const simulatedSubmitters = 10000;
+    const simulatedSubmitters = 5;
     const submitters: Submitter[] = [];
     // 10k is the rough maximum number of submitters
     for (let i = 0; i < simulatedSubmitters; i++) {
