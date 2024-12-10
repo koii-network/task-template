@@ -33,7 +33,7 @@ minimum_stake_amount: 1.9
 task_type: 'KPL'
 
 # Token Mint Address: (ONLY task_type == KPL) Fire Token as an example here. 
-token_type: ""
+token_type: "FJG2aEPtertCXoedgteCCMmgngSZo1Zd715oNBzR7xpR"
 
 # Total bounty amount:  (Required) The total bounty amount that will be distributed to the task. (Not accepted in case of update task).
 total_bounty_amount: 10
