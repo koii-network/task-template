@@ -1,12 +1,11 @@
 stages:
   - test
 
-npm_jest_tests:
+npm_install:
   stage: test
   image: node:latest
   script:
     - npm install
-    - npm run jest-test
 
 yarn_jest_tests:
   stage: test
