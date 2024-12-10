@@ -14,8 +14,12 @@ export default {
   },
   target: "node",
   resolve: {
-    extensions: [".ts", ".js"],
+    alias: {
+      '@_koii/namespace-wrapper': path.resolve(__dirname, 'node_modules/@_koii/namespace-wrapper')
+    },
+    extensions: ['.ts', '.js'],
   },
+  
   module: {
     rules: [
       {
