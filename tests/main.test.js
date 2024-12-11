@@ -148,7 +148,7 @@ describe("Performing the task", () => {
   it("should make sure the submitted distribution list is valid", async () => {
     const round = 1;
     const distributionList = await namespaceWrapper.getDistributionList(
-      null,
+      "",
       round,
     );
     console.log(

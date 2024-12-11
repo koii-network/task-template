@@ -2,10 +2,10 @@ import { taskRunner } from "@_koii/task-manager";
 
 import "../src/index.js";
 import { namespaceWrapper } from "@_koii/namespace-wrapper";
-
-const numRounds = process.argv[2] || 1;
-const roundDelay = process.argv[3] || 5000;
-const functionDelay = process.argv[4] || 1000;
+import { Keypair } from "@_koii/web3.js";
+const numRounds = parseInt(process.argv[2]) || 1;
+const roundDelay = parseInt(process.argv[3]) || 5000;
+const functionDelay = parseInt(process.argv[4]) || 1000;
 
 let TASK_TIMES = [];
 let SUBMISSION_TIMES = [];
@@ -14,7 +14,8 @@ let AUDIT_TIMES = [];
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
-await namespaceWrapper.stakeOnChain();
+const keypair = Keypair.generate();
+await namespaceWrapper.stakeOnChain(keypair.publicKey, keypair,keypair.publicKey, 10000 );
 async function executeTasks() {
   for (let round = 0; round < numRounds; round++) {
     const taskStartTime = Date.now();

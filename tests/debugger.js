@@ -80,7 +80,7 @@ class Debugger {
     const connection = new Connection("https://testnet.koii.network");
     const taskId = Debugger.taskID;
     const accountInfo = await connection.getAccountInfo(new PublicKey(taskId));
-    if (!accountInfo) {
+    if (!accountInfo?.data) {
       console.log(`${taskId} doesn't contain any distribution list data`);
       return null;
     }
