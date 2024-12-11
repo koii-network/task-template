@@ -1,5 +1,5 @@
 # Task Name: (Required) 
-task_name: 'task name'
+task_name: 'TypeScript Template'
 # Task Author: (Required) 
 author: 'Koii'
 # Task Description: (Required) 
@@ -18,13 +18,13 @@ task_executable_network: 'IPFS'
 task_audit_program: 'dist/main.js'
 
 # Round time: (Required) Duration of task, measured in slots (with each slot approximately equal to 408ms).
-round_time: 1500
+round_time: 1200
 
 # Audit window: (Required) The audit window should be greater than 1/3 of the round time.
-audit_window: 350
+audit_window: 500
 
 # Submission window: (Required) The submission window should be greater than 1/3 of the round time.
-submission_window: 350
+submission_window: 500
 
 # Minimum stake amount: (Required) The minimum amount of KOII that a user must stake in order to participate in the task.
 minimum_stake_amount: 1.9
@@ -33,7 +33,7 @@ minimum_stake_amount: 1.9
 task_type: 'KPL'
 
 # Token Mint Address: (ONLY task_type == KPL) Fire Token as an example here. 
-token_type: "BAmB86Mt6FDaqTjLzKimBjHtwV93PGQitjW5zKNnBVEU"
+token_type: "FJG2aEPtertCXoedgteCCMmgngSZo1Zd715oNBzR7xpR"
 
 # Total bounty amount:  (Required) The total bounty amount that will be distributed to the task. (Not accepted in case of update task).
 total_bounty_amount: 10
@@ -57,7 +57,7 @@ requirementsTags:
   - type: STORAGE
     value: '5 GB'
   - type: TASK_VARIABLE
-    value: 'TWITTER_PASSWORD'
+    value: 'EXAMPLE_VARIABLE'
     description: 'The password of your volunteer Twitter account.'
 
 # Tags: You can select the tags here via https://www.koii.network/docs/develop/command-line-tool/create-task-cli/create-task#tags

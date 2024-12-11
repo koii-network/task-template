@@ -1,0 +1,15 @@
+stages:
+  - test
+
+npm_install:
+  stage: test
+  image: node:latest
+  script:
+    - npm install
+
+yarn_jest_tests:
+  stage: test
+  image: node:latest
+  script:
+    - yarn install
+    - yarn jest

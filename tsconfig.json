@@ -21,7 +21,6 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
-
     /* Completeness */
     "skipLibCheck": true
   },
