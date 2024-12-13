@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "test": "node tests/simulateTask.js",
+    "test": "node tests/testTask.js",
+    "simulate": "node tests/simulateTask.js",
     "jest-test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "start": "node index.js",
     "prod-debug": "nodemon --ignore 'dist/*' tests/prod-debug.js",
