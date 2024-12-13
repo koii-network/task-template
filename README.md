@@ -1,205 +1,147 @@
-# Lesson 1: Introduction to Koii Tasks
+# Koii Task Template
 
-## Part IV: Deploying a Task
+## Koii Task Development: Step-by-Step Guide
 
-> [!WARNING]
->
-> In order to deploy a task you must download the desktop node and **run at least one task**. This will make a staking wallet that is usable for IPFS, which is required during deployment. If you have followed the EZSandbox tutorial up to this point, you already have a staking wallet.
+This guide will help you create, test, and deploy a task on the Koii Network. It's designed for beginners and experts alike. Read through the steps below for a simple, easy-to-follow guide.
 
-### Environment Variables
+*Want to dive deeper?* Check out our tutorialized [Development Guide](https://github.com/koii-network/ezsandbox).
 
-Before we deploy a task, let's take a quick look at how to add environment variables to your task. These are called "Task Extensions" in the node, and they allow you to ask each node operator for customized data needed for the task - for example, Twitter login credentials for a task that's accessing Twitter.
+## 1. Prerequisites
 
-To get a variable in your task, add it to your `config-task.yml`, in the `requirementsTags` section:
+Before you begin, make sure you have the following:
 
-```yml
-requirementsTags:
-  - type: TASK_VARIABLE
-    value: "VARIABLE_NAME"
-    description: "Variable description"
-```
+### Tools to Install
 
-The value and description will be shown in the desktop node, so make them descriptive enough that users will understand what to enter:
+- **Node.js** *(version >=20.0.0, LTS Versions only)*: [Download here](https://nodejs.org)
+- *(Optional, for Python and Docker tasks only)* **Docker Compose**: [Install here](https://docs.docker.com/get-started/08_using_compose/)
 
-![Archive Twitter Task Extensions](./imgs/secrets-example.png)
+## 2. Set Up Your Task
 
-Then you can use them in your task like any other Node.js environment variable, with `process.env.VARIABLE_NAME`. (While testing locally, you should define these in your .env).
+Once you have the required tools, input the following commands:
 
-> [!IMPORTANT]
->
-> In order to add new environment variables to a task so they can be configured in the desktop node, you must deploy or update it. This is because the task metadata is set at the time of deployment and can only be changed by updating the task. However, if you would like to test locally first, you can add the variables to your .env and run prod-debug.
+1. Clone the Koii Task Template:
+   ```sh
+   git clone https://github.com/koii-network/task-template.git
+   ```
 
-### Deploying a Task
+2. Install dependencies:
+   ```sh
+   yarn install
+   ```
 
-> [!WARNING]
->
-> In order to deploy a task, you **MUST** be using at least Node.js v18.
-> To check the version run:
->
-> ```sh
-> node --version
-> ```
->
-> If your version is too low, you can download the latest LTS version [here](https://nodejs.org/en)
+3. Navigate to the `src/task/1-task.js` file.
 
-#### Building
+Now, let's begin writing a task!
 
-The first step before deployment is to build your executable. First, makes sure you have installed all the necessary dependencies using
+## 3. Write Your Core Task Logic
 
-```sh
-yarn
-```
+The `src/task/1-task.js` file is where you will write all the code. It covers:
 
-Then run
+1. Defining task behavior
+2. Handling inputs and outputs
+3. Core logic error handling
+
+We suggest you follow our tutorialized [Development Guide](https://github.com/koii-network/ezsandbox) for a more in-depth walkthrough. To keep things short, import the packages you require and write your core logic within the 'try-catch' statement.
+
+To test your core logic, you can run the following command:
 
 ```sh
-yarn webpack
+yarn test
 ```
 
-in order to create the executable.
+This function will run your `src/task/1-task.js` file in a vacuum to quickly get your core logic into a working state. Use this function to test your UI and data postback to ensure your logic works as intended.
 
-#### Install Koii CLI Suite
+## 4. (Optional) Incentive Engineering
 
-If you have not already installed the Koii CLI Suite, you can find the instructions [here](https://www.koii.network/docs/develop/command-line-tool/koii-cli/install-cli).
+This step is optional, as nodes can run your task without incentives, but if you intend to distribute rewards for your task, consider adding audits.
 
-#### Get Wallet
+Beyond your core logic in the `1-task.js` file, there are 5 other task files within this template:
 
-There are two ways to get a wallet for deploying your tasks. The simplest method is to use your wallet from the desktop node, which is what we'll do here. You also have the option to [create a new wallet using the CLI](https://docs.koii.network/develop/command-line-tool/koii-cli/create-wallet), if you prefer.
+- `src/task/0-setup.js`: For defining steps executed once before your task starts.
+- `src/task/2-submission.js`: For defining how your task submits proofs for auditing.
+- `src/task/3-audit.js`: For defining a function that audits the work done in your task function.
+- `src/task/4-distribution.js`: For defining your incentive distribution logic.
+- `src/task/5-routes.js`: For defining custom routes.
 
-#### Fund Your Wallet
+Find more info in our tutorialized [Development Guide](https://github.com/koii-network/ezsandbox).
 
-If you're attending a live event, you will receive tokens to pay the deployment fees. If you're not attending a live event, you can earn tokens by running tasks in the desktop node.
-
-To request tokens, you'll need to provide your wallet's public key. You can find that in the desktop node:
-
-![locating public key](./imgs/node-public-key.png)
-
-#### Create Task CLI
-
-Now it's time to deploy our executable. For this you'll need to run
+To test a [full round cycle](https://docs.koii.network/gradual-consensus), use the following command:
 
 ```sh
-npx @_koii/create-task-cli@latest
+yarn simulate
 ```
 
-which will show you the following menu:
+This command simulates the entire task flow, including performing the task, submitting results, and auditing work. It handles multiple task rounds, tracks step durations, and shows performance results and errors.
 
-```sh
-? Select operation › - Use arrow-keys. Return to submit.
-❯   Create a New Local Repository
-    Deploy a New Task
-    Update Existing Task
-    Activate/Deactivate Task
-    Claim Reward
-    Fund Task with More KOII
-    Withdraw Staked Funds from Task
-    Upload Assets to IPFS (Metadata/Local Vars)
-```
+## 5. Production Testing
 
-Choose `Deploy a New Task`. Next, you may be asked if you want to use your Koii CLI wallet:
+Before deploying your task to a production environment, test it in the Desktop Node:
 
-```sh
-It looks like you have a koii cli installed. Would you like to use your koii cli key (/home/laura/.config/koii/id.json) to deploy this task? › (y/N)
-```
+1. Build your executable:
+   ```sh
+   yarn webpack
+   ```
 
-If you're not using a Koii CLI wallet, be sure to choose `no` at this point. Next you may be asked a similar question about your desktop node wallet:
+2. Create your `.env` file by renaming `.env.developer.example` to `.env`. Note: This file is for testing purposes only and does not reflect the env variables in your fully deployed task.
 
-```sh
-It looks like you have a desktop node installed. Would you like to use your desktop node key (/home/laura/.config/KOII-Desktop-Node/wallets/Laura_mainSystemWallet.json) to deploy this task? › (y/N)
-```
+3. Add the "EZ Sandbox Task" to your desktop node using the EZ Sandbox Task ID (`BXbYKFdXZhQgEaMFbeShaisQBYG1FD4MiSf9gg4n6mVn`) and the Advanced option in the Add Task tab. [Click here for a detailed walkthrough of adding this task to the node.](https://github.com/koii-network/ezsandbox/tree/main/Get%20Started%20-%20Quick%20Intro).
 
-In most cases, you should choose `yes` at this point. If you choose `no` for this as well, or if the CLI can't automatically detect the location of your wallet, you will be asked to manually enter the path to your wallet:
+4. Test your task in the production environment. To test your executable, enter the following command:
+   ```sh
+   yarn prod-debug
+   ```
+   The production debugger (prod-debug) launches nodemon, which automatically restarts your task whenever it detects changes in the source files, making production development faster and easier.
 
-```sh
-? Enter the path to your wallet ›
-```
+## 6. Production Deployment
 
-In the case of your desktop node wallet, it should be located at `<OS-specific path>/KOII-Desktop-Node/wallets/<name>_mainSystemWallet.json`.
+1. Fill in your `config-task.yml`: 
+   The default `config-task.yml` file has placeholders to fill in before deploying your task. This file configures your task with a name, an image, and other settings. Check the comments in the `config-task.yml` file for more information. Set the environment parameter in your config to "PRODUCTION".
 
-The OS-specific paths are as follows:
+2. Run the Create Task CLI: 
+   The Create-Task-CLI is a command-line tool that helps you easily deploy your task so the Koii Community can host it on their nodes. To get started, copy the command below to your CLI:
+   ```sh
+   npx @_koii/create-task-cli@latest
+   ```
+   The Create-Task-CLI will ask for a series of inputs to help you deploy your task.
 
-**Windows**: `/Users/<username>/AppData/Roaming`
+   *Note*: You may be asked for specific paths to your wallets. If you don't have a wallet yet, create one using the [Desktop Node](https://koii.network/node) or the [Koii CLI](https://docs.koii.network/develop/command-line-tool/koii-cli/install-cli).
 
-**Mac**: `/Users/<username>/Library/Application Support`
+   If the tool isn't able to grab these automatically, the OS-specific paths are:
 
-**Linux**: `/home/<username>/.config` (This path contains a dot folder that may be hidden by default. You can show hidden folders by pressing Ctrl-H)
+   **Windows:** `/Users/<username>/AppData/Roaming`
 
-In the example below, the wallet is located at `home/laura/.config/KOII-Desktop-Node/wallets/Laura_mainSystemWallet.json`
+   **Mac:** `/Users/<username>/Library/Application Support`
 
-![system wallet location](./imgs/system-wallet.png)
+   **Linux:** `/home/<username>/.config`
 
-After you've entered the path to your wallet, you'll be asked how you want to configure your task:
+   Once done, it will generate a task-ID, which will look something like "<BXbYKFdXZhQgEaMFbeShaisQBYG1FD4MiSf9gg4n6mVn>". [Add this task to your node as you did with the EZ Sandbox Task.](https://github.com/koii-network/ezsandbox/tree/main/Get%20Started%20-%20Quick%20Intro)
 
-```sh
-? Select operation › - Use arrow-keys. Return to submit.
-❯   using CLI
-    using config YML
-```
+*Congrats! You've done it! You're now officially a blockchain developer with a decentralized app/service live in Web3. We couldn't be more proud!*
 
-Choose "Using config YML".
+# More Info
 
-#### Staking Wallet
+## Task Flow
 
-> [!NOTE]
->
-> **Why do I need two wallets? What's the difference?**
->
-> The wallet you use for deploying your task is the one that needs to be funded, as it will be used for paying deployment fees. However, your task executable must be uploaded to IPFS so it can be distributed to the desktop nodes. In order to ensure the security of uploads, all file uploads must be signed. This signing process requires the use of a wallet called a Staking Wallet, which has a special role in running Koii tasks. This special role allows it to be used for signing uploads. This wallet does not need to have a balance.
+Tasks operate within a periodic structure known as 'rounds'. Each round consists of the following steps:
 
-Next, you'll be asked how you would like to upload your metadata:
+1. **Perform the Task:** Execute the necessary actions for the round.
+2. **Audit Work:** Review the work completed by other nodes.
+3. **Rewards and Penalties:** Distribute rewards and apply penalties as needed.
 
-```sh
-? Select operation › - Use arrow-keys. Return to submit.
-❯   Using KOII Storage SDK
-    Manually Input IPFS
-```
+For more detailed information about the task flow, refer to [the runtime flow documentation](https://docs.koii.network/concepts/what-are-tasks/what-are-tasks/gradual-consensus).
 
-Choose `Using KOII Storage SDK`.
+Looking to bring better structure to your task? Explore our [Task Organizer](https://www.figma.com/community/file/1220194939977550205/Task-Outline) for better organization.
 
-```sh
-? It looks like you have a desktop node installed. Would you like to use your desktop node staking key (/home/laura/.config/KOII-Desktop-Node/namespace/Laura_stakingWallet.json) to sign this upload to IPFS? › (y/N)
-```
+## Tips
 
-If you choose no, or if your staking wallet's location cannot be found automatically, you will be asked to manually enter the path:
+- Always ensure your secret files, such as `.env` files, are secure! Implement a robust `.gitignore` strategy.
 
-```sh
-? Enter the path to your staking wallet ›
-```
+**Advanced Runtime Options**
 
-When you installed the desktop node, a staking wallet was created for you automatically. This can be found in `<OS-specific path>/KOII-Desktop-Node/namespace/<name>_stakingWallet.json`.
+There are two ways to run your task during development:
 
-> [!IMPORTANT]
->
-> In order for your staking wallet to be usable by the CLI, you must run at least one task in the desktop node.
+1. With `GLOBAL_TIMERS="true"` (refer to `.env.local.example`) - When enabled, IPC calls are made by calculating the average time slots of all tasks running on your node.
 
-#### Confirm
+2. With `GLOBAL_TIMERS="false"` - This option allows for manual calls to the K2 and disables automatic triggers for round management on K2. Transactions are only accepted during the correct time period. Instructions for manual calls can be found in [Manual K2 Calls](./Manual%20K2%20Calls.md).
 
-You will be then be prompted to confirm that you want to pay the rent and bounty, type 'y' to confirm:
-
-```sh
-Your account will be deducted XX KOII for creating the task, which includes the rent exemption(XX KOII) and bounty amount fees (XX KOII) › (y/N)
-```
-
-> [!NOTE]
->
-> If you are using the default values in config-task.yml and deploying a Koii Task, your total deployment fee should be about 17 KOII, which is the minimum possible amount. If you do not have enough KOII, you can get some by running tasks in the desktop node. If you're at a Koii-sponsored event, we will provide you with the necessary tokens.
-
-Your task should now be deployed successfully and you should see a response similar to this:
-
-```sh
-Calling Create Task
-Task Id: 9oDEkeHwyGJVect8iEF1hHPKYdkqbtRToarbi8KQtgNS
-Stake Pot Account Pubkey: stakepotaccountp39zkKbCKoiLp3wZ66TuUu5LtS9d
-Note: Task Id is basically the public key of taskStateInfoKeypair.json
-Success
-```
-
-> [!IMPORTANT]
->
-> Make sure you save your task ID every time you deploy or update! Not only do you need it to run your task in the desktop node, it's required when updating your task.
-
-Congratulations, you've deployed a task!
-
-In this lesson, you've learned how to run, debug, and deploy a task. If you are interested in deploying a task in a Docker container, continue to [Part 5](PartV.md).
-
-Otherwise, let's get into the specifics of writing a task. [Lesson 2](../Lesson%202/README.md)
+**If you encounter any issues, don't hesitate to reach out by opening a ticket on [Discord](https://discord.gg/koii-network).**
