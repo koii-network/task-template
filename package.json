@@ -8,10 +8,11 @@
     "prod-debug": "yarn start",
     "webpack": "webpack",
     "webpack:test": "webpack --config ./tests/webpack.config.js",
-    "test": "tsx ./tests/simulateTask.ts",
+    "simulate": "tsx ./tests/simulateTask.ts",
     "jest-test": "jest --detectOpenHandles",
     "lint": "eslint . --fix",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\""
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "test": "tsx ./tests/testTask.ts"
   },
   "type": "module",
   "author": "Koii Network",
