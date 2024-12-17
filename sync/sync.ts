@@ -1,0 +1,39 @@
+import { removeTypes } from "babel-remove-types";
+import fs from "fs/promises";
+import path from "path";
+
+// Recursive function to process the directory
+async function processDirectory(srcDir: string, outputDir: string) {
+  const entries = await fs.readdir(srcDir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const srcPath = path.join(srcDir, entry.name);
+    const relativePath = path.relative("./", srcPath);
+    const outputPath = path.join(outputDir, relativePath);
+    console.log(srcPath, relativePath, outputPath);
+    if (entry.isDirectory() && !entry.name.endsWith('sync') && !entry.name.endsWith('.git') && !entry.name.endsWith('node_modules') && !entry.name.endsWith('dist')) {
+      await fs.mkdir(outputPath, { recursive: true });
+      await processDirectory(srcPath, outputDir);
+    } else if (entry.isFile() && entry.name.endsWith('.ts') && !entry.name.endsWith('.d.ts')) {
+      const tsCode = await fs.readFile(srcPath, "utf8");
+      const jsCode = await removeTypes(tsCode);
+      const jsFileName = entry.name.replace('.ts', '.js');
+      const jsPath = path.join(path.dirname(outputPath), jsFileName);
+      
+      await fs.writeFile(jsPath, jsCode);
+      console.log(`${relativePath} synced`);
+    } else if (entry.isFile() && !(entry.name.endsWith('package.json') || entry.name.endsWith('webpack.config.js'))) {
+      await fs.copyFile(srcPath, outputPath);
+      console.log(`${relativePath} synced`);
+    } 
+  }
+}
+
+async function main() {
+  await processDirectory("./", "./dist");
+  // copy ./sync/rootFiles to ./dist/
+  await fs.cp("./sync/rootFiles", "./dist", { recursive: true });
+  // copy 
+}
+
+main().catch(console.error);
