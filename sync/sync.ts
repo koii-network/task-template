@@ -23,7 +23,7 @@ async function processDirectory(srcDir: string, outputDir: string) {
       
       await fs.writeFile(jsPath, jsCode);
       console.log(`${relativePath} synced`);
-    } else if (entry.isFile() && !(entry.name.endsWith('package.json') || entry.name.endsWith('webpack.config.js'))) {
+    } else if (entry.isFile() && !(entry.name.endsWith('package.json') || entry.name.endsWith('webpack.config.js') || entry.name.endsWith('.gitlab-ci.yml'))) {
       try{
         await fs2.copyFile(srcPath, outputPath, fs2.constants.COPYFILE_EXCL, (err) => {
           if (err) {
