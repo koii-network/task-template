@@ -1,5 +1,6 @@
 import { removeTypes } from "babel-remove-types";
 import fs from "fs/promises";
+import fs2 from "fs";
 import path from "path";
 
 // Recursive function to process the directory
@@ -23,8 +24,17 @@ async function processDirectory(srcDir: string, outputDir: string) {
       await fs.writeFile(jsPath, jsCode);
       console.log(`${relativePath} synced`);
     } else if (entry.isFile() && !(entry.name.endsWith('package.json') || entry.name.endsWith('webpack.config.js'))) {
-      await fs.copyFile(srcPath, outputPath);
-      console.log(`${relativePath} synced`);
+      try{
+        await fs2.copyFile(srcPath, outputPath, fs2.constants.COPYFILE_EXCL, (err) => {
+          if (err) {
+            console.error(`${relativePath} failed to sync`);
+          } else {
+            console.log(`${relativePath} synced`);
+          }
+        });
+      } catch (e) {
+        console.error(`${relativePath} failed to sync`);
+      }
     } 
   }
 }
