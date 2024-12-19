@@ -21,7 +21,8 @@ yarn_install_and_test:
   artifacts:
     paths:
       - node_modules/
-
+# WHO THE HELL KNOWS WHY I NEED TO RUN YARN SYNC TWICE? IF I DON'T, THE ROOT FOLDER FILES CANNOT BE COPIED? 
+# IT IS NOT RELATED TO AWAIT! BECAUSE EVEN IF I USE AWAIT, IT STILL DOESN'T WORK!
 yarn_sync:
   stage: JSBuild
   needs: 
@@ -37,8 +38,6 @@ yarn_sync:
 npm_install_js:
   stage: JSVersionTest
   needs: 
-    - job: yarn_install_and_test
-      artifacts: true
     - job: yarn_sync
       artifacts: true
   script:
@@ -48,8 +47,6 @@ npm_install_js:
 yarn_jest_tests_js:
   stage: JSVersionTest
   needs: 
-    - job: yarn_install_and_test
-      artifacts: true
     - job: yarn_sync
       artifacts: true
   script:
@@ -57,3 +54,20 @@ yarn_jest_tests_js:
     - yarn install
     - yarn jest-test
 
+git_clone:
+  stage: clone
+  needs: 
+    - job: yarn_sync
+      artifacts: true
+  script:
+    - git clone https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.com/koii-network/dev-blue/k2-task-template-js.git
+    - cd k2-task-template-js
+    - find . -mindepth 1 ! -regex '^./\.git\(/.*\)?' -delete
+    - cd ..
+    - cp -r JSVersion/* k2-task-template-js/
+    - git add .
+    - git commit -m "Update k2-task-template-js version $(cat JSVersion/package.json | grep '"version"' | awk -F'"' '{print $4}')"
+    - git push https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.com/koii-network/dev-blue/k2-task-template-js.git
+  artifacts: 
+    paths: 
+      - k2-task-template-js/
