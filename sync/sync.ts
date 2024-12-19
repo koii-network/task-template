@@ -12,7 +12,7 @@ async function processDirectory(srcDir: string, outputDir: string) {
     const relativePath = path.relative("./", srcPath);
     const outputPath = path.join(outputDir, relativePath);
     console.log(srcPath, relativePath, outputPath);
-    if (entry.isDirectory() && !entry.name.endsWith('sync') && !entry.name.endsWith('.git') && !entry.name.endsWith('node_modules') && !entry.name.endsWith('dist')) {
+    if (entry.isDirectory() && !entry.name.endsWith('sync') && !entry.name.endsWith('.git') && !entry.name.endsWith('node_modules') && !entry.name.endsWith('dist') && !entry.name.endsWith('JSVersion')) {
       await fs.mkdir(outputPath, { recursive: true });
       await processDirectory(srcPath, outputDir);
     } else if (entry.isFile() && entry.name.endsWith('.ts') && !entry.name.endsWith('.d.ts')) {
@@ -40,9 +40,9 @@ async function processDirectory(srcDir: string, outputDir: string) {
 }
 
 async function main() {
-  await processDirectory("./", "./dist");
-  // copy ./sync/rootFiles to ./dist/
-  await fs.cp("./sync/rootFiles", "./dist", { recursive: true });
+  await processDirectory("./", "./JSVersion");
+  // copy ./sync/rootFiles to ./JSVersion/
+  await fs.cp("./sync/rootFiles", "./JSVersion", { recursive: true });
   // copy 
 }
 

@@ -1,5 +1,9 @@
 stages:
   - test
+  - JSBuild
+  - JSVersionTest
+  - clone
+  - delete
 
 npm_install:
   stage: test
@@ -13,3 +17,26 @@ yarn_jest_tests:
   script:
     - yarn install
     - yarn jest
+
+yarn_sync:
+  stage: JSBuild
+  needs: [yarn_install]
+  script:
+    - yarn sync
+
+
+npm_install_js:
+  stage: JSVersionTest
+  needs: [yarn_sync]
+  script:
+    - cd JSVersion
+    - npm install
+
+yarn_jest_tests_js:
+  stage: JSVersionTest
+  needs: [yarn_sync]
+  script:
+    - cd JSVersion
+    - yarn install
+    - yarn jest-test
+
