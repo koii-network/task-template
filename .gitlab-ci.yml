@@ -18,10 +18,15 @@ yarn_install_and_test:
   script:
     - yarn install
     - yarn jest
+  artifacts:
+    paths:
+      - node_modules/
 
 yarn_sync:
   stage: JSBuild
-  needs: [yarn_install_and_test]
+  needs: 
+    - job: yarn_install_and_test
+      artifacts: true
   script:
     - yarn sync
 
