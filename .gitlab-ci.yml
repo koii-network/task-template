@@ -11,7 +11,7 @@ npm_install:
   script:
     - npm install
 
-yarn_jest_tests:
+yarn_install_and_test:
   stage: test
   image: node:latest
   script:
@@ -20,7 +20,7 @@ yarn_jest_tests:
 
 yarn_sync:
   stage: JSBuild
-  needs: [yarn_install]
+  needs: [yarn_install_and_test]
   script:
     - yarn sync
 
