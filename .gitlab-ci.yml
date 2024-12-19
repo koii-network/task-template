@@ -29,18 +29,29 @@ yarn_sync:
       artifacts: true
   script:
     - yarn sync
-
+    - yarn sync
+  artifacts:
+    paths:
+      - JSVersion/
 
 npm_install_js:
   stage: JSVersionTest
-  needs: [yarn_sync]
+  needs: 
+    - job: yarn_install_and_test
+      artifacts: true
+    - job: yarn_sync
+      artifacts: true
   script:
     - cd JSVersion
     - npm install
 
 yarn_jest_tests_js:
   stage: JSVersionTest
-  needs: [yarn_sync]
+  needs: 
+    - job: yarn_install_and_test
+      artifacts: true
+    - job: yarn_sync
+      artifacts: true
   script:
     - cd JSVersion
     - yarn install
