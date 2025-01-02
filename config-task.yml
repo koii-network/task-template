@@ -1,7 +1,7 @@
 # Name and metadata of your task
 task_name: 'KPL token Miner'
 author: 'Koii'
-description: 'Run this task to mine KPL tokens. You just need to stake very little amount of KOII to participate in this task. Then you will randomly get KPL tokens. Including but not limited to oFIRE, oBIRD etc.'
+description: 'Run this task to mine KPL tokens. You just need to stake very little amount of KOII to participate in this task. Then you will randomly get KPL tokens. Including but not limited to oFIRE, oBIRD etc. (Note: The reward does not include KOII. You do not need to claim the reward. The KPL token will be automatically sent to your wallet.)'
 repositoryUrl: 'https://github.com/koii-network/task-template' # Replace with your own repo URL
 imageUrl: 'https://bafybeiewbrh36727473k6ogvyrlcyb6rbblczrtwyk2mx5bwp36g2rrcbq.ipfs.w3s.link/kpl_miner_task.png'
 infoUrl: 'https://www.koii.network/ocean'
