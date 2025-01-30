@@ -4,7 +4,6 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
 export default {
   entry: "./src/index.js",
   target: "node",
@@ -14,8 +13,11 @@ export default {
   devtool: "source-map",
   resolve: {
     alias: {
-      '@_koii/namespace-wrapper': path.resolve(__dirname, 'node_modules/@_koii/namespace-wrapper')
-    }
+      "@_koii/namespace-wrapper": path.resolve(
+        __dirname,
+        "node_modules/@_koii/namespace-wrapper",
+      ),
+    },
   },
   optimization: {
     usedExports: false,

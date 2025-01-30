@@ -188,19 +188,20 @@ describe("Performing the task", () => {
     const submitters = [];
     // 10k is the rough maximum number of submitters
     for (let i = 0; i < simulatedSubmitters; i++) {
-      const publicKey = `mockPublicKey${i}`; 
+      const publicKey = `mockPublicKey${i}`;
       submitters.push({
         publicKey,
-        votes: Math.floor(Math.random() * simulatedSubmitters) - 5000, 
-        stake: Math.floor(Math.random() * 1e9) + 1
+        votes: Math.floor(Math.random() * simulatedSubmitters) - 5000,
+        stake: Math.floor(Math.random() * 1e9) + 1,
       });
     }
     const bounty = Math.floor(Math.random() * 1e15) + 1;
     const roundNumber = 1;
     const distributionList = distribution(submitters, bounty, roundNumber);
     expect(Object.keys(distributionList).length).toBe(submitters.length);
-    expect(Object.keys(distributionList).sort()).toEqual(submitters.map(submitter => submitter.publicKey).sort());
-
+    expect(Object.keys(distributionList).sort()).toEqual(
+      submitters.map((submitter) => submitter.publicKey).sort(),
+    );
   });
 });
 
