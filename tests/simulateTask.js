@@ -15,7 +15,12 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 const keypair = Keypair.generate();
-await namespaceWrapper.stakeOnChain(keypair.publicKey, keypair,keypair.publicKey, 10000 );
+await namespaceWrapper.stakeOnChain(
+  keypair.publicKey,
+  keypair,
+  keypair.publicKey,
+  10000,
+);
 async function executeTasks() {
   for (let round = 0; round < numRounds; round++) {
     const taskStartTime = Date.now();
