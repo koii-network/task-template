@@ -77,7 +77,7 @@ class Debugger {
   }
 
   static async getAuditProgram() {
-    const connection = new Connection("https://testnet.koii.network");
+    const connection = new Connection("https://mainnet.koii.network");
     const taskId = Debugger.taskID;
     const accountInfo = await connection.getAccountInfo(new PublicKey(taskId));
     if (!accountInfo?.data) {
