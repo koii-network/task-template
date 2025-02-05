@@ -18,7 +18,7 @@
   "author": "Koii Network",
   "license": "ISC",
   "dependencies": {
-    "@_koii/task-manager": "^1.0.3",
+    "@_koii/task-manager": "^1.0.8",
     "@_koii/namespace-wrapper": "^1.0.16",
     "@_koii/web3.js": "^0.1.11",
     "dotenv": "^16.3.0"
