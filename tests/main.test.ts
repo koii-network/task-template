@@ -5,7 +5,7 @@ import { submission } from "../src/task/2-submission";
 import { audit } from "../src/task/3-audit";
 import { distribution } from "../src/task/4-distribution";
 import { routes } from "../src/task/5-routes";
-import { namespaceWrapper, _server } from "@_koii/namespace-wrapper";
+import { namespaceWrapper, _server } from "@_koii/task-manager/namespace-wrapper";
 import Joi from "joi";
 import axios from "axios";
 import { Submitter } from "@_koii/task-manager";
@@ -178,7 +178,7 @@ describe("Performing the task", () => {
     const submitters = [];
     const bounty = Math.floor(Math.random() * 1e15) + 1;
     const roundNumber = Math.floor(Math.random() * 1e5) + 1;
-    const distributionList = distribution(submitters, bounty, roundNumber);
+    const distributionList = await distribution(submitters, bounty, roundNumber);
     expect(distributionList).toEqual({});
   });
 
@@ -196,7 +196,7 @@ describe("Performing the task", () => {
     }
     const bounty = Math.floor(Math.random() * 1e15) + 1;
     const roundNumber = 1;
-    const distributionList = distribution(submitters, bounty, roundNumber);
+    const distributionList = await distribution(submitters, bounty, roundNumber);
     expect(Object.keys(distributionList).length).toBe(submitters.length);
     expect(Object.keys(distributionList).sort()).toEqual(submitters.map(submitter => submitter.publicKey).sort());
 
