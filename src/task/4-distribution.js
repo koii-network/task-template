@@ -2,7 +2,7 @@
 // 0.7 = 70%
 const SLASH_PERCENT = 0.7;
 
-export function distribution(submitters, bounty, roundNumber) {
+export async function distribution(submitters, bounty, roundNumber) {
   /**
    * Generate the reward list for a given round
    * This function should return an object with the public keys of the submitters as keys
