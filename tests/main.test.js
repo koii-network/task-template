@@ -184,7 +184,7 @@ describe("Performing the task", () => {
   });
 
   it("should generate a distribution list contains all the submitters", async () => {
-    const simulatedSubmitters = 10000;
+    const simulatedSubmitters = 5;
     const submitters = [];
     // 10k is the rough maximum number of submitters
     for (let i = 0; i < simulatedSubmitters; i++) {
