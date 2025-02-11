@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@_koii/task-manager": "^1.0.8",
+    "@_koii/task-manager": "^1.0.9",
     "@_koii/web3.js": "^0.1.11",
     "@babel/preset-env": "^7.25.7",
     "axios": "^1.7.7",
