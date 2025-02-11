@@ -11,7 +11,14 @@ export default {
   // mode:"production",
   mode: "development",
   devtool: "source-map",
-
+  resolve: {
+    alias: {
+      "@_koii/namespace-wrapper": path.resolve(
+        __dirname,
+        "node_modules/@_koii/namespace-wrapper",
+      ),
+    },
+  },
   optimization: {
     usedExports: false,
   },
