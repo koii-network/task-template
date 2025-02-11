@@ -33,7 +33,7 @@ minimum_stake_amount: 1.9
 task_type: 'KPL'
 
 # Token Mint Address: (ONLY task_type == KPL) Fire Token as an example here. 
-token_type: "FJG2aEPtertCXoedgteCCMmgngSZo1Zd715oNBzR7xpR"
+token_type: "4qayyw53kWz6GzypcejjT1cvwMXS1qYLSMQRE8se3gTv"
 
 # Total bounty amount:  (Required) The total bounty amount that will be distributed to the task. (Not accepted in case of update task).
 total_bounty_amount: 10
@@ -58,7 +58,7 @@ requirementsTags:
     value: '5 GB'
   - type: TASK_VARIABLE
     value: 'EXAMPLE_VARIABLE'
-    description: 'The password of your volunteer Twitter account.'
+    description: 'EXAMPLE_VARIABLE_DESCRIPTION'
 
 # Tags: You can select the tags here via https://www.koii.network/docs/develop/command-line-tool/create-task-cli/create-task#tags
 tags: ["AI", "ML"] 
