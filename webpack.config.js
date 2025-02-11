@@ -1,6 +1,5 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import DotenvWebpack from "dotenv-webpack";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,7 +35,7 @@ export default {
   },
   
   plugins: [
-    new DotenvWebpack()
+
   ],
   devtool: "source-map",
 };
