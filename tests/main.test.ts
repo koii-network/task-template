@@ -5,7 +5,7 @@ import { submission } from "../src/task/2-submission";
 import { audit } from "../src/task/3-audit";
 import { distribution } from "../src/task/4-distribution";
 import { routes } from "../src/task/5-routes";
-import { namespaceWrapper, _server } from "@_koii/namespace-wrapper";
+import { namespaceWrapper, _server } from "@_koii/task-manager/namespace-wrapper";
 import Joi from "joi";
 import axios from "axios";
 import { Submitter } from "@_koii/task-manager";

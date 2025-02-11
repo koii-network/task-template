@@ -1,4 +1,4 @@
-import { namespaceWrapper, app } from "@_koii/namespace-wrapper";
+import { namespaceWrapper, app } from "@_koii/task-manager/namespace-wrapper";
 /**
  * 
  * Define all your custom routes here

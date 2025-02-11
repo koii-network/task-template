@@ -13,13 +13,6 @@ export default {
     libraryTarget: "commonjs2",
   },
   target: "node",
-  resolve: {
-    alias: {
-      '@_koii/namespace-wrapper': path.resolve(__dirname, 'node_modules/@_koii/namespace-wrapper')
-    },
-    extensions: ['.ts', '.js'],
-  },
-  
   module: {
     rules: [
       {

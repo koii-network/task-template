@@ -4,12 +4,13 @@
     "target": "es2020",
 
     /* Modules */
-    "module": "commonjs",
+    "module": "NodeNext",
     "rootDir": "./src",
     "outDir": "./dist",
     "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "NodeNext",
 
     /* Type Checking */
     "strict": true,
