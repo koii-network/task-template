@@ -18,12 +18,13 @@
   "author": "Koii Network",
   "license": "ISC",
   "dependencies": {
-    "@_koii/task-manager": "^1.0.9",
-    "@_koii/namespace-wrapper": "^1.0.23",
+    "@_koii/task-manager": "^1.0.11",
     "@_koii/web3.js": "^0.1.11",
     "dotenv": "^16.3.0"
   },
+
   "devDependencies": {
+    "@_koii/namespace-wrapper": "^1.0.23",
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-typescript": "^7.26.0",
     "@types/cross-spawn": "^6.0.6",

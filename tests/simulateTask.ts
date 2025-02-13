@@ -1,7 +1,7 @@
 import { taskRunner } from "@_koii/task-manager";
 
 import "../src/index.js";
-import { namespaceWrapper } from "@_koii/namespace-wrapper";
+import { namespaceWrapper } from "@_koii/task-manager/namespace-wrapper";
 import { Keypair } from "@_koii/web3.js";
 
 const numRounds = parseInt(process.argv[2]) || 1;

@@ -11,23 +11,31 @@ export default {
     filename: "main.js",
     path: path.resolve(__dirname, "dist"),
     libraryTarget: "commonjs2",
+    clean: true
   },
   target: "node",
+  
   resolve: {
-    alias: {
-      '@_koii/namespace-wrapper': path.resolve(__dirname, 'node_modules/@_koii/namespace-wrapper')
-    },
-    extensions: ['.ts', '.js'],
+    extensions: [".ts", ".js"]
   },
   
   module: {
     rules: [
       {
         test: /\.ts$/,
-        use: "ts-loader",
-        exclude: /node_modules/,
-      },
-    ],
+        use: {
+          loader: "ts-loader",
+          options: {
+            transpileOnly: true
+          }
+        },
+        exclude: /node_modules/
+      }
+    ]
   },
+  
+  plugins: [
+
+  ],
   devtool: "source-map",
 };

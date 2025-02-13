@@ -4,25 +4,22 @@
     "target": "es2020",
 
     /* Modules */
-    "module": "commonjs",
+    "module": "CommonJS",
     "rootDir": "./src",
     "outDir": "./dist",
-    "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "Node",
 
     /* Type Checking */
     "strict": true,
-    "useUnknownInCatchVariables": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    /* Completeness */
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowJs": true,
+    "declaration": false,
+    "sourceMap": true,
+    "noEmit": false,
+    "allowImportingTsExtensions": false
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
