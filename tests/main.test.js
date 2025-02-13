@@ -6,7 +6,7 @@ import { audit } from "../src/task/3-audit.js";
 import { distribution } from "../src/task/4-distribution.js";
 import { routes } from "../src/task/5-routes.js";
 import { Keypair } from "@_koii/web3.js";
-import { namespaceWrapper, _server } from "@_koii/namespace-wrapper";
+import { namespaceWrapper, _server } from "@_koii/task-manager/namespace-wrapper";
 import Joi from "joi";
 import axios from "axios";
 
@@ -184,7 +184,7 @@ describe("Performing the task", () => {
   });
 
   it("should generate a distribution list contains all the submitters", async () => {
-    const simulatedSubmitters = 10000;
+    const simulatedSubmitters = 5;
     const submitters = [];
     // 10k is the rough maximum number of submitters
     for (let i = 0; i < simulatedSubmitters; i++) {

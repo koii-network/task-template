@@ -19,8 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@_koii/namespace-wrapper": "^1.0.23",
-    "@_koii/task-manager": "^1.0.9",
+    "@_koii/task-manager": "^1.0.11",
     "@_koii/web3.js": "^0.1.11",
     "@babel/preset-env": "^7.25.7",
     "axios": "^1.7.7",
@@ -33,6 +32,7 @@
     "tail": "^2.2.6"
   },
   "devDependencies": {
+    "@_koii/namespace-wrapper": "1.0.23",
     "eslint": "8.4.1",
     "globals": "^15.9.0",
     "jest": "^29.7.0",
