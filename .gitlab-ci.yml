@@ -13,3 +13,4 @@ yarn_jest_tests:
   script:
     - yarn install
     - yarn jest
+    - yarn lint
