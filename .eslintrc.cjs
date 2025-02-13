@@ -1,4 +1,5 @@
-export default {
+module.exports = {
+  // ESLint 
   env: {
     browser: true,
     commonjs: true,
