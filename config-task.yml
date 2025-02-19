@@ -5,7 +5,7 @@ description: 'Run this task to mine KPL tokens. You just need to stake very litt
 repositoryUrl: 'https://github.com/koii-network/task-template' # Replace with your own repo URL
 imageUrl: 'https://bafybeiewbrh36727473k6ogvyrlcyb6rbblczrtwyk2mx5bwp36g2rrcbq.ipfs.w3s.link/kpl_miner_task.png'
 infoUrl: 'https://www.koii.network/ocean'
-
+markdownDescriptionPath: "./KPL-Miner-description.md"
 # Task executable network: DEVELOPMENT, ARWEAVE, or IPFS
 # IPFS is the default value, as the CLI automatically manages the upload process via the Koii Storage SDK.
 task_executable_network: 'IPFS'
@@ -58,7 +58,7 @@ requirementsTags:
 
 # ONLY provide the task_id and migrationDescription if you are updating the task, otherwise leave blank.
 # Task_id: Previous task ID.
-task_id: '8CQT6QJN8ZUJWHgBAJBKxbuyBuE43fxA1jMGBGQPbCUZ'
+task_id: '2XUizbiDdG2PUWHX48vFzp7ekqJ2NpgCvtGtHHpDiHtS'
 
 # Migration description: Provide the description for changes made in the new version of the task.
 migrationDescription: 'More Updates, More Rewards!'
