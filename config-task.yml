@@ -58,7 +58,7 @@ requirementsTags:
 
 # ONLY provide the task_id and migrationDescription if you are updating the task, otherwise leave blank.
 # Task_id: Previous task ID.
-task_id: '2XUizbiDdG2PUWHX48vFzp7ekqJ2NpgCvtGtHHpDiHtS'
+task_id: '7iCiMCD1Qs3MRTTPuY9Qrid68c4F2WPZaBpZW4j9tKVv'
 
 # Migration description: Provide the description for changes made in the new version of the task.
 migrationDescription: 'More Updates, More Rewards!'
