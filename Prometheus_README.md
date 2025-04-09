@@ -1,152 +1,132 @@
-# 🚀 Prometheus Project Template
+# Prometheus Task Template for Koii Network
 
-## Project Overview
+## 🚀 Project Overview
 
-**Prometheus** is a robust, scalable project template designed to accelerate development of modern, production-ready applications. This boilerplate provides a comprehensive starting point with best-in-class configurations, tooling, and architectural patterns.
+This repository is a specialized Koii Network task template, designed to provide developers with a robust framework for creating and deploying decentralized computational tasks. Built with TypeScript, the Prometheus template offers a comprehensive structure for implementing blockchain-based distributed computing solutions.
 
-### 🌟 Key Features
-- TypeScript-first development environment
-- Fully configured build and testing pipelines
-- Docker and containerization support
-- ESLint and Prettier for code quality
-- Webpack for efficient bundling
-- Jest for comprehensive testing
-- CI/CD ready configuration
-- Modular and extensible project structure
+### Key Characteristics
+- 🔄 Task-based computational framework
+- 💻 TypeScript-powered development environment
+- 🌐 Koii Network integration
+- 🛡️ Modular task architecture
 
-## Getting Started
+## 🛠 Technologies Used
+
+- **Programming Language**: TypeScript
+- **Runtime**: Node.js (>=18.17.0)
+- **Package Manager**: Yarn
+- **Key Dependencies**:
+  - `@_koii/task-manager`: Task management utilities
+  - `@_koii/web3.js`: Web3 interaction library
+  - `@_koii/namespace-wrapper`: Namespace management
+
+## 📦 Project Structure
+
+```
+prometheus-task/
+│
+├── src/
+│   ├── index.ts                 # Main entry point
+│   └── task/
+│       ├── 0-setup.ts           # Initial setup logic
+│       ├── 1-task.ts            # Core task implementation
+│       ├── 2-submission.ts      # Result submission handling
+│       ├── 3-audit.ts           # Task auditing mechanism
+│       ├── 4-distribution.ts    # Reward distribution logic
+│       └── 5-routes.ts          # Custom route definitions
+│
+├── tests/                       # Testing utilities
+│   ├── main.test.ts
+│   ├── simulateTask.ts
+│   └── testTask.ts
+│
+├── config-task.yml              # Task configuration
+├── package.json                 # Project dependencies and scripts
+└── tsconfig.json                # TypeScript configuration
+```
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (version >=20.0.0, LTS recommended)
-- Yarn or npm package manager
-- Docker (optional, for containerization)
+- Node.js (version >=18.17.0)
+- Yarn package manager
 
 ### Installation Steps
+1. Clone the repository
+   ```bash
+   git clone https://github.com/your-org/prometheus-task.git
+   cd prometheus-task
+   ```
 
-1. Clone the repository:
+2. Install dependencies
+   ```bash
+   yarn install
+   ```
+
+## 🔍 Key Features
+
+- **Modular Task Architecture**: Separate modules for setup, core logic, submission, auditing, and distribution
+- **Flexible Configuration**: Customizable task parameters via `config-task.yml`
+- **Comprehensive Testing**: Built-in test scripts and simulation capabilities
+- **TypeScript Support**: Strong typing and modern JavaScript features
+
+## 💻 Development Commands
+
+- `yarn start`: Launch development server
+- `yarn test`: Run task test suite
+- `yarn simulate`: Simulate full task round cycle
+- `yarn webpack`: Build executable for production
+- `yarn lint`: Run code linting
+- `yarn format`: Automatically format code
+
+## 🧪 Testing and Simulation
+
+### Local Testing
 ```bash
-git clone https://github.com/your-org/prometheus-template.git
-cd prometheus-template
-```
-
-2. Install dependencies:
-```bash
-yarn install
-# or
-npm install
-```
-
-3. Copy environment configuration:
-```bash
-cp .env.developer.example .env
-```
-
-4. Run development server:
-```bash
-yarn dev
-# or
-npm run dev
-```
-
-## Customization Guide
-
-### Quick Personalization
-1. Update `package.json` with your project details
-2. Modify `.env` files to match your specific configuration
-3. Replace placeholder names in configuration files
-
-### Core Customization Areas
-- `src/task/1-task.ts`: Primary task logic
-- `config-task.yml`: Project-wide configuration
-- `webpack.config.js`: Build and bundling settings
-
-## Project Structure
-
-```
-prometheus-template/
-├── src/                  # Source code
-│   ├── task/             # Task-specific modules
-│   │   ├── 0-setup.ts
-│   │   ├── 1-task.ts
-│   │   └── ...
-├── tests/                # Test suites
-├── config-task.yml       # Project configuration
-├── docker-compose.yaml   # Container orchestration
-├── webpack.config.js     # Build configuration
-└── tsconfig.json         # TypeScript configuration
-```
-
-## Technologies Used
-
-### Core Technologies
-- TypeScript
-- Node.js
-- Webpack
-- Jest
-- ESLint
-- Prettier
-
-### Optional Integrations
-- Docker
-- CI/CD pipelines
-- WebAssembly support
-
-## Use Cases
-
-This template is ideal for:
-- Microservice development
-- Decentralized task runners
-- Backend API services
-- Event-driven applications
-- Blockchain and distributed computing projects
-
-## Testing
-
-Run comprehensive test suite:
-```bash
+# Run basic tests
 yarn test
-```
 
-Simulate full task cycle:
-```bash
+# Simulate full task round
 yarn simulate
 ```
 
-## Production Deployment
-
-1. Build production executable:
+### Production Debugging
 ```bash
+# Build and debug production executable
 yarn webpack
+yarn prod-debug
 ```
 
-2. Use the Create Task CLI for deployment:
-```bash
-npx @_koii/create-task-cli@latest
-```
+## 🌐 Deployment Process
 
-## Contributing
+1. Configure `config-task.yml` with your specific parameters
+2. Use Koii's Create Task CLI for deployment
+   ```bash
+   npx @_koii/create-task-cli@latest
+   ```
+
+## 📋 Task Round Flow
+
+Prometheus tasks follow a standard Koii Network round structure:
+1. **Task Execution**: Perform computational work
+2. **Submission**: Submit results for verification
+3. **Auditing**: Community nodes validate submissions
+4. **Distribution**: Rewards allocated based on performance
+
+## 🔒 License
+
+ISC License. See `LICENSE` file for complete details.
+
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## Troubleshooting
+## 📞 Support
 
-- Ensure Node.js version compatibility
-- Check environment variable configurations
-- Review webpack and TypeScript configurations
+For issues or questions, please open a GitHub issue or join the [Koii Network Discord](https://discord.gg/koii-network).
 
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-## Contact & Support
-
-- Project Link: [https://github.com/your-org/prometheus-template](https://github.com/your-org/prometheus-template)
-- Support: [Create an Issue](https://github.com/your-org/prometheus-template/issues)
-
----
-
-**Happy Coding! 🚀👩‍💻👨‍💻**
+**Happy Decentralized Computing! 🌍🚀**
