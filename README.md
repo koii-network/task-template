@@ -87,7 +87,7 @@ Before deploying your task to a production environment, test it in the Desktop N
 
 2. Create your `.env` file by renaming `.env.developer.example` to `.env`. Note: This file is for testing purposes only and does not reflect the env variables in your fully deployed task.
 
-3. Add the "EZ Sandbox Task" to your desktop node using the EZ Sandbox Task ID (`BXbYKFdXZhQgEaMFbeShaisQBYG1FD4MiSf9gg4n6mVn`) and the Advanced option in the Add Task tab. [Click here for a detailed walkthrough of adding this task to the node.](https://github.com/koii-network/ezsandbox/tree/main/Get%20Started%20-%20Quick%20Intro).
+3. Add the "EZ Sandbox Task" to your desktop node using the EZ Sandbox Task ID (`CRzLkJvYnta2BnaSMMVkew7FRrZtZoNe7wGFogq7Hj5D`) and the Advanced option in the Add Task tab. [Click here for a detailed walkthrough of adding this task to the node.](https://github.com/koii-network/ezsandbox/tree/main/Get%20Started%20-%20Quick%20Intro).
 
 4. Test your task in the production environment. To test your executable, enter the following command:
    ```sh
@@ -119,7 +119,7 @@ Before deploying your task to a production environment, test it in the Desktop N
 
    **Linux:** `/home/<username>/.config`
 
-   Once done, it will generate a task-ID, which will look something like "<BXbYKFdXZhQgEaMFbeShaisQBYG1FD4MiSf9gg4n6mVn>". [Add this task to your node as you did with the EZ Sandbox Task.](https://github.com/koii-network/ezsandbox/tree/main/Get%20Started%20-%20Quick%20Intro)
+   Once done, it will generate a task-ID, which will look something like "<CRzLkJvYnta2BnaSMMVkew7FRrZtZoNe7wGFogq7Hj5D>". [Add this task to your node as you did with the EZ Sandbox Task.](https://github.com/koii-network/ezsandbox/tree/main/Get%20Started%20-%20Quick%20Intro)
 
 _Congrats! You've done it! You're now officially a blockchain developer with a decentralized app/service live in Web3. We couldn't be more proud!_
 
